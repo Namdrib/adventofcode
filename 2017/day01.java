@@ -62,8 +62,8 @@ public class day01
 		System.out.println("Enter input:");
 		String input = scanner.nextLine();
 		input = input.trim();
-		System.out.println(a.solution(input, false));  // part 1
-		System.out.println(a.solution(input, true)); // part 2
+		System.out.println("Part 1: " + a.solution(input, false));
+		System.out.println("Part 2: " + a.solution(input, true));
 
 		scanner.close();
 	}
