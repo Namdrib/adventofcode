@@ -76,16 +76,15 @@ public class day04
 
 		List<String> inputs = new ArrayList<String>();
 
-		Scanner scanner = new Scanner(System.in);
-		while (scanner.hasNextLine())
+		try (Scanner scanner = new Scanner(System.in))
 		{
-			inputs.add(scanner.nextLine());
+			while (scanner.hasNextLine())
+			{
+				inputs.add(scanner.nextLine().trim());
+			}
 		}
-		scanner.close();
 
 		System.out.println("Part 1: " + a.numCorrectPassphrases(inputs, false));
 		System.out.println("Part 2: " + a.numCorrectPassphrases(inputs, true));
 	}
-
 }
-

@@ -58,14 +58,16 @@ public class day01
 			return;
 		}
 		
-		Scanner scanner = new Scanner(System.in);
-		System.out.println("Enter input:");
-		String input = scanner.nextLine();
+		String input = new String();
+		try (Scanner scanner = new Scanner(System.in))
+		{
+			System.out.print("Enter input: ");
+			input = scanner.nextLine();
+		}
+		
 		input = input.trim();
 		System.out.println("Part 1: " + a.solution(input, false));
 		System.out.println("Part 2: " + a.solution(input, true));
-
-		scanner.close();
 	}
 }
 

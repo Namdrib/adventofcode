@@ -1,6 +1,7 @@
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -8,29 +9,28 @@ import java.util.Scanner;
 
 public class day05
 {
-
 	public day05()
 	{
 		;
 	}
 
-	public int numMovesToEscape(int[] maze, boolean partTwo)
+	public int numMovesToEscape(List<Integer> maze, boolean partTwo)
 	{
 		int numMoves = 0;
 
 		int position = 0;
 
-		while (position >= 0 && position < maze.length)
+		while (position >= 0 && position < maze.size())
 		{
 			int oldPosition = position;
-			position += maze[position];
-			if (partTwo && maze[oldPosition] >= 3)
+			position += maze.get(position);
+			if (partTwo && maze.get(oldPosition) >= 3)
 			{
-				maze[oldPosition]--;
+				maze.set(oldPosition, maze.get(oldPosition) - 1);
 			}
 			else
 			{
-				maze[oldPosition]++;
+				maze.set(oldPosition, maze.get(oldPosition) + 1);
 			}
 			numMoves++;
 		}
@@ -44,9 +44,9 @@ public class day05
 
 		if (args.length > 0)
 		{
-			int[] input = new int[] { 0, 3, 0, 1, -3 };
-			assertEquals(5, a.numMovesToEscape(input.clone(), false));
-			assertEquals(10, a.numMovesToEscape(input.clone(), true));
+			List<Integer> input = Arrays.asList(0, 3, 0, 1, -3);
+			assertEquals(5, a.numMovesToEscape(new ArrayList<>(input), false));
+			assertEquals(10, a.numMovesToEscape(new ArrayList<>(input), true));
 
 			System.out.println("Tests successful!");
 			return;
@@ -55,22 +55,16 @@ public class day05
 		List<Integer> input = new ArrayList<Integer>();
 
 		// Take input, turn into usable form
-		Scanner scanner = new Scanner(System.in);
-		while (scanner.hasNextInt())
+		try (Scanner scanner = new Scanner(System.in))
 		{
-			int temp = scanner.nextInt();
-			input.add(temp);
+			while (scanner.hasNextInt())
+			{
+				int temp = scanner.nextInt();
+				input.add(temp);
+			}
 		}
-		scanner.close();
 
-		int[] array = new int[input.size()];
-		for (int i = 0; i < input.size(); i++)
-		{
-			array[i] = input.get(i);
-		}
-		System.out.println("Part 1: " + a.numMovesToEscape(array.clone(), false));
-		System.out.println("Part 2: " + a.numMovesToEscape(array.clone(), true));
-
+		System.out.println("Part 1: " + a.numMovesToEscape(new ArrayList<>(input), false));
+		System.out.println("Part 2: " + a.numMovesToEscape(new ArrayList<>(input), true));
 	}
-
 }

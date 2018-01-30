@@ -88,23 +88,23 @@ public class day02
 		List<List<Integer>> input = new ArrayList<List<Integer>>();
 
 		// Take input, turn into usable form
-		Scanner scanner = new Scanner(System.in);
-		while (scanner.hasNextLine())
+		try (Scanner scanner = new Scanner(System.in))
 		{
-			String line = scanner.nextLine();
-			String[] elements = line.split("\\s+");
-
-			ArrayList<Integer> temp = new ArrayList<Integer>();
-			for (String s : elements)
+			while (scanner.hasNextLine())
 			{
-				temp.add(Integer.parseInt(s));
+				String line = scanner.nextLine();
+				String[] elements = line.split("\\s+");
+
+				ArrayList<Integer> temp = new ArrayList<Integer>();
+				for (String s : elements)
+				{
+					temp.add(Integer.parseInt(s));
+				}
+				input.add(temp);
 			}
-			input.add(temp);
 		}
-		scanner.close();
 
 		System.out.println("Part 1: " + a.checksum_one(input));
 		System.out.println("Part 2: " + a.checksum_two(input));
 	}
-
 }

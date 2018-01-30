@@ -70,7 +70,7 @@ public class day12
 	private boolean setGroupIDs(List<day12Node> list, int groupID)
 	{
 		if (list.isEmpty()) return false;
-		
+
 		if (list.get(0).groupID == -1)
 		{
 			for (day12Node node : list)
@@ -118,7 +118,7 @@ public class day12
 			}
 			closed.add(current);
 		}
-		
+
 		return connectedPrograms;
 	}
 	
@@ -147,7 +147,7 @@ public class day12
 	public static void main(String[] args)
 	{
 		day12 a = new day12();
-		
+
 		if (args.length > 0)
 		{
 			ArrayList<String> input = new ArrayList<String>(Arrays.asList(
@@ -159,7 +159,7 @@ public class day12
 				"5 <-> 6",
 				"6 <-> 4, 5"
 			));
-			
+
 			a.buildGraph(input);
 			assertEquals(6, a.programsWithID(0).size());
 			assertEquals(2, a.numberOfGroups());
@@ -170,17 +170,17 @@ public class day12
 		List<String> input = new ArrayList<>();
 
 		// Take input, turn into usable form
-		Scanner scanner = new Scanner(System.in);
-		while (scanner.hasNextLine())
+		try (Scanner scanner = new Scanner(System.in))
 		{
-			String temp = scanner.nextLine();
-			input.add(temp);
+			while (scanner.hasNextLine())
+			{
+				String temp = scanner.nextLine();
+				input.add(temp);
+			}
 		}
-		scanner.close();
 
 		a.buildGraph(input);
 		System.out.println("Part 1: " + a.programsWithID(0).size());
 		System.out.println("Part 2: " + a.numberOfGroups());
 	}
 }
-

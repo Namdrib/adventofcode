@@ -289,20 +289,20 @@ public class day07
 		List<String> input = new ArrayList<>();
 
 		// Take input, turn into usable form
-		Scanner scanner = new Scanner(System.in);
-		while (scanner.hasNextLine())
+		try (Scanner scanner = new Scanner(System.in))
 		{
-			String temp = scanner.nextLine();
-			input.add(temp);
+			while (scanner.hasNextLine())
+			{
+				String temp = scanner.nextLine();
+				input.add(temp);
+			}
 		}
-		scanner.close();
 
 		System.out.println("building tree");
 		a.buildTree(input);
 
 		System.out.println("Part 1: " + a.getBottomNode().name);
 		System.out.println("Part 2: " + a.getCorrectWeight());
-
 	}
-
 }
+

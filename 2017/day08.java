@@ -117,17 +117,18 @@ public class day08
 		List<String> input = new ArrayList<>();
 
 		// Take input, turn into usable form
-		Scanner scanner = new Scanner(System.in);
-		while (scanner.hasNextLine())
+		try (Scanner scanner = new Scanner(System.in))
 		{
-			String temp = scanner.nextLine();
-			input.add(temp);
+			while (scanner.hasNextLine())
+			{
+				String temp = scanner.nextLine();
+				input.add(temp);
+			}
 		}
-		scanner.close();
 
 		int[] maxValues = a.largestRegister(input);
 		System.out.println("Part 1: " + maxValues[0]);
 		System.out.println("Part 2: " + maxValues[1]);
 	}
-
 }
+

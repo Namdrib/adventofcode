@@ -125,10 +125,13 @@ int bfs(const vector<string> &maze, Coord START, Coord END)
 
 int main()
 {
+	int input;
+	cout << "enter input: ";
+	cin >> input;
 	Coord START(1, 1);
 	Coord END(31, 39);
 	// Coord END(7, 4);
-	vector<string> maze(generateMaze(1350, END));
+	vector<string> maze(generateMaze(input, END));
 	for (size_t i=0; i<maze.size(); i++)
 	{
 		cout << maze[i] << endl;
