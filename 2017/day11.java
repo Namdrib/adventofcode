@@ -34,6 +34,11 @@ public class day11
 			this.z = z;
 		}
 		
+		public Cube(Cube c)
+		{
+			this(c.x, c.y, c.z);
+		}
+
 		public void moveBy(int x, int y, int z)
 		{
 			this.x += x;
@@ -49,6 +54,11 @@ public class day11
 		public boolean equals(Cube c)
 		{
 			return this.x == c.x && this.y == c.y && this.z == c.z;
+		}
+		
+		public int distanceTo(Cube c)
+		{
+			return (Math.abs(this.x - c.x) + Math.abs(this.y - c.y) + Math.abs(this.z - c.z)) / 2;
 		}
 		
 		public String toString()
@@ -91,13 +101,6 @@ public class day11
 	{
 		return new Cube(a.x + b.x, a.y + b.y, a.z + b.z);
 	}
-	
-	private int cubeDistance(Cube a, Cube b)
-	{
-		System.out.println(a + ", " + b);
-		if (a.equals(b)) return 0;
-		return (Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + Math.abs(a.z - b.z)) / 2;
-	}
 
 	///----- Hex helpers -----
 	
@@ -109,15 +112,16 @@ public class day11
 	public int[] fewestStepsTo(List<String> input)
 	{
 		// Navigate from start to ending position
-		Cube position = new Cube(0, 0, 0);
+		final Cube origin = new Cube(0, 0, 0);
+		Cube position = new Cube(origin);
 		int furthest = 0;
 		for (String s : input)
 		{
 			position = cubeNeighbour(position, s);
-			furthest = Math.max(furthest, cubeDistance(new Cube(0, 0, 0), position));
+			furthest = Math.max(furthest, position.distanceTo(origin));
 		}
 		
-		return new int[] { cubeDistance(new Cube(0, 0, 0), position), furthest };
+		return new int[] { position.distanceTo(origin), furthest };
 	}
 
 	public static void main(String[] args)
@@ -156,5 +160,5 @@ public class day11
 		System.out.println("Part 1: " + result[0]);
 		System.out.println("Part 2: " + result[1]);
 	}
-
 }
+
