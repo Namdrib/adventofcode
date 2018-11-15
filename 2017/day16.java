@@ -14,28 +14,38 @@ public class day16
 	{
 		;
 	}
-	
+
 	public String dance(int numPrograms, List<String> moves, long times)
 	{
 		// Build the line of programs
-		String line = new String();
+		String original = new String();
 		for (char c = 'a'; c - 'a' < numPrograms; c++)
 		{
-			line += c;
+			original += c;
 		}
-		
-		for (long i=0; i<times; i++)
+		String line = new String(original);
+
+		for (long i = 0; i < times; i++)
 		{
-			if (i%1000000 == 0) System.out.println("Set "+ i);
+			if (i % 1000000 == 0) System.out.println("Set " + i);
 			for (String move : moves)
 			{
 				line = performMove(line, move);
 			}
+
+			// Find a cycle (a point after which the line is the same as original
+			// then we know don't need to keep repeating that same set.
+			if (i > 0 && line.equals(original))
+			{
+				System.out.println("same after " + (i + 1) + " times");
+				times %= (i + 1); // zero-indexed
+				i = -1; // loop increments i after statement
+			}
 		}
-		
+
 		return line;
 	}
-	
+
 	private String performMove(String line, String move)
 	{
 		String temp = move.substring(1);
@@ -104,6 +114,6 @@ public class day16
 		}
 
 		System.out.println("Part 1: " + a.dance(16, input, 1));
-		System.out.println("Part 1: " + a.dance(16, input, 1000000000));
+		System.out.println("Part 2: " + a.dance(16, input, 1000000000));
 	}
 }
