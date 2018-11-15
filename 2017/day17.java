@@ -1,7 +1,6 @@
-//import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -31,29 +30,28 @@ public class day17
 			buffer.add(position, counter);
 			counter++;
 		}
-//		printBuffer(buffer, position);
+		// printBuffer(buffer, position);
 		return;
 	}
 	
 	private void printBuffer(List<Integer> buffer, int position)
 	{
-	    for (int i=0; i<buffer.size(); i++)
-	    {
-	        if (i == position)
-	        {
-	          System.out.print("(");
-	        }
-            System.out.print(buffer.get(i));
-            if (i == position)
-            {
-              System.out.print(")");
-            }
-            if (i < buffer.size()-1)
-            {
-              System.out.print(" ");
-            }
-	    }
-	    System.out.println();
+		for (int i=0; i<buffer.size(); i++)
+		{
+			if (i == position)
+			{
+				System.out.print("(" + buffer.get(i) + ")");
+			}
+			else
+			{
+				System.out.print(buffer.get(i));
+			}
+			if (i < buffer.size()-1)
+			{
+				System.out.print(" ");
+			}
+		}
+		System.out.println();
 	}
 
 	public int valueAfter(List<Integer> buffer, int query)
@@ -73,7 +71,7 @@ public class day17
 		if (args.length > 0)
 		{
 			a.spin(buffer, numInsertions, 3);
-//			assertEquals(638, a.valueAfter(buffer, numInsertions));
+			assertEquals(638, a.valueAfter(buffer, numInsertions));
 
 			System.out.println("Tests successful!");
 			return;
@@ -90,6 +88,6 @@ public class day17
 		buffer.clear();
 		buffer.add(0);
 		a.spin(buffer, 50000000, spinsPerInsert);
-        System.out.println("Part 2: " + a.valueAfter(buffer, 0));
+		System.out.println("Part 2: " + a.valueAfter(buffer, 0));
 	}
 }

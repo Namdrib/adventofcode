@@ -2,7 +2,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -127,7 +126,6 @@ public class day12
 	// Iterate through them to count how many there are
 	public int numberOfGroups()
 	{
-		int numGroups = 0;
 		Map<Integer, ArrayList<day12Node>> temp = new HashMap<>(adjList);
 
 		for (Map.Entry<Integer, ArrayList<day12Node>> entry : temp.entrySet())
