@@ -8,8 +8,6 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-// TODO : fix part 2
-
 // http://adventofcode.com/2017/day/10
 
 public class day10
@@ -41,8 +39,8 @@ public class day10
 		int overflowAmount = length - (list.size() - current);
 		int boundary = overflow ? list.size() : currentPlusLength;
 
-//		System.out.println("[P1] rotating from " + current + " by " + length + " overflow? " + overflow);
-//		System.out.println("[P1] Boundary: " + boundary);
+		// System.out.println("[P1] rotating from " + current + " by " + length + " overflow? " + overflow);
+		// System.out.println("[P1] Boundary: " + boundary);
 
 		// Find the area of interest to be reverse - reverse it
 		List<Integer> selection = new ArrayList<>(list.subList(current, boundary));
@@ -51,7 +49,7 @@ public class day10
 			List<Integer> beginning = new ArrayList<>(list.subList(0, overflowAmount));
 			selection.addAll(beginning);
 		}
-//		System.out.println("[P1] \tSelection: " + selection);
+		// System.out.println("[P1] \tSelection: " + selection);
 		Collections.reverse(selection);
 
 		// Apply the reversed selection to the appropriate parts
@@ -65,7 +63,7 @@ public class day10
 		// Do overflowed part if necessary
 		if (overflow)
 		{
-//			System.out.println("[P1] Overflow part 2");
+			// System.out.println("[P1] Overflow part 2");
 			for (int j = 0; j < overflowAmount; j++)
 			{
 				list.set(j, selection.get(j + i));
@@ -77,16 +75,16 @@ public class day10
 		current %= list.size();
 		skipSize++;
 
-//		System.out.println("[P1] New stuff:");
-//		System.out.println("[P1] \tList: " + list);
-//		System.out.println("[P1] \tItems: (c, s) " + current + " " + skipSize);
+		// System.out.println("[P1] New stuff:");
+		// System.out.println("[P1] \tList: " + list);
+		// System.out.println("[P1] \tItems: (c, s) " + current + " " + skipSize);
 	}
 
-	// Create the list of {start..end}
-	public void init(List<Integer> input)
+	// Create the list of numbers from 0..maxValue.
+	public void init(int maxValue)
 	{
 		// Make the list
-		list = new ArrayList<>(input);
+		list = new ArrayList<>(IntStream.rangeClosed(0, maxValue).boxed().collect(Collectors.toList()));
 
 		// Set vars
 		current = 0;
@@ -94,9 +92,9 @@ public class day10
 	}
 
 	// Perform each of the rotations
-	public List<Integer> partOne(List<Integer> input)
+	public List<Integer> partOne(List<Integer> lengths)
 	{
-		for (int i : input)
+		for (int i : lengths)
 		{
 			knotRotate(i);
 		}
@@ -106,24 +104,21 @@ public class day10
 
 	public String partTwo(String input)
 	{
+		init(255);
 		// Read the input as int reps of each char (0-255)
 		List<Integer> lengthSeq = new ArrayList<>();
 		for (int i=0; i<input.length(); i++)
 		{
-			int value = input.charAt(i);
-			lengthSeq.add(value);
+			lengthSeq.add((int) input.charAt(i));
 		}
 		lengthSeq.addAll(end);
-		System.out.println("[P2] lengthSeq: " + lengthSeq);
 
 
 		List<Integer> sparseHash = null;
 		for (int i=0; i<64; i++)
 		{
 			sparseHash = partOne(lengthSeq);
-			System.out.println("[P2] pos, skip: " + current + ", " + skipSize);
 		}
-		System.out.println("[P2] Sparse: " + sparseHash);
 
 		List<Integer> denseHash = denseHash(sparseHash);
 		return toHexadecimal(denseHash);
@@ -173,7 +168,7 @@ public class day10
 		day10 a = new day10();
 		if (args.length > 0)
 		{
-			a.init(IntStream.rangeClosed(0, 4).boxed().collect(Collectors.toList()));
+			a.init(4);
 			assertEquals(Arrays.asList(3, 4, 2, 1, 0),
 				a.partOne(Arrays.asList(3, 4, 1, 5)));
 
@@ -185,11 +180,10 @@ public class day10
 			assertEquals("4007ff", a.toHexadecimal(Arrays.asList(64, 7, 255)));
 
 			// Part two
-			a.init(IntStream.rangeClosed(0, 255).boxed().collect(Collectors.toList()));
 			assertEquals("a2582a3a0e66e6e86e3812dcb672a272", a.partTwo(""));
-//			assertEquals("33efeb34ea91902bb2f59c9920caa6cd", a.partTwo("AoC 2017"));
+			assertEquals("33efeb34ea91902bb2f59c9920caa6cd", a.partTwo("AoC 2017"));
 			assertEquals("3efbe78a8d82f29979031a4aa0b16a9d", a.partTwo("1,2,3"));
-//			assertEquals("63960835bcdc130f0b66d7ff4f6a5a8e", a.partTwo("1,2,4"));
+			assertEquals("63960835bcdc130f0b66d7ff4f6a5a8e", a.partTwo("1,2,4"));
 
 			System.out.println("Tests successful!");
 			return;
@@ -213,7 +207,7 @@ public class day10
 			inputList.add(Integer.parseInt(element.trim()));
 		}
 
-		a.init(IntStream.rangeClosed(0, 255).boxed().collect(Collectors.toList()));
+		a.init(255);
 		List<Integer> afterRotations = a.partOne(inputList);
 		System.out.println("Part 1: " + afterRotations.get(0) * afterRotations.get(1));
 		System.out.println("Part 2: " + a.partTwo(input));
