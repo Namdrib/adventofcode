@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
+// https://adventofcode.com/2017/day/14
+
 public class day14
 {
 	public day14()
@@ -133,7 +135,7 @@ public class day14
 		{
 			if (scanner.hasNextLine())
 			{
-			  input = scanner.next();
+				input = scanner.next();
 			}
 		}
 
