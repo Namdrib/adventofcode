@@ -18,7 +18,7 @@ public class day17
 	public void spin(List<Integer> buffer, int numInsertions, int spinsPerInsert)
 	{
 		int position = 0;
-		int counter = 1;
+		int counter = 1; // number being inserted
 		for (int i=0; i<numInsertions; i++)
 		{
 			// perform spins
@@ -30,28 +30,7 @@ public class day17
 			buffer.add(position, counter);
 			counter++;
 		}
-		// printBuffer(buffer, position);
 		return;
-	}
-	
-	private void printBuffer(List<Integer> buffer, int position)
-	{
-		for (int i=0; i<buffer.size(); i++)
-		{
-			if (i == position)
-			{
-				System.out.print("(" + buffer.get(i) + ")");
-			}
-			else
-			{
-				System.out.print(buffer.get(i));
-			}
-			if (i < buffer.size()-1)
-			{
-				System.out.print(" ");
-			}
-		}
-		System.out.println();
 	}
 
 	public int valueAfter(List<Integer> buffer, int query)
@@ -59,6 +38,41 @@ public class day17
 		int indexOfQuery = buffer.indexOf(query);
 		int indexAfter = (indexOfQuery + 1) % buffer.size();
 		return buffer.get(indexAfter);
+	}
+
+	// return the value after `target` after `numInsertions` insertions
+	// at `spinsPerInsert` spins per insertion
+	// simulating the buffer takes way too long
+	// so we work it out without the buffer
+	// only need to keep track of the number at the position `target+1`
+	public int partTwo(int target, int numInsertions, int spinsPerInsert)
+	{
+		int position = 0;
+		int counter = 1; // number being inserted
+		int size = 1; // size of the buffer
+		
+		int valueAfterTarget = 0;
+		
+		// make a half-arsed simulation without manipulating a buffer
+		// just use information I know like length, insertions, spins, etc.
+		for (int i=0; i<numInsertions; i++)
+		{
+			// perform spins
+			position += spinsPerInsert;
+			position %= size;
+
+			// "insert" the number
+			// if we are inserting directly after `target`, record it
+			position++;
+			if (position == (target + 1) % size)
+			{
+				valueAfterTarget = counter;
+			}
+			size++;
+			counter++;
+		}
+		
+		return valueAfterTarget;
 	}
 
 	public static void main(String[] args)
@@ -85,9 +99,6 @@ public class day17
 
 		a.spin(buffer, numInsertions, spinsPerInsert);
 		System.out.println("Part 1: " + a.valueAfter(buffer, numInsertions));
-		buffer.clear();
-		buffer.add(0);
-		a.spin(buffer, 50000000, spinsPerInsert);
-		System.out.println("Part 2: " + a.valueAfter(buffer, 0));
+		System.out.println("Part 2: " + a.partTwo(0, 50_000_000, spinsPerInsert));
 	}
 }
