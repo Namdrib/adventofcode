@@ -8,18 +8,22 @@ import java.util.Scanner;
 
 public class day17
 {
-	
+
 	public day17()
 	{
 		;
 	}
 
-	// perform numInsertions on buffer, spinning spinsPerInsert on each insert
-	public void spin(List<Integer> buffer, int numInsertions, int spinsPerInsert)
+	public int partOne(int numInsertions, int spinsPerInsert, int query)
 	{
+		List<Integer> buffer = new ArrayList<>();
+		buffer.add(0);
 		int position = 0;
 		int counter = 1; // number being inserted
-		for (int i=0; i<numInsertions; i++)
+
+		// spin the buffer
+		// perform numInsertions on buffer, spinning spinsPerInsert on each insert
+		for (int i = 0; i < numInsertions; i++)
 		{
 			// perform spins
 			position += spinsPerInsert;
@@ -30,11 +34,8 @@ public class day17
 			buffer.add(position, counter);
 			counter++;
 		}
-		return;
-	}
 
-	public int valueAfter(List<Integer> buffer, int query)
-	{
+		// return the value after `query`
 		int indexOfQuery = buffer.indexOf(query);
 		int indexAfter = (indexOfQuery + 1) % buffer.size();
 		return buffer.get(indexAfter);
@@ -50,12 +51,12 @@ public class day17
 		int position = 0;
 		int counter = 1; // number being inserted
 		int size = 1; // size of the buffer
-		
+
 		int valueAfterTarget = 0;
-		
+
 		// make a half-arsed simulation without manipulating a buffer
 		// just use information I know like length, insertions, spins, etc.
-		for (int i=0; i<numInsertions; i++)
+		for (int i = 0; i < numInsertions; i++)
 		{
 			// perform spins
 			position += spinsPerInsert;
@@ -71,7 +72,7 @@ public class day17
 			size++;
 			counter++;
 		}
-		
+
 		return valueAfterTarget;
 	}
 
@@ -84,8 +85,7 @@ public class day17
 
 		if (args.length > 0)
 		{
-			a.spin(buffer, numInsertions, 3);
-			assertEquals(638, a.valueAfter(buffer, numInsertions));
+			assertEquals(638, a.partOne(numInsertions, 3, numInsertions));
 
 			System.out.println("Tests successful!");
 			return;
@@ -97,8 +97,7 @@ public class day17
 			spinsPerInsert = scanner.nextInt();
 		}
 
-		a.spin(buffer, numInsertions, spinsPerInsert);
-		System.out.println("Part 1: " + a.valueAfter(buffer, numInsertions));
+		System.out.println("Part 1: " + a.partOne(numInsertions, spinsPerInsert, numInsertions));
 		System.out.println("Part 2: " + a.partTwo(0, 50_000_000, spinsPerInsert));
 	}
 }
