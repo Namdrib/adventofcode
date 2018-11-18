@@ -16,12 +16,12 @@ import java.util.Scanner;
 
 public class day11
 {
-	
+
 	// ----- Hex helpers -----
 	public static class Cube
 	{
 		int x, y, z;
-		
+
 		public Cube()
 		{
 			this(0, 0, 0);
@@ -33,7 +33,7 @@ public class day11
 			this.y = y;
 			this.z = z;
 		}
-		
+
 		public Cube(Cube c)
 		{
 			this(c.x, c.y, c.z);
@@ -45,22 +45,22 @@ public class day11
 			this.y += y;
 			this.z += z;
 		}
-		
+
 		public void moveBy(Cube c)
 		{
 			moveBy(c.x, c.y, c.z);
 		}
-		
+
 		public boolean equals(Cube c)
 		{
 			return this.x == c.x && this.y == c.y && this.z == c.z;
 		}
-		
+
 		public int distanceTo(Cube c)
 		{
 			return (Math.abs(this.x - c.x) + Math.abs(this.y - c.y) + Math.abs(this.z - c.z)) / 2;
 		}
-		
+
 		public String toString()
 		{
 			return "(" + this.x + "," + this.y + "," + this.z + ")";
@@ -79,31 +79,24 @@ public class day11
 		temp.put("se", new day11.Cube(1, -1, 0));
 		flatToppedCubeDirections = Collections.unmodifiableMap(temp);
 	}
-	
+
 	private Cube cubeDirection(String direction)
 	{
-		if (flatToppedCubeDirections.containsKey(direction))
-		{
-			return flatToppedCubeDirections.get(direction);
-		}
-		else
-		{
-			return new Cube(0, 0, 0);
-		}
+		return flatToppedCubeDirections.getOrDefault(direction, new Cube(0, 0, 0));
 	}
-	
+
 	private Cube cubeNeighbour(Cube in, String direction)
 	{
 		return cubeAdd(in, cubeDirection(direction));
 	}
-	
+
 	private Cube cubeAdd(Cube a, Cube b)
 	{
 		return new Cube(a.x + b.x, a.y + b.y, a.z + b.z);
 	}
 
-	///----- Hex helpers -----
-	
+	// ----- Hex helpers -----
+
 	public day11()
 	{
 		;
@@ -120,7 +113,7 @@ public class day11
 			position = cubeNeighbour(position, s);
 			furthest = Math.max(furthest, position.distanceTo(origin));
 		}
-		
+
 		return new int[] { position.distanceTo(origin), furthest };
 	}
 
@@ -161,4 +154,3 @@ public class day11
 		System.out.println("Part 2: " + result[1]);
 	}
 }
-

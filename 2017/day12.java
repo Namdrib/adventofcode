@@ -1,5 +1,4 @@
 import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -15,22 +14,22 @@ import java.util.Set;
 public class day12
 {
 	Map<Integer, ArrayList<day12Node>> adjList;
-	
+
 	public class day12Node
 	{
 		public int ID;
 		public int groupID;
-		
+
 		day12Node()
 		{
 			this(-1);
 		}
-		
+
 		day12Node(int ID)
 		{
 			this(ID, -1);
 		}
-		
+
 		day12Node(int ID, int groupID)
 		{
 			this.ID = ID;
@@ -40,7 +39,7 @@ public class day12
 
 	public day12()
 	{
-		// TODO Auto-generated constructor stub
+		;
 	}
 
 	// Read through input and build an adjacency list
@@ -48,13 +47,13 @@ public class day12
 	public void buildGraph(List<String> input)
 	{
 		adjList = new HashMap<>();
-		
-		for (String s: input)
+
+		for (String s : input)
 		{
 			// Add node
 			int node = Integer.parseInt(s.substring(0, s.indexOf(" ")));
 			adjList.putIfAbsent(node, new ArrayList<>());
-			
+
 			// Add node's neighbours
 			String[] neighbours = s.substring(s.indexOf("<-> ") + 4).split(", ");
 			for (String neighbour : neighbours)
@@ -63,7 +62,7 @@ public class day12
 			}
 		}
 	}
-	
+
 	// Set all the groupIDs of a list to groupID if they're not already set
 	// return true if the groupID was assigned
 	private boolean setGroupIDs(List<day12Node> list, int groupID)
@@ -107,7 +106,7 @@ public class day12
 			}
 
 			// Add all of current's neighbours to fringe
-			for (Iterator<day12Node> it = adjList.get(current).iterator(); it.hasNext(); )
+			for (Iterator<day12Node> it = adjList.get(current).iterator(); it.hasNext();)
 			{
 				int neighbour = it.next().ID;
 				if (!closed.contains(neighbour))
@@ -120,7 +119,7 @@ public class day12
 
 		return connectedPrograms;
 	}
-	
+
 	// Bad approach: run programsWithID for every ID
 	// In the end, each program's ID should be set
 	// Iterate through them to count how many there are

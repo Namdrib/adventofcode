@@ -17,7 +17,7 @@ public class day14
 	{
 		List<String> out = new ArrayList<>();
 		day10 d10 = new day10();
-		for (int i=0; i<128; i++)
+		for (int i = 0; i < 128; i++)
 		{
 			String row = input + "-" + String.valueOf(i);
 			out.add(d10.partTwo(row));
@@ -34,7 +34,7 @@ public class day14
 		for (String s : hashes)
 		{
 			List<Integer> temp = new ArrayList<>();
-			for (int i=0; i<s.length(); i++)
+			for (int i = 0; i < s.length(); i++)
 			{
 				// Convert hex digit into binary string
 				int hexDigit = Character.digit(s.charAt(i), 16);
@@ -69,8 +69,7 @@ public class day14
 			int tempX = x + deltaX[i];
 			int tempY = y + deltaY[i];
 			// stop if new x,y is out of bounds
-			if (tempY < 0 || tempY >= grid.size() || tempX < 0
-					|| tempX >= grid.get(y).size())
+			if (tempY < 0 || tempY >= grid.size() || tempX < 0 || tempX >= grid.get(y).size())
 			{
 				continue;
 			}
@@ -98,9 +97,9 @@ public class day14
 	public int partTwo(List<List<Integer>> grid)
 	{
 		int groupNumber = 0;
-		for (int i=0; i<grid.size(); i++)
+		for (int i = 0; i < grid.size(); i++)
 		{
-			for (int j=0; j<grid.get(0).size(); j++)
+			for (int j = 0; j < grid.get(0).size(); j++)
 			{
 				if (grid.get(i).get(j).equals(-1))
 				{
@@ -118,7 +117,8 @@ public class day14
 		if (args.length > 0)
 		{
 			// perform tests
-			// assertEquals(Arrays.asList(Arrays.asList(-1,0,-1,0,0,0,0,0,-1,-1,0,0,0,0,-1,0,0,0,0,0,0,0,0,-1,0,-1,-1,1,0,0,0,0)), a.generateGrid(Arrays.asList("a0c20170")));
+			// assertEquals(Arrays.asList(Arrays.asList(-1,0,-1,0,0,0,0,0,-1,-1,0,0,0,0,-1,0,0,0,0,0,0,0,0,-1,0,-1,-1,1,0,0,0,0)),
+			// a.generateGrid(Arrays.asList("a0c20170")));
 
 			List<String> hashes = a.generateHashes("flqrgnkx");
 			List<List<Integer>> grid = a.generateGrid(hashes);

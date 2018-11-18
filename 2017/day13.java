@@ -1,5 +1,4 @@
 import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,10 +12,10 @@ public class day13
 {
 	public class FirewallLayer
 	{
-		int		depth;		// how many layers deep into the firewall (starting with 0);
-		int		range;		// how far this layer scans
-		int		current;	// where the scanner currently is (should be between 0, range-1 (inclusive))
-		boolean	direction;	// false to scan "down" (0 to range-1), true to scan "up" (range-1 to 0)
+		int depth; // how many layers deep into the firewall (starting with 0);
+		int range; // how far this layer scans
+		int current; // where the scanner currently is (should be between 0, range-1 (inclusive))
+		boolean direction; // false to scan "down" (0 to range-1), true to scan "up" (range-1 to 0)
 
 		FirewallLayer()
 		{
@@ -70,11 +69,11 @@ public class day13
 	{
 		;
 	}
-	
+
 	private Map<Integer, FirewallLayer> init(List<String> input)
 	{
 		Map<Integer, FirewallLayer> firewall = new HashMap<>();
-		
+
 		String[] elements = input.toArray(new String[input.size()]);
 		for (String s : elements)
 		{
@@ -86,14 +85,14 @@ public class day13
 			firewall.put(depth, new FirewallLayer(depth, range)); // Maybe don't need ctor depth
 			// firewall.add(new FirewallLayer(depth, range));
 		}
-		
+
 		return firewall;
 	}
 
 	public int makeTrip(List<String> input)
 	{
 		Map<Integer, FirewallLayer> firewall = init(input);
-		int lastLayer = Integer.parseInt(input.get(input.size()-1).split(":\\ ")[0]);
+		int lastLayer = Integer.parseInt(input.get(input.size() - 1).split(":\\ ")[0]);
 
 		// Run simulation
 		int cost = 0;
@@ -122,7 +121,7 @@ public class day13
 
 		return cost;
 	}
-	
+
 	// Returns true if the packet will get caught trying to run with delay `delay`
 	// Caught if a given layer's scanner is at position 0 when packet reaches it
 	// Since it's oscillating, the period is `2 * (layer.range - 1)`
@@ -144,8 +143,8 @@ public class day13
 	int lowestDelay(List<String> input)
 	{
 		Map<Integer, FirewallLayer> firewall = init(input);
-		
-		for (int i=0; ; i++)
+
+		for (int i = 0;; i++)
 		{
 			if (!getCaughtWithDelay(firewall, i))
 			{
@@ -160,8 +159,7 @@ public class day13
 		if (args.length > 0)
 		{
 			List<String> input;
-			input = new ArrayList<>(
-					Arrays.asList("0: 3", "1: 2", "4: 4", "6: 4"));
+			input = new ArrayList<>(Arrays.asList("0: 3", "1: 2", "4: 4", "6: 4"));
 
 			assertEquals(24, a.makeTrip(input));
 			assertEquals(10, a.lowestDelay(input));

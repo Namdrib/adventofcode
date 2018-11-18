@@ -1,5 +1,4 @@
 import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -75,7 +74,7 @@ public class day16
 			{
 				char a = move.charAt(1);
 				char b = move.charAt(3);
-				
+
 				int aPos = line.indexOf(a);
 				int bPos = line.indexOf(b);
 				char swap = arr[aPos];
@@ -100,9 +99,9 @@ public class day16
 			System.out.println("Tests successful!");
 			return;
 		}
-		
+
 		List<String> input = new ArrayList<>();
-		
+
 		// Take input, turn into usable form
 		try (Scanner scanner = new Scanner(System.in))
 		{

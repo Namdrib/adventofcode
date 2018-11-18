@@ -1,5 +1,4 @@
 import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -15,13 +14,13 @@ public class day17
 	}
 
 	/**
-	 * Return the value after `target` after `numInsertions` insertions at `spinsPerInsert` spins per
-	 * insertion
+	 * Return the value after `target` after `numInsertions` insertions at `spinsPerInsert` spins
+	 * per insertion
 	 * 
 	 * <b>Part One</b>
 	 * 
-	 * Create a simulation, populate a buffer with the insertions and spins. This is required because
-	 * something might be inserted <i>behind</i> <code>target</code>
+	 * Create a simulation, populate a buffer with the insertions and spins. This is required
+	 * because something might be inserted <i>behind</i> <code>target</code>
 	 * 
 	 * <b>Part Two</b>
 	 * 

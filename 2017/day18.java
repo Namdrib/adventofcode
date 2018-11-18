@@ -29,9 +29,9 @@ public class day18
 	{
 		List<String> out = new ArrayList<>();
 
-		try(BufferedReader br = new BufferedReader(new FileReader(inputFile)))
+		try (BufferedReader br = new BufferedReader(new FileReader(inputFile)))
 		{
-			for (String line; (line = br.readLine()) != null; )
+			for (String line; (line = br.readLine()) != null;)
 			{
 				out.add(line);
 			}

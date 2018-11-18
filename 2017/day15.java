@@ -1,5 +1,4 @@
 import static org.junit.Assert.assertEquals;
-
 import java.util.Scanner;
 
 // https://adventofcode.com/2017/day/15
@@ -8,11 +7,11 @@ public class day15
 {
 	public class Generator
 	{
-		final long			factor;
-		final static long	divisor	= 2147483647;
-		final long			multiple;
-		final boolean		partTwo;
-		long				start;
+		final long factor;
+		final static long divisor = 2147483647;
+		final long multiple;
+		final boolean partTwo;
+		long start;
 
 		Generator(long factor, long multiple, long start, boolean partTwo)
 		{

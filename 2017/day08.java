@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-//http://adventofcode.com/2017/day/8
+// http://adventofcode.com/2017/day/8
 
 public class day08
 {
@@ -23,26 +23,26 @@ public class day08
 	{
 		switch (comparison)
 		{
-		case "==":
-			return (left == right);
+			case "==":
+				return (left == right);
 
-		case "!=":
-			return (left != right);
+			case "!=":
+				return (left != right);
 
-		case "<":
-			return (left < right);
+			case "<":
+				return (left < right);
 
-		case "<=":
-			return (left <= right);
+			case "<=":
+				return (left <= right);
 
-		case ">":
-			return (left > right);
+			case ">":
+				return (left > right);
 
-		case ">=":
-			return (left >= right);
-		default:
-			System.err.println("Invalid comparison: " + comparison);
-			return false;
+			case ">=":
+				return (left >= right);
+			default:
+				System.err.println("Invalid comparison: " + comparison);
+				return false;
 		}
 	}
 

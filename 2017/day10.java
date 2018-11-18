@@ -1,5 +1,4 @@
 import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,12 +12,12 @@ import java.util.stream.IntStream;
 public class day10
 {
 	// both parts
-	List<Integer>	list;
-	int				current;	// the current starting position
-	int				skipSize;	// how much to increment current
+	List<Integer> list;
+	int current; // the current starting position
+	int skipSize; // how much to increment current
 
-	// part 2
-	final static List<Integer> end = Arrays.asList(17, 31, 73, 47, 23); // gets added to part 2 after reading
+	// gets added to part 2 after reading
+	final static List<Integer> end = Arrays.asList(17, 31, 73, 47, 23);
 
 	public day10()
 	{
@@ -58,7 +57,7 @@ public class day10
 		{
 			list.set(i, selection.get(i - current));
 		}
-		i-= current;
+		i -= current;
 
 		// Do overflowed part if necessary
 		if (overflow)
@@ -84,7 +83,8 @@ public class day10
 	public void init(int maxValue)
 	{
 		// Make the list
-		list = new ArrayList<>(IntStream.rangeClosed(0, maxValue).boxed().collect(Collectors.toList()));
+		list = new ArrayList<>(
+				IntStream.rangeClosed(0, maxValue).boxed().collect(Collectors.toList()));
 
 		// Set vars
 		current = 0;
@@ -107,7 +107,7 @@ public class day10
 		init(255);
 		// Read the input as int reps of each char (0-255)
 		List<Integer> lengthSeq = new ArrayList<>();
-		for (int i=0; i<input.length(); i++)
+		for (int i = 0; i < input.length(); i++)
 		{
 			lengthSeq.add((int) input.charAt(i));
 		}
@@ -115,7 +115,7 @@ public class day10
 
 
 		List<Integer> sparseHash = null;
-		for (int i=0; i<64; i++)
+		for (int i = 0; i < 64; i++)
 		{
 			sparseHash = partOne(lengthSeq);
 		}
@@ -125,17 +125,17 @@ public class day10
 	}
 
 	// Return the dense hash where:
-	// Perform bitwise XOR (^)  to combine each consecutive block of 16 numbers
+	// Perform bitwise XOR (^) to combine each consecutive block of 16 numbers
 	// since the input should have 256 numbers, the result should have 16 numbers
 	// first element of dense hash
 	public List<Integer> denseHash(List<Integer> sparseHash)
 	{
 		List<Integer> out = new ArrayList<>();
 
-		for (int i=0; i<sparseHash.size(); )
+		for (int i = 0; i < sparseHash.size();)
 		{
 			int element = 0;
-			for (int j=0; j<16; j++)
+			for (int j = 0; j < 16; j++)
 			{
 				element ^= sparseHash.get(i);
 				i++;
@@ -169,13 +169,11 @@ public class day10
 		if (args.length > 0)
 		{
 			a.init(4);
-			assertEquals(Arrays.asList(3, 4, 2, 1, 0),
-				a.partOne(Arrays.asList(3, 4, 1, 5)));
+			assertEquals(Arrays.asList(3, 4, 2, 1, 0), a.partOne(Arrays.asList(3, 4, 1, 5)));
 
 			// Intermediate functions
-			assertEquals(Arrays.asList(64),
-				a.denseHash(Arrays.asList(
-					65, 27, 9, 1, 4, 3, 40, 50, 91, 7, 6, 0, 2, 5, 68, 22)));
+			assertEquals(Arrays.asList(64), a.denseHash(
+					Arrays.asList(65, 27, 9, 1, 4, 3, 40, 50, 91, 7, 6, 0, 2, 5, 68, 22)));
 
 			assertEquals("4007ff", a.toHexadecimal(Arrays.asList(64, 7, 255)));
 

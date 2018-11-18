@@ -1,5 +1,4 @@
 import static org.junit.Assert.assertEquals;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -12,12 +11,12 @@ import java.util.Scanner;
 
 public class day03
 {
-	
+
 	public day03()
 	{
 		;
 	}
-	
+
 	private <T> void print2DList(List<List<T>> input)
 	{
 		for (List<T> list : input)
@@ -30,7 +29,7 @@ public class day03
 		}
 		System.out.println();
 	}
-	
+
 	private int gridDimFor(int input)
 	{
 		int n = 1;
@@ -40,13 +39,13 @@ public class day03
 		}
 		return n;
 	}
-	
+
 	// Generate an anti-clockwise spiral grid with 1 in the centre
 	// such that it includes input
 	// e.g. including 9:
-	// 5  4  3
-	// 6  1  2
-	// 7  8  9
+	// 5 4 3
+	// 6 1 2
+	// 7 8 9
 	// Will have a complete square (e.g. must be n*n) such that it includes input
 	// That means including 2, 3, ..., 9 will generate a 3*3
 	// Observation: n^2 (where n is odd) is always on a bottom-right diagonal
@@ -55,7 +54,7 @@ public class day03
 	{
 		// Ensure n is large enough to encompass input
 		int n = gridDimFor(input);
-		
+
 		// Initialise (kind of empty) n*n list
 		List<Integer> temp = new ArrayList<>(Collections.nCopies(n, 0));
 		List<List<Integer>> out = new ArrayList<>();
@@ -63,7 +62,7 @@ public class day03
 		{
 			out.add(new ArrayList<>(temp));
 		}
-		
+
 		// Now populate with numbers
 		int x = (int) Math.floor(n / 2);
 		int y = (int) Math.floor(n / 2);
@@ -79,9 +78,9 @@ public class day03
 				counter++;
 				x += ((i & 1) == 0) ? -1 : 1;
 			}
-			
+
 			if (i == n) break;
-			
+
 			// y-axis lines
 			for (int j = 0; j < i; j++)
 			{
@@ -91,13 +90,13 @@ public class day03
 			}
 
 		}
-		
+
 		System.err.println("Final: ");
 		print2DList(out);
-		
+
 		return out;
 	}
-	
+
 	// Part 1
 	// On such a spiral grid, how many steps away (using manhattan distance)
 	// the input number is from the centre (1)
@@ -120,13 +119,13 @@ public class day03
 		int dx = Math.abs((grid.get(dy).size() / 2) - x);
 		return dx + dy;
 	}
-	
+
 	// Part 2
 	// The description is decribed by https://oeis.org/A141481
 	public int firstLargerThan(int input, String OEIS_A14181)
 	{
 		int n = gridDimFor(input);
-		
+
 		// Read file in the string
 		try (BufferedReader br = new BufferedReader(new FileReader(OEIS_A14181)))
 		{
@@ -137,8 +136,8 @@ public class day03
 				{
 					String[] parts = s.split(" ");
 					int whichEntry = Integer.parseInt(parts[0]);
-					
-					if (whichEntry > n*n)
+
+					if (whichEntry > n * n)
 					{
 						break;
 					}
@@ -157,12 +156,12 @@ public class day03
 
 		return -1;
 	}
-	
+
 	public static void main(String[] args)
 	{
 		day03 a = new day03();
 		String pathToSeq = "2017/tests/a141481.txt";
-		
+
 		if (args.length > 0)
 		{
 			// Part 1

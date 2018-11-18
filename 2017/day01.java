@@ -1,5 +1,4 @@
 import static org.junit.Assert.assertEquals;
-
 import java.util.Scanner;
 
 // http://adventofcode.com/2017/day/1
@@ -19,9 +18,9 @@ public class day01
 		{
 			// Store the two digits to check
 			char first = input.charAt(i);
-			int nextPos = (i + ((partTwo) ? input.length()/2 : 1)) % input.length();
+			int nextPos = (i + ((partTwo) ? input.length() / 2 : 1)) % input.length();
 			char second = input.charAt(nextPos);
-			
+
 			if (first == second)
 			{
 				sum += (first - '0');
@@ -57,17 +56,16 @@ public class day01
 			System.out.println("Tests successful!");
 			return;
 		}
-		
+
 		String input = new String();
 		try (Scanner scanner = new Scanner(System.in))
 		{
 			System.out.print("Enter input: ");
 			input = scanner.nextLine();
 		}
-		
+
 		input = input.trim();
 		System.out.println("Part 1: " + a.solution(input, false));
 		System.out.println("Part 2: " + a.solution(input, true));
 	}
 }
-
