@@ -88,11 +88,6 @@ public class day05
 		return out;
 	}
 
-	public int partTwo()
-	{
-		return 0;
-	}
-
 	public static void main(String[] args)
 	{
 		day05 a = new day05();
