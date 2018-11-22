@@ -94,7 +94,6 @@ public class day05
 		if (args.length > 0)
 		{
 			// perform tests
-
 			assertEquals("18f47a30", a.solve("abc", 8, false));
 			assertEquals("05ace8e3", a.solve("abc", 8, true));
 
@@ -113,7 +112,6 @@ public class day05
 		}
 
 		// Do something with the input and a
-
 		System.out.println("Part 1: " + a.solve(input, 8, false));
 		System.out.println("Part 2: " + a.solve(input, 8, true));
 	}
