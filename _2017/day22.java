@@ -12,6 +12,9 @@ import util.IntegerPair;
 
 // https://adventofcode.com/2017/day/22
 
+//TODO : Not sure why this solution is so slow
+// see the c++ solution for something that actually completes in a reasonable time
+
 public class day22
 {
 	int startX, startY;
@@ -74,6 +77,8 @@ public class day22
 			e.printStackTrace();
 		}
 		System.out.println(out);
+		System.out.println("Starting at " + startX + ", " + startY);
+
 		return out;
 	}
 
@@ -91,7 +96,7 @@ public class day22
 		IntegerPair currentNode = new IntegerPair(startX, startY);
 		direction = 0;
 		int numInfectingMoves = 0;
-		
+
 		long startTime = 0, endTime = 0;
 		startTime = System.nanoTime();
 
@@ -99,70 +104,54 @@ public class day22
 		for (int i = 0; i < numBursts; i++)
 		{
 			// See whether current tile is infected
-			IntegerPair temp = null;
+			// InfectionState is = infectedNodes.getOrDefault(currentNode, InfectionState.CLEAN);
 			InfectionState is = InfectionState.CLEAN;
+			IntegerPair temp = null;
 			for (IntegerPair ip : infectedNodes.keySet())
 			{
 				if (ip.equals(currentNode))
 				{
 					temp = ip;
 					is = infectedNodes.get(ip);
-					break;
 				}
 			}
-			infectedNodes.remove(temp);
 
-			if (partTwo)
+			InfectionState targetState = null;
+			switch (is)
 			{
-				InfectionState targetState = null;
-				switch (is)
-				{
-					case CLEAN:
+				case CLEAN:
+					if (partTwo)
+					{
 						targetState = InfectionState.WEAKENED;
-						direction -= 1;
-						break;
-					case FLAGGED:
-						targetState = InfectionState.CLEAN;
-						direction -= 2;
-						break;
-					case INFECTED:
-						targetState = InfectionState.FLAGGED;
-						direction -= 3;
-						break;
-					case WEAKENED:
+					}
+					else
+					{
 						targetState = InfectionState.INFECTED;
 						numInfectingMoves++;
-						break;
-					default:
-						break;
-				}
-//				if (targetState != InfectionState.CLEAN)
-				{
-					infectedNodes.put(new IntegerPair(currentNode), targetState);
-				}
-			}
-			else
-			{
-				if (temp == null)
-				{
-					// turn left
+					}
 					direction -= 1;
-
-					// infect current
-					infectedNodes.put(new IntegerPair(currentNode), InfectionState.INFECTED);
-					numInfectingMoves++;
-				}
-				else
-				{
-					// turn right
+					break;
+				case FLAGGED:
+					targetState = InfectionState.CLEAN;
+					direction -= 2;
+					break;
+				case INFECTED:
+					targetState = partTwo ? InfectionState.FLAGGED : InfectionState.CLEAN;
 					direction -= 3;
-
-					// clean current
-//					infectedNodes.remove(temp);
-				}
+					break;
+				case WEAKENED:
+					targetState = InfectionState.INFECTED;
+					numInfectingMoves++;
+					break;
+				default:
+					System.out.println("InfectionState is null?");
+					break;
 			}
+			// System.out.println("Target state is " + targetState);
+			infectedNodes.put((temp == null) ? new IntegerPair(currentNode) : temp, targetState);
 
-			// handle direction under/overflow
+
+			// correct direction under/overflow
 			if (direction < 0)
 			{
 				direction += dirX.length;
@@ -176,30 +165,13 @@ public class day22
 			{
 				endTime = System.nanoTime();
 				long timeTaken = (endTime - startTime) / 1_000_000;
-				System.out.println(i + " took " + timeTaken + " ms, map size: " + infectedNodes.size());
+				System.out.println(
+						i + " took " + timeTaken + " ms, map size: " + infectedNodes.size());
 				startTime = endTime;
 			}
-			// if (i < 8 || i == 69)
-			// {
-			// System.out.println("After i = " + i);
-			// System.out.println(infectedNodes);
-			// System.out.println(initialNode + " facing " + direction);
-			// System.out.println("Num infecting moves = " + numInfectingMoves);
-			// System.out.println("----------");
-			// }
 		}
 
 		return numInfectingMoves;
-	}
-
-	public int partOne()
-	{
-		return 0;
-	}
-
-	public int partTwo()
-	{
-		return 0;
 	}
 
 	public static void main(String[] args)
@@ -212,6 +184,7 @@ public class day22
 			assertEquals(5, a.solve(infected, 7, false));
 			assertEquals(41, a.solve(infected, 70, false));
 			assertEquals(5_587, a.solve(infected, 10_000, false));
+
 			assertEquals(26, a.solve(infected, 100, true));
 			assertEquals(2_511_944, a.solve(infected, 10_000_000, true));
 
@@ -230,11 +203,8 @@ public class day22
 		}
 
 		// Do something with the input and a
-
 		Map<IntegerPair, InfectionState> infected = a.readInfected(input);
 		System.out.println("Part 1: " + a.solve(infected, 10_000, false));
 		System.out.println("Part 1: " + a.solve(infected, 10_000_000, true));
-		// System.out.println("Part 1: " + a.partOne());
-		// System.out.println("Part 2: " + a.partTwo());
 	}
 }
