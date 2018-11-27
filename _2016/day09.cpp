@@ -37,6 +37,11 @@ int decomopressed_length_of(const string &s)
 	return out;
 }
 
+int decomopressed_length_of_v2(const string &s)
+{
+	;
+}
+
 int main()
 {
 	vector<string> input;
@@ -45,6 +50,7 @@ int main()
 		input.push_back(line);
 	}
 
+	// part 1 asserts
 	assert(decomopressed_length_of("ADVENT") == 6);
 	assert(decomopressed_length_of("A(1x5)BC") == 7);
 	assert(decomopressed_length_of("(3x3)XYZ") == 9);
@@ -52,10 +58,19 @@ int main()
 	assert(decomopressed_length_of("(6x1)(1x3)A") == 6);
 	assert(decomopressed_length_of("X(8x2)(3x3)ABCY") == 18);
 
-	int total_length = 0;
+	// part 2 asserts
+	assert(decomopressed_length_of_v2("(3x3)XYZ") == 9);
+	assert(decomopressed_length_of_v2("X(8x2)(3x3)ABCY") == 20);
+	assert(decomopressed_length_of_v2("(27x12)(20x12)(13x14)(7x10)(1x12)A") == 241920);
+	assert(decomopressed_length_of_v2("(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN") == 445);
+
+	int total_length1 = 0;
+	int total_length2 = 0;
 	for (string s : input)
 	{
-		total_length += decomopressed_length_of(s);
+		total_length1 += decomopressed_length_of(s);
+		total_length2 += decomopressed_length_of_v2(s);
 	}
-	cout << "Part 1: " << total_length << endl;
+	cout << "Part 1: " << total_length1 << endl;
+	cout << "Part 2: " << total_length2 << endl;
 }
