@@ -18,7 +18,7 @@ public:
 
 	const int DEFAULT_VALUE = 0;
 	const pair<int, int> DEFAULT_PAIR = make_pair(DEFAULT_VALUE, DEFAULT_VALUE);
-	pair<int, int> target;
+	pair<int, int> target; // for part 1
 	int part1;
 
 	day10()
@@ -61,17 +61,10 @@ public:
 	{
 		while (true)
 		{
-			map<int, pair<int, int>>::iterator it;
-			for (it = bots.begin(); it != bots.end(); ++it)
-			{
-				if (it->second.first > DEFAULT_VALUE && it->second.second > DEFAULT_VALUE)
-				{
-					break;
-				}
-			}
+			auto it = find_if(all(bots), [this] (const pair<int, pair<int, int>> &p){
+				return p.second.first > DEFAULT_VALUE && p.second.second > DEFAULT_VALUE;
+			});
 
-			// temrinating cond
-			// no bot has enough chips to process
 			if (it == bots.end())
 			{
 				break;
@@ -87,12 +80,14 @@ public:
 	// this only works on the assumption there are no cyclic things
 	void process(int bot)
 	{
+		// take reference so bots[bot] can be modified through p
 		auto &p = bots[bot];
-		if (p.first < 1 || p.second < 1)
+		if (p.first <= DEFAULT_VALUE || p.second <= DEFAULT_VALUE)
 		{
 			return;
 		}
 
+		// set part 1 if condition is met
 		if (p == target)
 		{
 			part1 = bot;
@@ -123,9 +118,15 @@ public:
 			process(rule_hi.second);
 			give_bot(rule_hi.second, p.second);
 		}
+
+		// avoids bloating output with empty bots
 		bots.erase(bot);
 	}
 
+	// give value to bots[bot_num]
+	// assumes the target bot isn't already full
+	// if it is, don't do anything
+	// give_bot ensures the bot's pair is sorted
 	void give_bot(int bot_num, int value)
 	{
 		// populate bots[dest_bot] if DNE
@@ -144,9 +145,7 @@ public:
 			p.second = value;
 		}
 
-		// maintain order. p.first should be lowest
-		auto temp = make_pair(min(p.first, p.second), max(p.first, p.second));
-		p = temp;
+		p = make_pair(min(p.first, p.second), max(p.first, p.second));
 	}
 };
 
@@ -160,9 +159,6 @@ int main()
 
 	day10 a;
 	a.init(input);
-
-	// cout << "rules: " << a.rules << endl;
-	// cout << "bots: " << a.bots << endl;
 
 	a.target = make_pair(17, 61);
 	a.solve(); // part 1 in here
