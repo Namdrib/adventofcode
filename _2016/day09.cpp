@@ -9,11 +9,7 @@ size_t decomopressed_length_of(const string &s)
 	// cout << s << endl;
 	size_t out = 0;
 
-	size_t i=0;
-	// bool in_marker = false;
-	// size_t start_pos, end_pos;
-
-	for (i=0; i<s.size(); i++)
+	for (size_t i=0; i<s.size(); i++)
 	{
 		// cout << string(i, ' ') << "^" << " out: " << out << endl;
 		// start reading marker
@@ -25,6 +21,7 @@ size_t decomopressed_length_of(const string &s)
 			size_t x_pos = marker.find('x');
 			size_t marker_length = stoi(marker.substr(0, x_pos));
 			size_t marker_repeats = stoi(marker.substr(x_pos+1));
+
 			out += marker_length * marker_repeats;
 			i += marker.size() + marker_length;
 			out--;
@@ -39,7 +36,7 @@ size_t decomopressed_length_of(const string &s)
 	return out;
 }
 
-void expand(const string &s, size_t pos, size_t &out, string marker, size_t multiplier)
+void expand(const string &s, size_t &out, size_t multiplier)
 {
 	// cout << "[EXPANDING] " << s << endl;
 	for (size_t i=0; i<s.size(); i++)
@@ -54,7 +51,7 @@ void expand(const string &s, size_t pos, size_t &out, string marker, size_t mult
 			size_t marker_length = stoi(marker.substr(0, x_pos));
 			size_t marker_repeats = stoi(marker.substr(x_pos+1));
 
-			expand(s.substr(match+1, marker_length), i, out, marker, multiplier * marker_repeats);
+			expand(s.substr(match+1, marker_length), out, multiplier * marker_repeats);
 			i += marker.size() + marker_length;
 			out -= multiplier;
 		}
@@ -68,7 +65,7 @@ void expand(const string &s, size_t pos, size_t &out, string marker, size_t mult
 size_t decomopressed_length_of_v2(const string &s)
 {
 	size_t out = 0;
-	expand(s, 0, out, s, 1);
+	expand(s, out, 1);
 
 	cout << "Length of " << s << ": " << out << endl;
 	return out;
