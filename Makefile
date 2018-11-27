@@ -10,7 +10,7 @@ JFLAGS = -Xlint
 	javac $^ $(JFLAGS)
 
 clean:
-	rm -rf a *.class *.exe *.bin
+	find ./ -type f \( -iname a -o -iname \*.class -o -iname \*.exe -o -name \*.bin \) -delete
 
 # Run tests like this:
 # make dayxx && time for item in tests/dayxx_*.in ;do cat $item | ./a [optional args]; done
