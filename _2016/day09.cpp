@@ -2,6 +2,8 @@
 #include "../util/helpers.cpp"
 using namespace std;
 
+// https://adventofcode.com/2016/day/09
+
 int decomopressed_length_of(const string &s)
 {
 	cout << s << endl;
