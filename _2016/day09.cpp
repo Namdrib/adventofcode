@@ -68,27 +68,7 @@ void expand(const string &s, size_t pos, size_t &out, string marker, size_t mult
 size_t decomopressed_length_of_v2(const string &s)
 {
 	size_t out = 0;
-	size_t multiplier = 1;
-	for (size_t i=0; i<s.size(); i++)
-	{
-		if (s[i] == '(')
-		{
-			size_t match = s.find_first_of(')', i);
-			string marker = s.substr(i+1, match-i-1);
-
-			size_t x_pos = marker.find('x');
-			int marker_length = stoi(marker.substr(0, x_pos));
-			size_t marker_repeats = stoi(marker.substr(x_pos+1));
-
-			expand(s.substr(match+1, marker_length), i, out, marker, multiplier * marker_repeats);
-			i += marker.size() + marker_length;
-			out--;
-		}
-		else
-		{
-			out += multiplier;
-		}
-	}
+	expand(s, 0, out, s, 1);
 
 	cout << "Length of " << s << ": " << out << endl;
 	return out;
