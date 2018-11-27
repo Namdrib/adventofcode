@@ -1,6 +1,6 @@
 # Makefile for adventofcode
 
-CFLAGS = -std=gnu++11 -O2
+CFLAGS = -std=gnu++11 -O2 -Wall
 JFLAGS = -Xlint
 
 %.bin: %.cpp
