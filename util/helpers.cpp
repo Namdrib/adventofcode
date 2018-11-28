@@ -22,8 +22,14 @@ template <typename T>
 ostream& operator << (ostream &os, const set<T> &s)
 {
 	const char* delim = " ";
-	copy(s.begin(), --s.end(), ostream_iterator<T>(os, delim));
-	os << s.back();
+	for (auto it = s.begin(); it != s.end(); ++it)
+	{
+		os << *it;
+		if (it != --s.end())
+		{
+			os << delim;
+		}
+	}
 	return os;
 }
 
