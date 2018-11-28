@@ -1,39 +1,35 @@
-#include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <set>
-#include <utility>
-#include <vector>
+#include <bits/stdc++.h>
+#include "../util/helpers.cpp"
 using namespace std;
 
-// http://adventofcode.com/2016/day/2
+// https://adventofcode.com/2016/day/2
 
-string getCode(const vector<string> &instructions)
+string get_code(const vector<string> &instructions, bool part_two)
 {
 	// Part 1
-	vector<vector<char>> keypad1 {
-		{'1', '2', '3'},
-		{'4', '5', '6'},
-		{'7', '8', '9'}
+	const vector<string> keypad1 {
+		{"123"},
+		{"456"},
+		{"789"}
 	};
 	// Part 2
-	vector<vector<char>> keypad2 {
-		{' ', ' ', '1', ' ', ' '},
-		{' ', '2', '3', '4', ' '},
-		{'5', '6', '7', '8', '9'},
-		{' ', 'A', 'B', 'C', ' '},
-		{' ', ' ', 'D', ' ', ' '}
+	const vector<string> keypad2 {
+		{"  1  "},
+		{" 234 "},
+		{"56789"},
+		{" ABC "},
+		{"  D  "}
 	};
-	vector<vector<char>> *keypad = &keypad2;
+	const vector<string> *keypad = part_two ? &keypad2 : &keypad1;
 	const int DIM = keypad->size();
-	
+
 	// Starting point: '5'
-	int x, y;
+	int x=0, y=0;
 	for (int i=0; i<DIM; i++)
 	{
 		for (int j=0; j<DIM; j++)
 		{
-			if (find((*keypad)[i].begin(), (*keypad)[i].end(), '5') != ((*keypad)[i].end()))
+			if (find(all((*keypad)[i]), '5') != ((*keypad)[i].end()))
 			{
 				x = j;
 				y = i;
@@ -42,35 +38,33 @@ string getCode(const vector<string> &instructions)
 		}
 	}
 	FOUND_START_LOCATION:
-	
+
 	string out;
-	for (size_t i=0; i<instructions.size(); i++)
+	for (auto instruction : instructions)
 	{
 		// A single line of instructions
-		for (size_t j=0; j<instructions[i].size(); j++)
+		for (auto dir : instruction)
 		{
 			// Work out which direction to go,
 			// and whether the new key is valid
-			int deltaX = 0;
-			int deltaY = 0;
-			char dir = instructions[i][j];
-			if (dir == 'U') deltaY = -1;
-			if (dir == 'D') deltaY = 1;
-			if (dir == 'L') deltaX = -1;
-			if (dir == 'R') deltaX = 1;
+			int delta_x = 0;
+			int delta_y = 0;
+			if (dir == 'U') delta_y = -1;
+			if (dir == 'D') delta_y = 1;
+			if (dir == 'L') delta_x = -1;
+			if (dir == 'R') delta_x = 1;
 			// Going out of bounds of the keypad
-			if (y+deltaY < 0 || y+deltaY >= DIM ||
-			    x+deltaX < 0 || x+deltaX >= DIM ||
-			    (*keypad)[y+deltaY][x+deltaX] == ' ')
+			if (y + delta_y < 0 || y + delta_y >= DIM ||
+			    x + delta_x < 0 || x + delta_x >= DIM ||
+			    (*keypad)[y+delta_y][x+delta_x] == ' ')
 				continue;
 			else
 			{
-				y += deltaY;
-				x += deltaX;
+				y += delta_y;
+				x += delta_x;
 			}
-			// cerr << "line " << i << ": moved to " << (*keypad)[y][x] << endl;
 		}
-		
+
 		// Store the ith passcode entry
 		out += (*keypad)[y][x];
 	}
@@ -84,6 +78,7 @@ int main()
 	{
 		instructions.push_back(temp);
 	}
-	
-	cout << getCode(instructions) << endl;
+
+	cout << "Part 1: " << get_code(instructions, false) << endl;
+	cout << "Part 2: " << get_code(instructions, true) << endl;
 }

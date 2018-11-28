@@ -8,37 +8,37 @@ using namespace std;
 
 const int DIM = 50;
 
-class Coord
+class coord
 {
 public:
-	Coord()
+	coord()
 	{
-		numSteps = 0;
+		num_steps = 0;
 	}
-	Coord(int x, int y) : Coord()
+	coord(size_t x, size_t y) : coord()
 	{
 		this->x = x;
 		this->y = y;
 	}
-	Coord(int x, int y, int numSteps) : Coord(x, y)
+	coord(size_t x, size_t y, size_t num_steps) : coord(x, y)
 	{
-		this->numSteps = numSteps;
+		this->num_steps = num_steps;
 	}
-	
-	friend ostream& operator << (ostream &os, Coord c)
+
+	friend ostream& operator << (ostream &os, coord c)
 	{
-		os << "(" << c.x << "," << c.y << ") : " << c.numSteps;
+		os << "(" << c.x << "," << c.y << ") : " << c.num_steps;
 		return os;
 	}
-	
-	operator == (const Coord &rhs)
+
+	bool operator == (const coord &rhs)
 	{
 		return (x == rhs.x && y == rhs.y);
 	}
-	
-	int x;
-	int y;
-	int numSteps;
+
+	size_t x;
+	size_t y;
+	size_t num_steps;
 };
 
 int formula(int x, int y)
@@ -46,7 +46,7 @@ int formula(int x, int y)
 	return x*x + 3*x + 2*x*y + y + y*y;
 }
 
-string toBinaryString(int n)
+string to_binary_string(int n)
 {
 	string out;
 	while (n >>= 1)
@@ -57,20 +57,20 @@ string toBinaryString(int n)
 	return out;
 }
 
-// Generate a maze based on the instructions, given a faveNum
+// Generate a maze based on the instructions, given a fave_num
 // Mark the END pos on the map for reference
-vector<string> generateMaze(int faveNum, Coord END)
+vector<string> generate_maze(int fave_num, coord END)
 {
 	vector<string> maze(DIM, string(DIM, '.'));
 	for (size_t i=0; i<DIM; i++)
 	{
 		for (size_t j=0; j<DIM; j++)
 		{
-			int num = formula(j, i) + faveNum;
-			string b = toBinaryString(num);
-			int numOnes = count(b.begin(), b.end(), '1');
-			maze[i][j] = ((numOnes&1) ? '#' : '.');
-			
+			int num = formula(j, i) + fave_num;
+			string b = to_binary_string(num);
+			int num_ones = count(all(b), '1');
+			maze[i][j] = ((num_ones&1) ? '#' : '.');
+
 			if (i == END.y && j == END.x) maze[i][j] = 'O';
 		}
 	}
@@ -78,46 +78,46 @@ vector<string> generateMaze(int faveNum, Coord END)
 }
 
 // Since the maze is unweighted, BFS will give optimal pathfinding results
-int bfs(const vector<string> &maze, Coord START, Coord END)
+int bfs(const vector<string> &maze, coord START, coord END)
 {
 	// Exploration order: Up, down, left, right
-	int yDir[] = {-1, 1, 0, 0};
-	int xDir[] = {0, 0, -1, 1};
-	
-	vector<Coord> closed;
-	vector<Coord> fringe;
+	int y_dir[] = {-1, 1, 0, 0};
+	int x_dir[] = {0, 0, -1, 1};
+
+	vector<coord> closed;
+	vector<coord> fringe;
 	fringe.push_back(START);
-	
+
 	while (!fringe.empty())
 	{
-		Coord current = fringe.front();
+		coord current = fringe.front();
 		fringe.erase(fringe.begin());
-		
+
 		// Exit condition
 		if (current == END)
 		{
 			// cout << "Found end!" << endl;
 			// cout << current << endl;
-			return current.numSteps;
+			return current.num_steps;
 		}
-		
+
 		// Each direction
 		for (int i=0; i<4; i++)
 		{
-			int dX = current.x + xDir[i];
-			int dY = current.y + yDir[i];
+			int dX = current.x + x_dir[i];
+			int dY = current.y + y_dir[i];
 			if (dX < 0 || dX >= DIM || dY < 0 || dY >= DIM) continue;
 			if (maze[dY][dX] == '#') continue;
-			
-			Coord temp(dX, dY, current.numSteps+1);
+
+			coord temp(dX, dY, current.num_steps+1);
 			if (find(closed.begin(), closed.end(), temp) != closed.end()) continue;
 			fringe.push_back(temp);
 			closed.push_back(temp);
 			// cerr << "Adding a thing" << endl;
 		}
-		if (find(closed.begin(), closed.end(), Coord(current)) == closed.end())
+		if (find(closed.begin(), closed.end(), coord(current)) == closed.end())
 			closed.push_back(current);
-		
+
 	}
 	// cerr << "EXHAUSTED FRINGE!" << endl;
 	return 99; // Cannot reach
@@ -126,22 +126,21 @@ int bfs(const vector<string> &maze, Coord START, Coord END)
 int main()
 {
 	int input;
-	cout << "enter input: ";
 	cin >> input;
-	Coord START(1, 1);
-	Coord END(31, 39);
-	// Coord END(7, 4);
-	vector<string> maze(generateMaze(input, END));
+	coord START(1, 1);
+	coord END(31, 39);
+	// coord END(7, 4);
+	vector<string> maze(generate_maze(input, END));
 	for (size_t i=0; i<maze.size(); i++)
 	{
 		cout << maze[i] << endl;
 	}
-	
+
 	// Part 1: How many steps from START to END
 	cout << "Part 1: " << bfs(maze, START, END) << endl; 
-	
+
 	// Part 2: How many locations reachable from the start within 50 steps
-	int numReachable = 0;
+	int num_reachable = 0;
 	for (size_t i=0; i<maze.size(); i++)
 	{
 		for (size_t j=0; j<maze[i].size(); j++)
@@ -149,12 +148,12 @@ int main()
 			// Valid starting pos
 			if (maze[i][j] == '.')
 			{
-				if (bfs(maze, Coord(j,i), START) <= DIM)
+				if (bfs(maze, coord(j,i), START) <= DIM)
 				{
-					numReachable++;
+					num_reachable++;
 				}
 			}
 		}
 	}
-	cout << "Part 2: " << numReachable << endl;
+	cout << "Part 2: " << num_reachable << endl;
 }

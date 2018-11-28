@@ -1,43 +1,40 @@
-#include <iostream>
-#include <map>
-#include <vector>
+#include <bits/stdc++.h>
+#include "../util/helpers.cpp"
 using namespace std;
 
 // http://adventofcode.com/2016/day/6
 
 // Search for the most common letter in m
 // (or least common, for part 2)
-char mostCommonIn(map<char, int> &m)
+char desired_freq_in(const map<char, int> &m, bool part_two)
 {
-	int count = 99;
-	char mostCommon = 'a';
+	int count = part_two ? numeric_limits<int>::max() : numeric_limits<int>::min();
+	char out = 'a';
+
 	for (auto it=m.begin(); it!=m.end(); it++)
 	{
-		// Flip the sign for parts
-		// 1: >
-		// 2: <
-		if (it->second < count) 
+		if (part_two ? it->second < count : it->second > count) 
 		{
-			mostCommon = it->first;
+			out = it->first;
 			count = it->second;
 		}
 	}
-	return mostCommon;
+	return out;
 }
 
 // Return the correctly-encoded word
-string correct(const vector<string> &in)
+string correct(const vector<string> &in, bool part_two)
 {
 	string out;
 	for (size_t i=0; i<in[0].size(); i++) // Across
 	{
-		map<char, int> charCount;
+		map<char, int> char_count;
 		// Find the most common char in this column
-		for (size_t j=0; j<in.size(); j++) // Down
+		for (auto s : in) // Down
 		{
-			charCount[in[j][i]]++;
+			char_count[s[i]]++;
 		}
-		out += mostCommonIn(charCount);
+		out += desired_freq_in(char_count, part_two);
 	}
 	return out;
 }
@@ -49,6 +46,7 @@ int main()
 	{
 		input.push_back(temp);
 	}
-	
-	cout << correct(input) << endl; // Part 1
+
+	cout << "Part 1: " << correct(input, false) << endl;
+	cout << "Part 2: " << correct(input, true) << endl;
 }

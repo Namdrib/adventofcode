@@ -4,7 +4,6 @@ using namespace std;
 
 // http://adventofcode.com/2016/day/10
 
-
 class day10
 {
 public:

@@ -2,11 +2,12 @@
 #include "../util/helpers.cpp"
 using namespace std;
 
+// http://adventofcode.com/2016/day/7
 
 // Split a string into its [bracketed] and non-bracketed parts
 // Non-bracketed parts are just the plain "string"
 // Bracketed parts are parsed into "[string]"
-vector<string> parseIP(const string &in)
+vector<string> parse_ip(const string &in)
 {
 	vector<string> out;
 	string temp;
@@ -22,7 +23,7 @@ vector<string> parseIP(const string &in)
 	return out;
 }
 
-bool hasABBA(const string &in, size_t start, size_t end)
+bool has_abba(const string &in, size_t start, size_t end)
 {
 	for (size_t i=start; i<end-2; i++)
 	{
@@ -35,35 +36,35 @@ bool hasABBA(const string &in, size_t start, size_t end)
 }
 
 // Part 1
-bool supportsTLS(const string &in)
+bool supports_tls(const string &in)
 {
-	bool hasValidABBA = false;
-	vector<string> parts(parseIP(in));
+	bool has_valid_abba = false;
+	vector<string> parts(parse_ip(in));
 	for (auto part : parts)
 	{
 		if (part[0] == '[')
 		{
-			if (hasABBA(part, 1, part.size()-1))
+			if (has_abba(part, 1, part.size()-1))
 			{
 				return false;
 			}
 		}
 		else
 		{
-			if (hasABBA(part, 0, part.size()))
+			if (has_abba(part, 0, part.size()))
 			{
-				hasValidABBA = true;
+				has_valid_abba = true;
 			}
 		}
 	}
 
-	return hasValidABBA;
+	return has_valid_abba;
 }
 
 // Part 2
-bool supportsSSL(const string &in)
+bool supports_ssl(const string &in)
 {
-	vector<string> parts(parseIP(in));
+	vector<string> parts(parse_ip(in));
 	sort(rall(parts)); // guarantee all the [] come last
 
 	set<string> aba; // all the aba patterns in the input
@@ -107,16 +108,16 @@ int main(int ac, char **av)
 	if (ac > 1)
 	{
 		// part 1
-		assert(supportsTLS("abba[mnop]qrst"));
-		assert(!supportsTLS("abcd[bddb]xyyx"));
-		assert(!supportsTLS("aaaa[qwer]tyui"));
-		assert(supportsTLS("ioxxoj[asdfgh]zxcvbn"));
+		assert(supports_tls("abba[mnop]qrst"));
+		assert(!supports_tls("abcd[bddb]xyyx"));
+		assert(!supports_tls("aaaa[qwer]tyui"));
+		assert(supports_tls("ioxxoj[asdfgh]zxcvbn"));
 
 		// part 2
-		assert(supportsSSL("aba[bab]xyz"));
-		assert(!supportsSSL("xyx[xyx]xyx"));
-		assert(supportsSSL("aaa[kek]eke"));
-		assert(supportsSSL("zazbz[bzb]cdb"));
+		assert(supports_ssl("aba[bab]xyz"));
+		assert(!supports_ssl("xyx[xyx]xyx"));
+		assert(supports_ssl("aaa[kek]eke"));
+		assert(supports_ssl("zazbz[bzb]cdb"));
 
 		return 0;
 	}
@@ -129,18 +130,10 @@ int main(int ac, char **av)
 	}
 
 	// Part 1
-	int numTLSEnabled = 0;
-	for (string s : input)
-	{
-		if (supportsTLS(s)) numTLSEnabled++;
-	}
-	cout << "Part 1: " << numTLSEnabled << endl;
-	
+	int part1 = accumulate(all(input), 0, [](int acc, string s){return acc + supports_tls(s);});
+	cout << "Part 1: " << part1 << endl;
+
 	// Part 2
-	int numSSLEnabled = 0;
-	for (string s : input)
-	{
-		if (supportsSSL(s)) numSSLEnabled++;
-	}
-	cout << "Part 2: " << numSSLEnabled << endl;
+	int part2 = accumulate(all(input), 0, [](int acc, string s){return acc + supports_ssl(s);});
+	cout << "Part 2: " << part2 << endl;
 }

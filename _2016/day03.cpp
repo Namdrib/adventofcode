@@ -1,8 +1,5 @@
-#include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <sstream>
-#include <vector>
+#include <bits/stdc++.h>
+#include "../util/helpers.cpp"
 using namespace std;
 
 // http://adventofcode.com/2016/day/3
@@ -18,36 +15,31 @@ bool possible(int a, int b, int c)
 
 int main()
 {
-	vector<vector<int>> triSpecs;
+	vector<vector<int>> tri_specs;
 	for (string s; getline(cin, s);)
 	{
 		// Get the three legnths
 		stringstream ss(s);
 		vector<int> v(3);
 		ss >> v[0] >> v[1] >> v[2];
-		triSpecs.push_back(v);
-		
+		tri_specs.push_back(v);
 	}
-	
-	// Loop for part 1
-	int numPossiblePart1 = 0;
-	for (size_t i=0; i<triSpecs.size(); i++)
-	{
-		if (possible(triSpecs[i][0], triSpecs[i][1], triSpecs[i][2])) numPossiblePart1++;
-	}
-	
+
+	// Part 1
+	int part1 = accumulate(all(tri_specs), 0, [](int acc, vector<int> v){
+		return acc + possible(v[0], v[1], v[2]);
+	});
+
 	// Loop for part 2
-	int numPossiblePart2 = 0;
-	for (size_t i=0; i<triSpecs[0].size(); i++) // Across
+	int part2 = 0;
+	for (size_t i=0; i<tri_specs[0].size(); i++) // Across
 	{
-		for (size_t j=0; j<triSpecs.size()-2; j+=3) // Down
+		for (size_t j=0; j<tri_specs.size()-2; j+=3) // Down
 		{
-			;
-			if (possible(triSpecs[j][i], triSpecs[j+1][i], triSpecs[j+2][i])) numPossiblePart2++;
-			cerr << "Latest: j=" << j << endl;
+			if (possible(tri_specs[j][i], tri_specs[j+1][i], tri_specs[j+2][i])) part2++;
 		}
 	}
-	
-	cout << numPossiblePart1 << endl;
-	cout << numPossiblePart2 << endl;
+
+	cout << "Part 1: " << part1 << endl;
+	cout << "Part 2: " << part2 << endl;
 }

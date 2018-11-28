@@ -66,8 +66,6 @@ ostream& operator << (ostream &os, const map<K, V> &m)
 	return os;
 }
 
-
-
 // used to input into a vector like
 // my_vector = split_str_by_whitespace("three words here")
 // {"three", "words", "here"}
