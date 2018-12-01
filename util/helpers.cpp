@@ -77,4 +77,12 @@ vector<T> split_str_by_whitespace(const string &str)
 	return vector<T>(begin, end);
 }
 
+// return the clamped version of v, such that
+// it is between lo and hi (inclusive)
+template <typename T>
+T clamp(const T &v, const T &lo, const T &hi)
+{
+	return min(max(v, lo), hi);
+}
+
 #endif // HELPERS_CPP
