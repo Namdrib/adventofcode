@@ -39,4 +39,20 @@ public class Util {
     }
     return out;
   }
+
+  public static List<List<Integer>> readInputInto2DListInteger() {
+    List<List<Integer>> out = new ArrayList<List<Integer>>();
+    try (Scanner scanner = new Scanner(System.in)) {
+      for (String line; (line = scanner.nextLine()) != null;) {
+        String[] elements = line.split("\\s+");
+
+        ArrayList<Integer> temp = new ArrayList<Integer>();
+        for (String s : elements) {
+          temp.add(Integer.parseInt(s));
+        }
+        out.add(temp);
+      }
+    }
+    return out;
+  }
 }

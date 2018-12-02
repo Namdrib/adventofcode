@@ -76,12 +76,11 @@ public class day02 {
           continue;
         }
 
-        int numDiff = numDiffLetters(a, b);
-        if (numDiff == 1) {
+        if (numDiffLetters(a, b) == 1) {
           String out = "";
-          for (int k = 0; k < Math.min(a.length(), b.length()); k++) {
-            if (a.charAt(k) == b.charAt(k)) {
-              out += a.charAt(k);
+          for (int i = 0; i < Math.min(a.length(), b.length()); i++) {
+            if (a.charAt(i) == b.charAt(i)) {
+              out += a.charAt(i);
             }
           }
           return out;
