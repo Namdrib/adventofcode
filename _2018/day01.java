@@ -9,11 +9,7 @@ import util.Util;
 public class day01 {
 
   public int partOne(List<Integer> list) {
-    int out = 0;
-    for (int i : list) {
-      out += i;
-    }
-    return out;
+    return list.stream().reduce(0, (a, b) -> a + b);
   }
 
   public int partTwo(List<Integer> list) {
