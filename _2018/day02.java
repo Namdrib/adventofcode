@@ -9,31 +9,30 @@ import util.Util;
 public class day02 {
 
   /**
-   * Return true if `s` contains `target` number of `c`
+   * Return true if `s` contains `c` exactly `n` times
+   * 
    * @param s the input string
    * @param c the character to search for
-   * @param target the desired frequency of c in s
-   * @return true iff `s` contains `target` number of `c`, false otherwise
+   * @param n the desired frequency of c in s
+   * @return true iff `s` contains `c` exactly `n` times, false otherwise
    */
-  public boolean hasN(String s, char c, int target) {
-    
+  public boolean hasN(String s, char c, int n) {
     int freq = 0;
     for (int i = 0; i < s.length(); i++) {
       if (s.charAt(i) == c) {
         freq++;
-        
+
         // early exit
-        if (freq > target) {
+        if (freq > n) {
           return false;
         }
       }
     }
-    return freq == target;
+    return freq == n;
   }
 
   public int partOne(List<String> list) {
-    int numTwice = 0;
-    int numThrice = 0;
+    int numTwice = 0, numThrice = 0;
 
     for (String s : list) {
       boolean gotTwo = false;
@@ -53,6 +52,12 @@ public class day02 {
     return numTwice * numThrice;
   }
 
+  /**
+   * 
+   * @param a first query string
+   * @param b second query string
+   * @return the number of indices at which a and b have differing letters
+   */
   int numDiffLetters(String a, String b) {
     int out = 0;
 
@@ -64,16 +69,19 @@ public class day02 {
     return out;
   }
 
-
   public String partTwo(List<String> list) {
-    for (int i = 0; i < list.size(); i++) {
-      for (int j = i + 1; j < list.size(); j++) {
-        int numDiff = numDiffLetters(list.get(i), list.get(j));
+    for (String a : list) {
+      for (String b : list) {
+        if (a == b) {
+          continue;
+        }
+
+        int numDiff = numDiffLetters(a, b);
         if (numDiff == 1) {
           String out = "";
-          for (int k = 0; k < Math.min(list.get(i).length(), list.get(j).length()); k++) {
-            if (list.get(i).charAt(k) == list.get(j).charAt(k)) {
-              out += list.get(i).charAt(k);
+          for (int k = 0; k < Math.min(a.length(), b.length()); k++) {
+            if (a.charAt(k) == b.charAt(k)) {
+              out += a.charAt(k);
             }
           }
           return out;
