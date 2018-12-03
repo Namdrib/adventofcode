@@ -2,6 +2,7 @@ package util;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Collection of public helper functions for Java solutions
@@ -54,5 +55,23 @@ public class Util {
       }
     }
     return out;
+  }
+
+  /**
+   * Convert a List<String> -> List<Integer>
+   * @param input
+   * @return
+   */
+  public static List<Integer> listStringToInt(List<String> input) {
+    return input.stream().map(s -> Integer.parseInt(s)).collect(Collectors.toList());
+  }
+
+  /**
+   * Convert a List<E> -> List<String>
+   * @param input
+   * @return
+   */
+  public static <E> List<String> listEToString(List<E> input) {
+    return input.stream().map(i -> String.valueOf(i)).collect(Collectors.toList());
   }
 }

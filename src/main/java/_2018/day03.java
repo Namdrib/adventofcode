@@ -3,8 +3,7 @@ package _2018;
 import static org.junit.Assert.assertEquals;
 import java.util.*;
 import java.util.Map.Entry;
-import util.IntegerPair;
-import util.Util;
+import util.*;
 
 // https://adventofcode.com/2018/day/3
 
@@ -89,7 +88,7 @@ public class day03 {
     }
 
     // Take input, turn into usable form
-    String filename = "_2018/tests/day03_01.in";
+    String filename = Global.testPath + "_2018/day03_01" + Global.testExt;
     List<String> input = Util.readFileIntoListString(filename);
 
     List<Claim> claims = new ArrayList<>();

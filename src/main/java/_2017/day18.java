@@ -1,15 +1,12 @@
 package _2017;
 
 import static org.junit.Assert.assertEquals;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
+import util.Global;
+import util.Util;
 
 // https://adventofcode.com/2017/day/18
 
@@ -25,29 +22,6 @@ public class day18
 		registers = new HashMap<>();
 		soundsPlayed = new ArrayList<>();
 		recoveredSounds = new ArrayList<>();
-	}
-
-	public List<String> readFile(String inputFile)
-	{
-		List<String> out = new ArrayList<>();
-
-		try (BufferedReader br = new BufferedReader(new FileReader(inputFile)))
-		{
-			for (String line; (line = br.readLine()) != null;)
-			{
-				out.add(line);
-			}
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		return out;
 	}
 
 	/**
@@ -178,6 +152,7 @@ public class day18
 		return recoveredSounds.get(0);
 	}
 
+	// TODO
 	public int partTwo()
 	{
 		return 0;
@@ -189,8 +164,8 @@ public class day18
 		if (args.length > 0)
 		{
 			// perform tests
-			String testFile = "2017/tests/day18_00.in";
-			List<String> instructions = a.readFile(testFile);
+			String filename = Global.testPath + "_2017/day18_00" + Global.testExt;
+			List<String> instructions = Util.readFileIntoListString(filename);
 
 			assertEquals(4, a.partOne(instructions));
 			assertEquals(0, a.partTwo());
@@ -200,17 +175,10 @@ public class day18
 		}
 
 		// Read a file name containing the instructions
-		String inputFile = "";
-		try (Scanner scanner = new Scanner(System.in))
-		{
-			if (scanner.hasNextLine())
-			{
-				inputFile = scanner.nextLine();
-			}
-		}
+		String filename = Global.testPath + "_2017/day18_01" + Global.testExt;
 
 		// Do something with the input and a
-		List<String> instructions = a.readFile(inputFile);
+		List<String> instructions = Util.readFileIntoListString(filename);
 		System.out.println("Part 1: " + a.partOne(instructions));
 		System.out.println("Part 2: " + a.partTwo());
 	}

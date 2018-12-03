@@ -2,11 +2,12 @@ package _2018;
 
 import static org.junit.Assert.assertEquals;
 import java.util.*;
-import util.Util;
+import template.day;
+import util.*;
 
 // https://adventofcode.com/2018/day/2
 
-public class day02 {
+public class day02 extends day {
 
   /**
    * Return true if `s` contains `c` exactly `n` times
@@ -31,10 +32,11 @@ public class day02 {
     return freq == n;
   }
 
-  public int partOne(List<String> list) {
+  @Override
+  public String partOne(List<String> input) {
     int numTwice = 0, numThrice = 0;
 
-    for (String s : list) {
+    for (String s : input) {
       boolean gotTwo = false;
       boolean gotThree = false;
       for (char c = 'a'; c <= 'z'; c++) {
@@ -49,7 +51,7 @@ public class day02 {
       }
     }
 
-    return numTwice * numThrice;
+    return String.valueOf(numTwice * numThrice);
   }
 
   /**
@@ -69,9 +71,10 @@ public class day02 {
     return out;
   }
 
-  public String partTwo(List<String> list) {
-    for (String a : list) {
-      for (String b : list) {
+  @Override
+  public String partTwo(List<String> input) {
+    for (String a : input) {
+      for (String b : input) {
         if (a == b) {
           continue;
         }
@@ -92,12 +95,12 @@ public class day02 {
   }
 
   public static void main(String[] args) {
-    day02 a = new day02();
+    day a = new day02();
     if (args.length > 0) {
       // perform tests
 
       // Part 1
-      assertEquals(12, a.partOne(
+      assertEquals("12", a.partOne(
           Arrays.asList("abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab")));
 
       // Part 2
@@ -109,7 +112,7 @@ public class day02 {
     }
 
     // Take input, turn into usable form
-    String filename = "_2018/tests/day02_01.in";
+    String filename = Global.testPath + "_2018/day02_01" + Global.testExt;
     List<String> input = Util.readFileIntoListString(filename);
 
     // Do something with the input and a
