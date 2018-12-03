@@ -1,13 +1,9 @@
 package aoc._2017;
 
 import static org.junit.Assert.assertEquals;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import aoc.util.Global;
+import aoc.util.Util;
 
 // http://adventofcode.com/2017/day/19
 
@@ -29,30 +25,6 @@ public class day19
 		dirY = 1;
 		numMoves = 0;
 		letters = "";
-	}
-
-	// Read a network file into a list of strings
-	public List<String> readNetwork(String filename)
-	{
-		List<String> out = new ArrayList<>();
-		try (BufferedReader br = new BufferedReader(new FileReader(filename)))
-		{
-			String line;
-			while ((line = br.readLine()) != null)
-			{
-				out.add(line);
-			}
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		return out;
 	}
 
 	// Take a network, traverse it and accumulate the letters
@@ -193,7 +165,7 @@ public class day19
 		{
 			// perform tests
 			String filename = Global.testPath + "_2017/day19_00" + Global.testExt;
-			List<String> network = a.readNetwork(filename);
+			List<String> network = Util.readFileIntoListString(filename);
 			a.solve(network);
 			assertEquals("ABCDEF", a.partOne());
 			assertEquals(38, a.partTwo());
@@ -204,7 +176,7 @@ public class day19
 
 		// Take input, turn into usable form
 		String filename = Global.testPath + "_2017/day19_01" + Global.testExt;
-		List<String> network = a.readNetwork(filename);
+		List<String> network = Util.readFileIntoListString(filename);
 		a.solve(network);
 
 		System.out.println("Part 1: " + a.partOne());
