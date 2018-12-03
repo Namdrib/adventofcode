@@ -1,37 +1,29 @@
-package _2017;
+package template;
 
 import static org.junit.Assert.assertEquals;
 import java.io.*;
 import java.util.*;
 
-// https://adventofcode.com/2017/day/DAY
+// https://adventofcode.com/YEAR/day/DAY
 
-public class dayDAY
+public interface day
 {
-	public dayDAY()
-	{
-		;
-	}
 
-	public int partOne()
-	{
-		return 0;
-	}
+	public <E> String solve(List<E> input, boolean partTwo);
 
-	public int partTwo()
-	{
-		return 0;
-	}
+	public String partOne(List<String> input);
+
+	public String partTwo(List<String> input);
 
 	public static void main(String[] args)
 	{
-		dayDAY a = new dayDAY();
+		// day a = new day();
 		if (args.length > 0)
 		{
 			// perform tests
 
-			assertEquals(0, a.partOne());
-			assertEquals(0, a.partTwo());
+			// assertEquals("0", a.partOne());
+			// assertEquals("0", a.partTwo());
 
 			System.out.println("Tests successful!");
 			return;
@@ -49,7 +41,7 @@ public class dayDAY
 
 		// Do something with the input and a
 
-		System.out.println("Part 1: " + a.partOne());
-		System.out.println("Part 2: " + a.partTwo());
+		// System.out.println("Part 1: " + a.partOne());
+		// System.out.println("Part 2: " + a.partTwo());
 	}
 }
