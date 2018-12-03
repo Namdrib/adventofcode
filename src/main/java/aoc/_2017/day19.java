@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+import aoc.util.Global;
 
 // http://adventofcode.com/2017/day/19
 
@@ -192,7 +192,8 @@ public class day19
 		if (args.length > 0)
 		{
 			// perform tests
-			List<String> network = a.readNetwork("2017/tests/day19_00.txt");
+			String filename = Global.testPath + "_2017/day19_00" + Global.testExt;
+			List<String> network = a.readNetwork(filename);
 			a.solve(network);
 			assertEquals("ABCDEF", a.partOne());
 			assertEquals(38, a.partTwo());
@@ -202,16 +203,8 @@ public class day19
 		}
 
 		// Take input, turn into usable form
-		String inputFile = null;
-		try (Scanner scanner = new Scanner(System.in))
-		{
-			if (scanner.hasNextLine())
-			{
-				inputFile = scanner.next();
-			}
-		}
-
-		List<String> network = a.readNetwork(inputFile);
+		String filename = Global.testPath + "_2017/day19_01" + Global.testExt;
+		List<String> network = a.readNetwork(filename);
 		a.solve(network);
 
 		System.out.println("Part 1: " + a.partOne());

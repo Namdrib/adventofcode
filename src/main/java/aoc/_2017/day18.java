@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
+import aoc.util.Global;
 
 // https://adventofcode.com/2017/day/18
 
@@ -189,8 +189,8 @@ public class day18
 		if (args.length > 0)
 		{
 			// perform tests
-			String testFile = "2017/tests/day18_00.in";
-			List<String> instructions = a.readFile(testFile);
+			String filename = Global.testPath + "_2017/day18_00" + Global.testExt;
+			List<String> instructions = a.readFile(filename);
 
 			assertEquals(4, a.partOne(instructions));
 			assertEquals(0, a.partTwo());
@@ -200,17 +200,10 @@ public class day18
 		}
 
 		// Read a file name containing the instructions
-		String inputFile = "";
-		try (Scanner scanner = new Scanner(System.in))
-		{
-			if (scanner.hasNextLine())
-			{
-				inputFile = scanner.nextLine();
-			}
-		}
+		String filename = Global.testPath + "_2017/day18_01" + Global.testExt;
 
 		// Do something with the input and a
-		List<String> instructions = a.readFile(inputFile);
+		List<String> instructions = a.readFile(filename);
 		System.out.println("Part 1: " + a.partOne(instructions));
 		System.out.println("Part 2: " + a.partTwo());
 	}

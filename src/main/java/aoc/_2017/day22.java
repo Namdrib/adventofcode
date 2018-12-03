@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 import aoc.util.*;
 
 // https://adventofcode.com/2017/day/22
@@ -43,14 +42,14 @@ public class day22
 	/**
 	 * Initialise the program state by reading an infected file
 	 * 
-	 * @param infectedFile path to file containing a grid of dots and hashes
+	 * @param filename path to file containing a grid of dots and hashes
 	 * @return a set of infected nodes, each node given by an IntegerPair
 	 */
-	private Map<IntegerPair, InfectionState> readInfected(String infectedFile)
+	private Map<IntegerPair, InfectionState> readInfected(String filename)
 	{
 		Map<IntegerPair, InfectionState> out = new HashMap<>();
 
-		try (BufferedReader br = new BufferedReader(new FileReader(infectedFile)))
+		try (BufferedReader br = new BufferedReader(new FileReader(filename)))
 		{
 			int width = 0;
 			int i = 0;
@@ -180,7 +179,8 @@ public class day22
 		if (args.length > 0)
 		{
 			// perform tests
-			Map<IntegerPair, InfectionState> infected = a.readInfected("_2017/tests/day22_00.in");
+			String filename = Global.testPath + "_2017/day22_00" + Global.testExt;
+			Map<IntegerPair, InfectionState> infected = a.readInfected(filename);
 			assertEquals(5, a.solve(infected, 7, false));
 			assertEquals(41, a.solve(infected, 70, false));
 			assertEquals(5_587, a.solve(infected, 10_000, false));
@@ -192,18 +192,10 @@ public class day22
 			return;
 		}
 
-		// Take input, turn into usable form
-		String input = null;
-		try (Scanner scanner = new Scanner(System.in))
-		{
-			if (scanner.hasNextLine())
-			{
-				input = scanner.next();
-			}
-		}
-
 		// Do something with the input and a
-		Map<IntegerPair, InfectionState> infected = a.readInfected(input);
+		String filename = Global.testPath + "_2017/day22_01" + Global.testExt;
+		Map<IntegerPair, InfectionState> infected = a.readInfected(filename);
+
 		System.out.println("Part 1: " + a.solve(infected, 10_000, false));
 		System.out.println("Part 1: " + a.solve(infected, 10_000_000, true));
 	}
