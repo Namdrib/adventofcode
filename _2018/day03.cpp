@@ -70,11 +70,14 @@ int solve(vector<claim> claims, bool partTwo = false)
 	map<pair<int, int>, int> freq;
 
 	for (size_t k = 0; k < claims.size(); k++)
+	// for (vector<claim>::iterator it = claims.begin(); it != claims.end(); ++it)
 	{
 		auto p = claims[k];
+		// auto p = *it;
 		if (partTwo)
 		{
-			// if (none_of(all(claims), [it, p](claim c){return (*it != c) && p.intersects(c);}))
+			// need to skip when *it and c point to the same object
+			// if (none_of(all(claims), [it, p](claim c){return (&*it == &c) && p.intersects(c);}))
 			// {
 			// 	return p.id;
 			// }
