@@ -14,7 +14,7 @@ clean:
 
 # Run tests like this:
 ## compile
-# a = "src/main/java/aoc/_2018/day01(.bin)" # .bin if c++
+# a = "src/main/java/_2018/day01(.bin)" # .bin if c++
 
 ## run
-# ./"$a" < src/test/java/aoc/_2018/day01_01.in
+# ./"$a" < src/test/java/_2018/day01_01.in
