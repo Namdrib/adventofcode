@@ -76,4 +76,13 @@ public class Util {
   public static <E> List<String> listEToString(List<E> input) {
     return input.stream().map(i -> String.valueOf(i)).collect(Collectors.toList());
   }
+  
+  public static boolean isPrime(long n) {
+    for (long i=2; i<Math.sqrt(n); i++) {
+      if (n%i == 0) {
+        return false;
+      }
+    }
+    return true;
+  }
 }

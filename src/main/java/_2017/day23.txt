@@ -1,0 +1,58 @@
+// Originial assembly
+set b 81
+set c b
+jnz a 2
+jnz 1 5
+mul b 100
+sub b -100000
+set c b
+sub c -17000
+set f 1
+set d 2
+set e 2
+set g d
+mul g e
+sub g b
+jnz g 2
+set f 0
+sub e -1
+set g e
+sub g b
+jnz g -8
+sub d -1
+set g d
+sub g b
+jnz g -13
+jnz f 2
+sub h -1
+set g b
+sub g c
+jnz g 2
+jnz 1 3
+sub b -17
+jnz 1 -23
+
+// Rough translation
+
+int a = partTwo
+d = e = f = g = h = 0
+
+for (b = a ? 108_100 : 81; b < a ? 125_100 : 81; b += 17) {
+
+	// this entire loop body is a big
+	// if (!prime(b)) h++
+	boolean f = 1
+	for (int d = 2; d < b; d++) {
+		for (int e = 2; e < b; e++) {
+			// check if b has factors
+			if (d * e == b) {
+				f = 0
+			}
+		}
+	}
+
+	// h is the number of non-prime numbers between b (108_100) and c (125_100)
+	if (f == 0) {
+		h++;
+	}
+}
