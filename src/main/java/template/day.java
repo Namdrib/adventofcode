@@ -5,6 +5,22 @@ import java.util.*;
 // https://adventofcode.com/YEAR/day/DAY
 
 public abstract class day {
+
+  /**
+   * Used for when there is common work to be done before partOne and partTwo then call this in
+   * main. It is most likely some form of intermediary output is saved as a class member, then used
+   * in solve or part 1 or part 2
+   * 
+   * This usually involves processing the input in some way to work with something easier
+   * e.g. creating a data type or map, etc. to hold more accessible input
+   * 
+   * @param input
+   */
+  public void presolve(List<String> input) {
+    ;
+  }
+
+
   /**
    * solve and partX can treat each other like wrapper functions
    * 
