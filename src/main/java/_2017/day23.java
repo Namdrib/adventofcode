@@ -7,6 +7,8 @@ import template.day;
 import util.Global;
 import util.Util;
 
+// https://adventofcode.com/2017/day/23
+
 public class day23 extends day {
 
   Map<String, Long> registers; // <name, value>

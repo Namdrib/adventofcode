@@ -85,4 +85,18 @@ T clamp(const T &v, const T &lo, const T &hi)
 	return min(max(v, lo), hi);
 }
 
+// return true iff n is prime
+template <typename T>
+bool isPrime(T n)
+{
+	for (T i=2; i<sqrt(n); i++)
+	{
+		if (n % i == 0)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 #endif // HELPERS_CPP
