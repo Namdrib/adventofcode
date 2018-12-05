@@ -3,6 +3,8 @@ package _2018;
 import static org.junit.Assert.assertEquals;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import template.day;
 import util.Global;
 import util.Util;
@@ -71,26 +73,27 @@ public class day04 extends day {
   @Override
   public String partOne(List<String> input) {
 
+    // Entry<Integer, Map<Integer, Integer>> a = Collections.max(
+    // sleepCounts.entrySet().stream()
+    // .mapToInt(es -> es.getValue().values().stream()
+    // .mapToInt(i -> i).sum()).collect(Collectors.toList())
+    // );
+
+    // System.out.println("Guard: " + a.getKey() + ", sleep time: " + a.getValue());
+
     // guard w/ most minutes of sleep
     int maxSleep = -1;
     int maxSleepGuardID = -1;
     for (Entry<Integer, Map<Integer, Integer>> sc : sleepCounts.entrySet()) {
       // System.out.println(sc);
 
-      int tempID = sc.getKey();
-
-      int sleepForGuard = 0;
-      for (Entry<Integer, Integer> gsa : sc.getValue().entrySet()) {
-        sleepForGuard += gsa.getValue();
-      }
+      int sleepForGuard = sc.getValue().values().stream().mapToInt(i -> i).sum();
       // System.out.println("Sleep for guard " + tempID + " is " + sleepForGuard);
       if (sleepForGuard > maxSleep) {
-        maxSleepGuardID = tempID;
+        maxSleepGuardID = sc.getKey();
         maxSleep = sleepForGuard;
       }
     }
-    // System.out.println("Guard " + maxSleepGuardID + " sleeps " + maxSleep + " times");
-
 
     // for that guard, find the minute they are most likely to be asleep
     // i.e. sleepCounts<maxSleepGuardID> with maximum key
@@ -99,10 +102,7 @@ public class day04 extends day {
         .getKey();
     System.out.println("Guard " + maxSleepGuardID + " mostly asleep for minute " + mostSleepMinute);
 
-
-    String out = String.valueOf(maxSleepGuardID * mostSleepMinute);
-
-    return out;
+    return String.valueOf(maxSleepGuardID * mostSleepMinute);
   }
 
   // find the guard most frequently asleep on the same minute
@@ -120,14 +120,11 @@ public class day04 extends day {
     // for each guard
     for (Entry<Integer, Map<Integer, Integer>> guard : sleepCounts.entrySet()) {
 
-      int minute = -1;
-      int minuteFreq = -1;
-      for (Entry<Integer, Integer> gsa : guard.getValue().entrySet()) {
-        if (gsa.getValue() > minuteFreq) {
-          minute = gsa.getKey();
-          minuteFreq = gsa.getValue();
-        }
-      }
+      Entry<Integer, Integer> minuteStream =
+          Collections.max(guard.getValue().entrySet(), (e1, e2) -> e1.getValue() - e2.getValue());
+
+      int minute = minuteStream.getKey();
+      int minuteFreq = minuteStream.getValue();
 
       if (minuteFreq > mostFrequentMinuteCount) {
         mostFrequentMinute = minute;
