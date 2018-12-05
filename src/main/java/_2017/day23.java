@@ -101,7 +101,7 @@ public class day23 extends day {
     int c = 125_100;
     int h = 0; // the output
 
-    for (; b < c; b += 17) {
+    for (; b <= c; b += 17) {
       if (!Util.isPrime(b)) {
         h++;
       }
