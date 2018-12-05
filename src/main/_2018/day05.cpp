@@ -22,7 +22,7 @@ string collapse(string s) {
 
 			// if c and next match, erase them
 			if ((islower(c) && isupper(next) && toupper(c) == next)
-				|| (isupper(c) && islower(next) && tolower(c) == next)) {
+					|| (isupper(c) && islower(next) && tolower(c) == next)) {
 				s.erase(i, 2);
 				got_match = true;
 				i-=2;
@@ -38,9 +38,10 @@ string collapse(string s) {
 }
 
 // return a version of s with no occurrences of c (lower or upper case)
-string strip(string s, char c) {
-	s.erase(remove(all(s), tolower(c)), s.end());
-	s.erase(remove(all(s), toupper(c)), s.end());
+string strip(string s, const char &c) {
+	s.erase(remove_if(all(s), [&c](char ch){
+		return tolower(ch) == tolower(c);
+	}), s.end());
 	return s;
 }
 
@@ -56,8 +57,8 @@ int solve(string s, bool part_two) {
 			int collapsed_size = collapse(temp).size();
 
 			if (collapsed_size < min_size) {
-				min_size = collapsed_size;
 				min_collapsed = temp;
+				min_size = collapsed_size;
 			}
 		}
 		return min_size;
