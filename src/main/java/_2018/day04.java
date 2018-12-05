@@ -9,6 +9,8 @@ import template.day;
 import util.Global;
 import util.Util;
 
+// https://adventofcode.com/2018/day/4
+
 // TODO : stream it up
 
 public class day04 extends day {
