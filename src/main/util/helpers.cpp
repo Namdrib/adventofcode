@@ -77,6 +77,15 @@ vector<T> split_str_by_whitespace(const string &str)
 	return vector<T>(begin, end);
 }
 
+// used to input into a vector from input stream
+// could be stdin (pass cin), or a file stream
+template <typename T>
+vector<T> split_istream_by_whitespace(istream &is)
+{
+	istream_iterator<T> begin(is), end;
+	return vector<T>(begin, end);
+}
+
 // return the clamped version of v, such that
 // it is between lo and hi (inclusive)
 template <typename T>
