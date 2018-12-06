@@ -4,11 +4,6 @@ using namespace std;
 
 // http://adventofcode.com/2018/day/6
 
-int manhattan_distance(int x1, int y1, int x2, int y2)
-{
-	return abs(x1 - x2) + abs(y1 - y2);
-}
-
 // return the number of n in v
 int count_num_of(vector<vector<int>> &v, int n) {
 

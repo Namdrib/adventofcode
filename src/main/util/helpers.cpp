@@ -108,4 +108,10 @@ bool isPrime(T n)
 	return true;
 }
 
+template <typename T>
+T manhattan_distance(T x1, T y1, T x2, T y2)
+{
+	return abs(x1 - x2) + abs(y1 - y2);
+}
+
 #endif // HELPERS_CPP
