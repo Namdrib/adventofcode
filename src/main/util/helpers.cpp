@@ -86,6 +86,18 @@ vector<T> split_istream_by_whitespace(istream &is)
 	return vector<T>(begin, end);
 }
 
+// used to input into a vector from input stream
+// could be stdin (pass cin), or a file stream
+vector<string> split_istream_per_line(istream &is)
+{
+	vector<string> out;
+	for (string line; getline(cin, line);)
+	{
+		out.push_back(line);
+	}
+	return out;
+}
+
 // return the clamped version of v, such that
 // it is between lo and hi (inclusive)
 template <typename T>
@@ -112,6 +124,10 @@ template <typename T>
 T manhattan_distance(T x1, T y1, T x2, T y2)
 {
 	return abs(x1 - x2) + abs(y1 - y2);
+}
+
+bool to_bool(string s) {
+	return !(s[0] == '0');
 }
 
 #endif // HELPERS_CPP
