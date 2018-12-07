@@ -20,7 +20,7 @@ int num_deps_in(const vector<vector<bool>> &v, int row) {
 
 // clear col n from every row in the adj_mat
 // then update fringe and closed as necessary
-void bfs_body(vector<vector<bool>> &adj_mat, vector<int> &fringe, set<int> &closed, int n) {
+void bfs_body(vector<vector<bool>> &adj_mat, priority_queue<int, vector<int>, greater<int>> &fringe, set<int> &closed, int n) {
 
 	// clear dependencies, update fringe and closed
 	for (size_t i = 0; i < adj_mat.size(); i++) {
@@ -36,11 +36,7 @@ void bfs_body(vector<vector<bool>> &adj_mat, vector<int> &fringe, set<int> &clos
 				continue;
 			}
 
-			if (find(all(fringe), i) != fringe.end()) {
-				continue;
-			}
-
-			fringe.push_back(i);
+			fringe.push(i);
 		}
 	}
 
@@ -50,7 +46,7 @@ void bfs_body(vector<vector<bool>> &adj_mat, vector<int> &fringe, set<int> &clos
 // until all jobs are done,
 // finish current jobs
 // assign possible jobs
-int solve_part_two(vector<vector<bool>> &adj_mat, vector<int> fringe) {
+int solve_part_two(vector<vector<bool>> &adj_mat, priority_queue<int, vector<int>, greater<int>> fringe) {
 
 	string order;
 
@@ -92,14 +88,12 @@ int solve_part_two(vector<vector<bool>> &adj_mat, vector<int> fringe) {
 			}
 		}
 
-		sort(all(fringe));
-
 		// assign jobs to open workers
 		for (size_t i = 0; i < num_workers; i++) {
 			if (working_until[i] <= elapsed) {
 				if (!fringe.empty()) {
-					int current = fringe.front();
-					fringe.erase(fringe.begin());
+					int current = fringe.top();
+					fringe.pop();
 
 					working_until[i] = elapsed + proc_time + current;
 					working_on[i] = current;
@@ -124,13 +118,13 @@ string solve(vector<string> input, bool part_two) {
 		adj_mat[match.str(2)[0] - 'A'][match.str(1)[0] - 'A'] = true;
 	}
 
-	vector<int> fringe;
+	priority_queue<int, vector<int>, greater<int>> fringe;
 	set<int> closed;
 
 	// add all the things w/o dependencies
 	for (size_t i=0; i<adj_mat.size(); i++) {
 		if (num_deps_in(adj_mat, i) == 0) {
-			fringe.push_back(i);
+			fringe.push(i);
 		}
 	}
 
@@ -145,9 +139,8 @@ string solve(vector<string> input, bool part_two) {
 
 	while (!fringe.empty()) {
 		// get smallest
-		sort(all(fringe));
-		int current = fringe.front();
-		fringe.erase(fringe.begin());
+		int current = fringe.top();
+		fringe.pop();
 
 		bfs_body(adj_mat, fringe, closed, current);
 
