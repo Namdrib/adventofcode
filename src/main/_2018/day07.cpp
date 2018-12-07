@@ -18,6 +18,35 @@ int num_deps_in(const vector<vector<bool>> &v, int row) {
 	});
 }
 
+// clear col n from every row in the adj_mat
+// then update fringe and closed as necessary
+void bfs_body(vector<vector<bool>> &adj_mat, vector<int> &fringe, set<int> &closed, int n) {
+
+	// clear dependencies, update fringe and closed
+	for (size_t i = 0; i < adj_mat.size(); i++) {
+
+		if (adj_mat[i][n]) {
+			adj_mat[i][n] = 0; // remove the current dependency
+
+			if (closed.count(i) > 0) {
+				continue;
+			}
+
+			if (num_deps_in(adj_mat, i) > 0) {
+				continue;
+			}
+
+			if (find(all(fringe), i) != fringe.end()) {
+				continue;
+			}
+
+			fringe.push_back(i);
+		}
+	}
+
+	closed.insert(n);
+}
+
 // until all jobs are done,
 // finish current jobs
 // assign possible jobs
@@ -56,29 +85,8 @@ int solve_part_two(vector<vector<bool>> &adj_mat, vector<int> fringe) {
 
 				int current = working_on[i];
 
-				// clear dependencies, update fringe and closed
-				for (size_t j = 0; j < adj_mat.size(); j++) {
+				bfs_body(adj_mat, fringe, closed, current);
 
-					if (adj_mat[j][current]) {
-						adj_mat[j][current] = 0; // remove the current dependency
-
-						if (closed.count(j) > 0) {
-							continue;
-						}
-
-						if (num_deps_in(adj_mat, j) > 0) {
-							continue;
-						}
-
-						if (find(all(fringe), j) != fringe.end()) {
-							continue;
-						}
-
-						fringe.push_back(j);
-					}
-				}
-
-				closed.insert(current);
 				order += ('A' + current);
 				working_on[i] = -1;
 			}
@@ -95,7 +103,6 @@ int solve_part_two(vector<vector<bool>> &adj_mat, vector<int> fringe) {
 
 					working_until[i] = elapsed + proc_time + current;
 					working_on[i] = current;
-
 				}
 			}
 		}
@@ -107,6 +114,7 @@ int solve_part_two(vector<vector<bool>> &adj_mat, vector<int> fringe) {
 
 // use bfs to solve dependencies
 string solve(vector<string> input, bool part_two) {
+
 	// used to store deps. adj_mat[i][j] = true means node j depends on i
 	vector<vector<bool>> adj_mat(n, vector<bool>(n, false));
 
@@ -136,49 +144,21 @@ string solve(vector<string> input, bool part_two) {
 	string out;
 
 	while (!fringe.empty()) {
-		// for (auto v : adj_mat) {
-		// 	cout << v << endl;
-		// } cout << "----------------" << endl;
-
 		// get smallest
 		sort(all(fringe));
 		int current = fringe.front();
 		fringe.erase(fringe.begin());
 
-		for (size_t i=0; i<adj_mat.size(); i++) {
+		bfs_body(adj_mat, fringe, closed, current);
 
-			if (adj_mat[i][current]) {
-				adj_mat[i][current] = 0; // remove the current dependency
-
-				if (closed.count(i) > 0) {
-					continue;
-				}
-
-				if (num_deps_in(adj_mat, i) > 0) {
-					continue;
-				}
-
-				if (find(all(fringe), i) != fringe.end()) {
-					continue;
-				}
-
-				fringe.push_back(i);
-			}
-		}
-
-		closed.insert(current);
 		out += ('A' + current);
 	}
 
 	return out;
-
 }
 
 int main() {
 	vector<string> input = split_istream_per_line(cin);
-
-	// assert(solve("dabAcCaCBAcCcaDA", false) == 10);
-	// assert(solve("dabAcCaCBAcCcaDA", true) == 4);
 
 	cout << "Part 1: " << solve(input, false) << endl;
 	cout << "Part 2: " << solve(input, true) << endl;
