@@ -8,9 +8,9 @@ const regex order("Step (\\w+) must be finished before step (\\w+) can begin.");
 smatch match;
 
 // some constants
-const int n = 6;
-const int num_workers = 2;
-const int proc_time = 0 + 1;
+const int n = 26;
+const int num_workers = 5;
+const int proc_time = 60 + 1; // lhs of + is main proc time, rhs is alphabet offset (A = 1)
 
 int num_deps_in(const vector<vector<bool>> &v, int row) {
 	return accumulate(all(v[row]), 0, [](int a, bool b) {
@@ -18,31 +18,91 @@ int num_deps_in(const vector<vector<bool>> &v, int row) {
 	});
 }
 
-
-
-// init workers all 0
-// init elapsed = 0
-
-// for each worker w,
-
-// 	if there is an available job and worker.size() < num_workers,
-// 		w[job] = elapsed + proc + job
-
-// 		dont clear dependency yet
-
-// elapsed = min_time_all(workers)
-// for each worker w,
-// 	if w.time <= elapsed,
-// 		clear the dependency held by worker
-// 		clear the worker entry
-
-
+// until all jobs are done,
+// finish current jobs
+// assign possible jobs
 int solve_part_two(vector<vector<bool>> &adj_mat, vector<int> fringe) {
 
 	string order;
-	int elapsed = 0;
 
-	return elapsed;
+	// keep track of when each work is working until and what they're workin gon
+	// working_until[w] == t means worker w is working until time t
+	// working_on[w] == n means worker w is working on node n
+	vector<int> working_until(num_workers, 0);
+	vector<int> working_on(num_workers, -1);
+
+	set<int> closed; // completed jobs
+
+	int elapsed;
+	for (elapsed = 0; (closed.size() != adj_mat.size()); elapsed++) {
+
+		// skip elapsed to the earliest-finishing active job
+		// this avoids essentially "empty" loops where jobs are
+		// just ticking away with no change in state
+		vector<int> active_working_until;
+		for (size_t i = 0; i < num_workers; i++) {
+			if (working_on[i] >= 0) {
+				active_working_until.push_back(working_until[i]);
+			}
+		}
+		if (!active_working_until.empty()) {
+			elapsed = *min_element(all(active_working_until));
+		}
+
+		// free all the workers who are done
+		// also clearing any dependencies as a result
+		for (size_t i = 0; i < num_workers; i++) {
+			if (working_on[i] >= 0 && working_until[i] <= elapsed) {
+
+				int current = working_on[i];
+
+				// clear dependencies, update fringe and closed
+				for (size_t j = 0; j < adj_mat.size(); j++) {
+
+					if (adj_mat[j][current]) {
+						adj_mat[j][current] = 0; // remove the current dependency
+
+						if (closed.count(j) > 0) {
+							continue;
+						}
+
+						if (num_deps_in(adj_mat, j) > 0) {
+							continue;
+						}
+
+						if (find(all(fringe), j) != fringe.end()) {
+							continue;
+						}
+
+						fringe.push_back(j);
+					}
+				}
+
+				closed.insert(current);
+				order += ('A' + current);
+				working_on[i] = -1;
+			}
+		}
+
+		sort(all(fringe));
+
+		// assign jobs to open workers
+		for (size_t i = 0; i < num_workers; i++) {
+			if (working_until[i] <= elapsed) {
+				if (!fringe.empty()) {
+					int current = fringe.front();
+					fringe.erase(fringe.begin());
+
+					working_until[i] = elapsed + proc_time + current;
+					working_on[i] = current;
+
+				}
+			}
+		}
+	}
+
+	// don't want to increase elapsed after last one
+	return --elapsed;
 }
 
 // use bfs to solve dependencies
