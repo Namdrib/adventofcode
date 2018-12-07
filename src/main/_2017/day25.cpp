@@ -2,6 +2,8 @@
 #include "../util/helpers.cpp"
 using namespace std;
 
+// http://adventofcode.com/2017/day/25
+
 class state
 {
 public:
