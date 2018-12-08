@@ -10,11 +10,10 @@ class node
 {
 public:
 	vector<node> children;
-	vector<int> metadata;
+	vector<size_t> metadata;
 
 	int id;
 };
-
 
 void read_recurse(const vector<int> &input, node &root, int &start) {
 	int num_children = input[start];
@@ -25,8 +24,6 @@ void read_recurse(const vector<int> &input, node &root, int &start) {
 	root.id = id;
 	id++;
 
-	// cout << char('A' + root.id) << " starts at " << start << ", has " << num_children << " children, " << num_metadata << " metadata" << endl;
-
 	for (auto &child : root.children) {
 		start += 2;
 		read_recurse(input, child, start);
@@ -36,7 +33,6 @@ void read_recurse(const vector<int> &input, node &root, int &start) {
 		start++;
 		metadata = input[start+1];
 	}
-	// cout << "metadata for " << char('A' + root.id) << " is " << root.metadata << endl;
 }
 
 // recursively sum the metadata of a root and its children
@@ -66,13 +62,13 @@ int sum_value(const node &root) {
 
 	// metadata are 1-indexed
 	for (auto metadata : root.metadata) {
-		if (metadata > 0 && metadata <= root.children.size()) {
-			out += sum_value(root.children[metadata-1]);
+		metadata--;
+		if (metadata < root.children.size()) {
+			out += sum_value(root.children[metadata]);
 		}
 	}
 
 	return out;
-
 }
 
 int solve(node root, bool part_two) {
