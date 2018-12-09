@@ -7,19 +7,9 @@ using namespace std;
 #define all(c) (c).begin(), (c).end()
 #define rall(c) (c).rbegin(), (c).rend()
 
-// output vector
-template <typename T>
-ostream& operator << (ostream &os, const vector<T> &v)
-{
-	const char* delim = " ";
-	copy(v.begin(), --v.end(), ostream_iterator<T>(os, delim));
-	os << v.back();
-	return os;
-}
-
-// output list
-template <typename T>
-ostream& operator << (ostream &os, const list<T> &v)
+// output vector, list
+template <typename T, template <typename, typename = allocator<T>> class Container>
+ostream& operator << (ostream &os, const Container<T> &v)
 {
 	const char* delim = " ";
 	copy(v.begin(), --v.end(), ostream_iterator<T>(os, delim));
@@ -51,7 +41,7 @@ ostream& operator << (ostream &os, const pair<K, V> &p)
 	return os;
 }
 
-// output pair
+// pair equality
 template <typename K, typename V>
 const bool operator == (pair<K, V> &lhs, pair<K, V> &rhs)
 {

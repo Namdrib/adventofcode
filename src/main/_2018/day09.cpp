@@ -32,7 +32,7 @@ long solve(string input, bool part_two) {
 
 	// everyone starts with no points
 	vector<long> players(num_players, 0);
-	int player = 0;
+	size_t player = 0;
 
 	// designate right is clockwise, left is anticlockwise
 	list<long> circle;
@@ -73,7 +73,6 @@ int main() {
 	assert(solve("17 players; last marble is worth 1104 points", false) == 2764);
 	assert(solve("21 players; last marble is worth 6111 points", false) == 54718);
 	assert(solve("30 players; last marble is worth 5807 points", false) == 37305);
-
 
 	cout << "Part 1: " << solve(input, false) << endl;
 	cout << "Part 2: " << solve(input, true) << endl;
