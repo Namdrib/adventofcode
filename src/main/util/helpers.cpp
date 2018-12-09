@@ -17,6 +17,16 @@ ostream& operator << (ostream &os, const vector<T> &v)
 	return os;
 }
 
+// output list
+template <typename T>
+ostream& operator << (ostream &os, const list<T> &v)
+{
+	const char* delim = " ";
+	copy(v.begin(), --v.end(), ostream_iterator<T>(os, delim));
+	os << v.back();
+	return os;
+}
+
 // output set
 template <typename T>
 ostream& operator << (ostream &os, const set<T> &s)
@@ -126,7 +136,8 @@ T manhattan_distance(T x1, T y1, T x2, T y2)
 	return abs(x1 - x2) + abs(y1 - y2);
 }
 
-bool to_bool(string s) {
+bool to_bool(string s)
+{
 	return !(s[0] == '0');
 }
 
