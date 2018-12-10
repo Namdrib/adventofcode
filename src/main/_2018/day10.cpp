@@ -4,10 +4,8 @@ using namespace std;
 
 // http://adventofcode.com/2018/day/10
 
-const regex input_regex("position=<\\s*(-?\\d+),\\s*(-?\\d+)> velocity=<\\s*(-?\\d+),\\s*(-?\\d+)>");
+const regex input_regex(R"(position=<\s*(-?\d+),\s*(-?\d+)> velocity=<\s*(-?\d+),\s*(-?\d+)>)");
 smatch match;
-	// regex_search(input, match, input_regex);
-	// const int num_players = stoi(match.str(1));
 
 class point {
 public:
