@@ -24,7 +24,7 @@ string solve(int input, bool part_two) {
 
 	for (size_t i = 1; i < grid.size(); i++) {
 		for (size_t j = 1; j < grid.size(); j++) {
-			int power = get_power(j, i, input);
+			int power = get_power(j-1, i-1, input);
 			grid[i][j] = power + grid[i][j-1] + grid[i-1][j] - grid[i-1][j-1];
 		}
 	}
@@ -36,15 +36,15 @@ string solve(int input, bool part_two) {
 	size_t start = (part_two ? 1 : 3);
 	size_t end = (part_two ? grid.size()-1 : 3);
 	for (size_t size = start; size <=end; size++) {
-		for (size_t i = size; i < grid.size(); i++) {
-			for (size_t j = size; j < grid[i].size(); j++) {
+		for (size_t i = 0; i < grid.size() - size; i++) {
+			for (size_t j = 0; j < grid[i].size() - size; j++) {
 
-				long sum = grid[i][j] - grid[i][j-size] - grid[i-size][j] + grid[i-size][j-size];
+				long sum = grid[i][j] - grid[i][j+size] - grid[i+size][j] + grid[i+size][j+size];
 
 				if (sum > max_power) {
 					max_power = sum;
 					max_power_size = size;
-					coords = make_pair(j - size + 1, i - size + 1);
+					coords = make_pair(j , i);
 				}
 			}
 		}
