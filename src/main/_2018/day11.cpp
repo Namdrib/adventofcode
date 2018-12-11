@@ -35,7 +35,7 @@ string solve(int input, bool part_two) {
 
 	size_t start = (part_two ? 1 : 3);
 	size_t end = (part_two ? grid.size()-1 : 3);
-	for (size_t size = start; size <=end; size++) {
+	for (size_t size = start; size <= end; size++) {
 		for (size_t i = 0; i < grid.size() - size; i++) {
 			for (size_t j = 0; j < grid[i].size() - size; j++) {
 
