@@ -129,10 +129,7 @@ string solve(vector<string> input, bool part_two) {
 	}
 
 	if (part_two) {
-		int i = solve_part_two(adj_mat, fringe);
-		stringstream ss;
-		ss << i;
-		return ss.str();
+		return to_string(solve_part_two(adj_mat, fringe));
 	}
 
 	string out;
