@@ -131,4 +131,19 @@ bool to_bool(string s)
 	return !(s[0] == '0');
 }
 
+// return the digits of the string s
+// assumes all characters in s are digits [0-9]
+vector<int> digits_of(string s) {
+	vector<int> out;
+
+	for (char c : s) {
+		if (isdigit(c)) {
+			out.push_back(int(c - '0'));
+		}
+	}
+
+	return out;
+}
+
+
 #endif // HELPERS_CPP
