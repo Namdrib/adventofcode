@@ -4,6 +4,15 @@ using namespace std;
 #ifndef HELPERS_CPP
 #define HELPERS_CPP
 
+typedef long long ll;
+typedef vector<int> vi;
+typedef vector<string> vs;
+typedef pair<int, int> pii;
+typedef vector<vi> vvi;
+typedef vector<ll> vl;
+typedef vector<bool> vb;
+typedef vector<double> vd;
+
 #define all(c) (c).begin(), (c).end()
 #define rall(c) (c).rbegin(), (c).rend()
 
