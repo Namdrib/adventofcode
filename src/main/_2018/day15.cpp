@@ -91,8 +91,6 @@ vi get_dist(map<pii, pair<pii, int>> meta, pii state) {
 // return that distance
 vi distance_to(const vs &field, const vector<unit> &units, const unit &src, const unit &dest) {
 
-	// cout << "bfs from " << src << " to " << dest << endl;
-
 	vector<pii> fringe;
 	set<pii> closed;
 
@@ -107,9 +105,6 @@ vi distance_to(const vs &field, const vector<unit> &units, const unit &src, cons
 
 		if (dest == current) {
 			vi actions = get_dist(meta, current);
-			// cout << "moves from " << src << " to " << dest << ": " << dist << endl;
-			// return dist;
-			// return meta;
 			reverse(all(actions));
 			return actions;
 		}
@@ -152,13 +147,12 @@ vi distance_to(const vs &field, const vector<unit> &units, const unit &src, cons
 }
 
 
-int aftermath(const vs &input, vector<unit> units, bool part_two) {
+int battle(const vs &input, vector<unit> &units, bool part_two) {
 	int num_rounds = 0;
 	int p_elves = count_if(all(units), [](unit a){return a.c == 'E';});
 	int p_goblins = count_if(all(units), [](unit a){return a.c == 'G';});
 	// run move/combat steps
 	for (;; num_rounds++) {
-		cout << "ROUND " << num_rounds << ", " << p_elves << " vs " << p_goblins << endl;
 		sort(all(units));
 
 		// every unit
@@ -246,11 +240,6 @@ int aftermath(const vs &input, vector<unit> units, bool part_two) {
 				continue;
 			}
 
-			// cout << "potential targets for " << *current_unit << ": ";
-			// for (auto thing : attack_targets) {
-				// cout << *thing << " ";
-			// } cout << endl;
-
 			unit *target = *min_element(all(attack_targets), [](unit *a, unit *b){
 				if (a->hp == b->hp) {
 					return a < b;
@@ -261,9 +250,7 @@ int aftermath(const vs &input, vector<unit> units, bool part_two) {
 			target = &(*find(all(units), *target));
 
 			target->hp -= current_unit->ap;
-			cout << "target of " << *current_unit << " is " << *target << endl;
 			if (target->hp <= 0) {
-				cout << "killed " << *target << endl;
 				int dist = distance(units.begin(), find(all(units), *target));
 				units.erase(units.begin() + dist);
 				if (dist <= i) i--;
@@ -273,33 +260,6 @@ int aftermath(const vs &input, vector<unit> units, bool part_two) {
 			int num_elves = count_if(all(units), [](unit a){return a.c == 'E';});
 			int num_goblins = count_if(all(units), [](unit a){return a.c == 'G';});
 
-			if (part_two) {
-				if (num_elves != p_elves) {
-					return -1;
-				}
-			}
-
-			if (num_elves != p_elves || num_goblins != p_goblins) {
-				cout << "in round " << num_rounds << ", there are " << num_elves << " e and " << num_goblins << "g" << endl;
-				
-				cout << "After " << num_rounds + 1 << " rounds" << endl;
-				for (size_t i=0; i<input.size(); i++) {
-					for (size_t j=0; j<input[i].size(); j++) {
-						bool got = false;
-						for (unit u : units) {
-							if (u.x == j && u.y == i) {
-								cout << u.c;
-								got = true;
-								break;
-							}
-						}
-						if (!got) {
-							cout << input[i][j];
-						}
-					}
-					cout << endl;
-				}
-			}
 			p_elves = num_elves;
 			p_goblins = num_goblins;
 			if (num_elves == 0 || num_goblins == 0) {
@@ -309,27 +269,22 @@ int aftermath(const vs &input, vector<unit> units, bool part_two) {
 				goto end;
 			}
 		}
-
-		// output at end of round
 	}
-	end:
+	end: // lol
 
 	int out = 0;
 	out = accumulate(all(units), 0, [](int a, unit b) {
 		return a + b.hp;
 	});
-	cout << "total remaining hp = " << out << " * " << num_rounds << endl;
 	out *= (num_rounds);
-	cout << "returning " << out << endl;
 	return out;
 }
 
 int solve(vs input, bool part_two) {
 
-	int ap = 3;
+	int ap = part_two ? 4 : 3;
 	int out = 0;
 	do {
-		cout << "solving for ap = " << ap << ", out was " << out << endl;
 		// build units
 		vector<unit> units;
 		vs input_copy = input;
@@ -345,15 +300,21 @@ int solve(vs input, bool part_two) {
 				}
 			}
 		}
-		cout << "finished building" << endl;
-		out = aftermath(input_copy, units, part_two);
-		cout << "out is " << out << endl;
-		if (part_two && out > 0) {
-			out = ap;
-			break;
+
+		int num_elves = count_if(all(units), [](unit a){return a.c == 'E';});
+
+		out = battle(input_copy, units, part_two);
+
+		int new_elves = count_if(all(units), [](unit a){return a.c == 'E';});
+
+		if (part_two) {
+			if (num_elves == new_elves) {
+				cout << "required ap: " << ap << endl;
+				return out;
+			}
 		}
 		ap++;
-	} while (out < 0);
+	} while (part_two);
 
 	return out;
 }
@@ -424,19 +385,6 @@ int main() {
 		"#########",
 	};
 
-	// test movement only
-	vs m1 = {
-		"#########",
-		"#G..G..G#",
-		"#.......#",
-		"#.......#",
-		"#G..E..G#",
-		"#.......#",
-		"#.......#",
-		"#G..G..G#",
-		"#########",
-	};
-
 	assert(solve(e0, false) == 27730);
 	assert(solve(e1, false) == 36334);
 	assert(solve(e2, false) == 39514);
@@ -444,15 +392,13 @@ int main() {
 	assert(solve(e4, false) == 28944);
 	assert(solve(e5, false) == 18740);
 
-	// assert(solve(e1, true) == 15);
-	// assert(solve(e2, true) == 4);
-	// assert(solve(e3, true) == 15);
-	// assert(solve(e4, true) == 12);
-	// assert(solve(e5, true) == 34);
-
-	// assert(solve(m1, false) == 1);
+	assert(solve(e0, true) == 4988); // 15 power
+	assert(solve(e2, true) == 31284); // 4 power
+	assert(solve(e3, true) == 3478); // 15 power
+	assert(solve(e4, true) == 6474); // 12 power
+	assert(solve(e5, true) == 1140); // 34 power
 
 
 	cout << "Part 1: " << solve(input, false) << endl;
-	// cout << "Part 2: " << solve(input, true) << endl;
+	cout << "Part 2: " << solve(input, true) << endl; // 17 power
 }
