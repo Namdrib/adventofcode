@@ -4,10 +4,6 @@ using namespace std;
 
 // http://adventofcode.com/2018/day/15
 
-const regex input_regex("(\\d+) players; last marble is worth (\\d+) points");
-smatch match;
-// regex_search(thing, match, input_regex);
-
 // up, left, right, down (reading order)
 int delta_x[4] = {0, -1, 1, 0};
 int delta_y[4] = {-1, 0, 0, 1};
@@ -19,8 +15,6 @@ public:
 	char c;
 
 	int x, y;
-
-	bool moved;
 
 	unit() : unit('E') {
 
@@ -34,29 +28,32 @@ public:
 
 	unit(char c, int x, int y, int ap) : ap(ap), c(c), x(x), y(y) {
 		hp = 200;
+	}
 
-		moved = false;
+	void move_by(int dx, int dy) {
+		x += dx;
+		y += dy;
 	}
 
 	// reading order
-	friend const bool operator < (const unit &u1, const unit &u2) {
-		if (u1.y == u2.y) {
-			return u1.x < u2.x;
+	friend const bool operator < (const unit &a, const unit &b) {
+		if (a.y == b.y) {
+			return a.x < b.x;
 		}
-		return u1.y < u2.y;
+		return a.y < b.y;
 	}
 
-	const bool operator == (const unit &u) const {
-		return x == u.x && y == u.y;
+	const bool operator == (const unit &a) const {
+		return x == a.x && y == a.y;
 	}
-	const bool operator != (const unit &u) const {
-		return !(*this == u);
+	const bool operator != (const unit &a) const {
+		return !(*this == a);
 	}
-	const bool operator == (const pii &p) const {
-		return x == p.first && y == p.second;
+	const bool operator == (const pii &a) const {
+		return x == a.first && y == a.second;
 	}
-	const bool operator != (const pii &p) const {
-		return !(*this == p);
+	const bool operator != (const pii &a) const {
+		return !(*this == a);
 	}
 
 	friend ostream& operator << (ostream &os, const unit &u) {
@@ -65,18 +62,17 @@ public:
 	}
 };
 
+// returns true if there is a unit at (x,y), with faction c
 bool unit_at(const vector<unit> &units, char c, int x, int y) {
-	for (auto u : units) {
-		if (u.x == x && u.y == y && u.c == c) {
-			return true;
-		}
-	}
-	return false;
+	return any_of(all(units), [c, x, y](unit a){
+		return a.c == c && a.x == x && a.y == y;
+	});
 }
 
 vi get_dist(map<pii, pair<pii, int>> meta, pii state) {
 	vi actions;
 
+	// trace back from dest to source
 	while (meta.count(state)) {
 		auto temp = meta[state];
 		state = temp.first;
@@ -96,6 +92,7 @@ vi distance_to(const vs &field, const vector<unit> &units, const unit &src, cons
 
 	fringe.push_back(make_pair(src.x, src.y));
 
+	// <state, <parent, direction>>
 	map<pii, pair<pii, int>> meta;
 
 	while (!fringe.empty()) {
@@ -109,7 +106,8 @@ vi distance_to(const vs &field, const vector<unit> &units, const unit &src, cons
 			return actions;
 		}
 
-		if (src != current && (unit_at(units, src.c, current.first, current.second) || unit_at(units, dest.c, current.first, current.second))) {
+		if (src != current && (unit_at(units, src.c, current.first, current.second) ||
+				unit_at(units, dest.c, current.first, current.second))) {
 			continue;
 		}
 
@@ -118,7 +116,8 @@ vi distance_to(const vs &field, const vector<unit> &units, const unit &src, cons
 			pii step = make_pair(current.first + delta_x[i], current.second + delta_y[i]);
 
 			// out of bounds
-			if (step.first < 0 || step.first >= field[0].size() || step.second < 0 || step.second >= field.size()) {
+			if (step.first < 0 || step.first >= (int) field[0].size() ||
+					step.second < 0 || step.second >= (int) field.size()) {
 				continue;
 			}
 
@@ -148,10 +147,8 @@ vi distance_to(const vs &field, const vector<unit> &units, const unit &src, cons
 
 
 int battle(const vs &input, vector<unit> &units, bool part_two) {
-	int num_rounds = 0;
-	int p_elves = count_if(all(units), [](unit a){return a.c == 'E';});
-	int p_goblins = count_if(all(units), [](unit a){return a.c == 'G';});
 	// run move/combat steps
+	int num_rounds = 0;
 	for (;; num_rounds++) {
 		sort(all(units));
 
@@ -181,15 +178,15 @@ int battle(const vs &input, vector<unit> &units, bool part_two) {
 				continue;
 			}
 
-			// if in range, no move, attack
 
 			// check the closest targest for unit (by number of moves required)
-			int min_distance_moves = min_element(all(units_in_range), [](pair<unit, vi> a, pair<unit, vi> b){
+			const size_t min_distance_moves = min_element(all(units_in_range),
+					[](const pair<unit, vi> &a, const pair<unit, vi> &b){
 				return a.second.size() < b.second.size();
 			})->second.size();
-			// cout << "min_distance_moves from " << u << " is " << min_distance_moves << endl;
 
 			// --- MOVING ---
+			// if in range, don't move, just attack
 			if (min_distance_moves > 1) {
 				// consider squares in range
 				// find the one with fewest steps (manhattan distance)
@@ -198,33 +195,26 @@ int battle(const vs &input, vector<unit> &units, bool part_two) {
 				// take a _single step_ in that direction
 				// if multiple ways avail, take first in reading order
 
-				vector<unit> nearest;
+				set<unit> nearest;
 				for (auto p : units_in_range) {
 					if (p.second.size() == min_distance_moves) {
-						nearest.push_back(p.first);
+						nearest.insert(p.first);
 					}
 				}
 
-				sort(all(nearest));
+				unit nearest_unit = *min_element(all(nearest),
+						[&units_in_range](const unit &a, const unit &b){
+					return units_in_range.at(a)[0] < units_in_range.at(b)[0];
+				});
+				int min_action = units_in_range[nearest_unit][0];
 
-				int min_action = 4;
-				for (auto near : nearest) {
-					min_action = min(min_action, units_in_range[near][0]);
-				}
-
-				current_unit->x += delta_x[min_action];
-				current_unit->y += delta_y[min_action];
+				current_unit->move_by(delta_x[min_action], delta_y[min_action]);
 			}
 
 			// --- ATTACKING ---
+
 			// determine all targest in range (adjacent)
-			// if no targets, end turn
-			// else attack target with lowest HP (ties broken by reading order)
-
-			// deals damage == to attack power, reducing HP by that much
-			// if HP <= 0, target dies, becomes .
-
-			vector<unit*> attack_targets;
+			vector<unit> attack_targets;
 			for (size_t j = 0; j < units.size(); j++) {
 				// same unit or same team
 				if (i == j || current_unit->c == units[j].c) {
@@ -232,38 +222,42 @@ int battle(const vs &input, vector<unit> &units, bool part_two) {
 				}
 
 				if (manhattan_distance(current_unit->x, current_unit->y, units[j].x, units[j].y) == 1) {
-					attack_targets.push_back(&(units[j]));
+					attack_targets.push_back(units[j]);
 				}
 			}
 
+			// no targets, end turn
 			if (attack_targets.empty()) {
 				continue;
 			}
 
-			unit *target = *min_element(all(attack_targets), [](unit *a, unit *b){
-				if (a->hp == b->hp) {
+			// attack target with lowest HP (ties broken by reading order)
+			auto target_it = min_element(all(attack_targets),
+					[](const unit &a, const unit &b){
+				if (a.hp == b.hp) {
 					return a < b;
 				}
-				return a->hp < b->hp;
+				return a.hp < b.hp;
 			});
 
-			target = &(*find(all(units), *target));
+			// find the target in units
+			// this is necessary since we are potentially deleting it from units
+			target_it = find(all(units), *target_it);
 
-			target->hp -= current_unit->ap;
-			if (target->hp <= 0) {
-				int dist = distance(units.begin(), find(all(units), *target));
+			// deals damage == to AP, reducing HP by that much
+			// if HP <= 0, target dies
+			target_it->hp -= current_unit->ap;
+			if (target_it->hp <= 0) {
+				size_t dist = distance(units.begin(), target_it);
 				units.erase(units.begin() + dist);
 				if (dist <= i) i--;
 			}
 
-
-			int num_elves = count_if(all(units), [](unit a){return a.c == 'E';});
-			int num_goblins = count_if(all(units), [](unit a){return a.c == 'G';});
-
-			p_elves = num_elves;
-			p_goblins = num_goblins;
+			// end the loop when no targets left
+			int num_elves = count_if(all(units), [](const unit &a){return a.c == 'E';});
+			int num_goblins = count_if(all(units), [](const unit &a){return a.c == 'G';});
 			if (num_elves == 0 || num_goblins == 0) {
-				if (i == units.size()-1) {
+				if (i == units.size() - 1) {
 					num_rounds++;
 				}
 				goto end;
@@ -272,8 +266,7 @@ int battle(const vs &input, vector<unit> &units, bool part_two) {
 	}
 	end: // lol
 
-	int out = 0;
-	out = accumulate(all(units), 0, [](int a, unit b) {
+	int out = accumulate(all(units), 0, [](int a, unit b) {
 		return a + b.hp;
 	});
 	out *= (num_rounds);
@@ -282,7 +275,7 @@ int battle(const vs &input, vector<unit> &units, bool part_two) {
 
 int solve(vs input, bool part_two) {
 
-	int ap = part_two ? 4 : 3;
+	int ap = 3;
 	int out = 0;
 	do {
 		// build units
@@ -301,16 +294,16 @@ int solve(vs input, bool part_two) {
 			}
 		}
 
-		int num_elves = count_if(all(units), [](unit a){return a.c == 'E';});
+		int p_elves = count_if(all(units), [](const unit &a){return a.c == 'E';});
 
 		out = battle(input_copy, units, part_two);
 
-		int new_elves = count_if(all(units), [](unit a){return a.c == 'E';});
+		int new_elves = count_if(all(units), [](const unit &a){return a.c == 'E';});
 
 		if (part_two) {
-			if (num_elves == new_elves) {
-				cout << "required ap: " << ap << endl;
-				return out;
+			// no elves died
+			if (p_elves == new_elves) {
+				break;
 			}
 		}
 		ap++;
