@@ -154,5 +154,19 @@ vector<int> digits_of(string s) {
 	return out;
 }
 
+vector<long> extract_nums_from(string s) {
+	const regex digits_regex("(-?\\d+)+");
+
+	auto begin_it = sregex_iterator(all(s), digits_regex);
+	auto end_it = sregex_iterator();
+
+	vector<long> out;
+	for (auto it = begin_it; it != end_it; ++it) {
+		smatch match = *it;
+		out.push_back(stoi(match.str()));
+	}
+
+	return out;
+}
 
 #endif // HELPERS_CPP
