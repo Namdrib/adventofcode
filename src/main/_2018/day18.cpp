@@ -69,10 +69,10 @@ int solve(vs input, bool part_two) {
 	// keep track of which states we have seen
 	// use to determine whether loops occur
 	map<vs, int> seen_states;
-
 	int loop_start = -1, loop_length = -1;
-	int i;
-	for (i = 0; i < (part_two ? PART_TWO_TICKS : 10); i++) {
+
+	// for part two, perform PART_TWO_TICKS ticks
+	for (int i = 0; i < (part_two ? PART_TWO_TICKS : 10); i++) {
 		grid = tick(grid);
 
 		// if we have seen a state before, we will cycle
@@ -83,21 +83,14 @@ int solve(vs input, bool part_two) {
 				loop_start = seen_states[grid];
 				loop_length = i - loop_start;
 				i++;
-				break;
+
+				// skip forwards
+				int num_complete_loops = (PART_TWO_TICKS - i) / loop_length;
+				i += (num_complete_loops * loop_length) - 1; // offset the i++ from continue
+				continue;
 			}
 		}
 		seen_states[grid] = i;
-	}
-
-	// for part two, perform PART_TWO_TICKS ticks
-	if (part_two) {
-		// skip a bunch of complete loops
-		int num_complete_loops = (PART_TWO_TICKS - i) / loop_length;
-		i += (num_complete_loops * loop_length);
-
-		for (; i < PART_TWO_TICKS; i++) {
-			grid = tick(grid);
-		}
 	}
 
 	// count wood and lumber
