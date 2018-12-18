@@ -18,11 +18,11 @@ typedef vector<double> vd;
 
 // output vector, list
 template <typename T, template <typename, typename = allocator<T>> class Container>
-ostream& operator << (ostream &os, const Container<T> &v)
+ostream& operator << (ostream &os, const Container<T> &c)
 {
 	const char* delim = " ";
-	copy(v.begin(), --v.end(), ostream_iterator<T>(os, delim));
-	os << v.back();
+	copy(c.begin(), --c.end(), ostream_iterator<T>(os, delim));
+	os << c.back();
 	return os;
 }
 
@@ -117,9 +117,9 @@ T clamp(const T &v, const T &lo, const T &hi)
 
 // return true iff n is prime
 template <typename T>
-bool isPrime(T n)
+bool is_prime(T n)
 {
-	for (T i=2; i<sqrt(n); i++)
+	for (T i = 2; i < sqrt(n); i++)
 	{
 		if (n % i == 0)
 		{
@@ -169,6 +169,12 @@ vector<int> extract_nums_from(string s) {
 	}
 
 	return out;
+}
+
+// returns true iff index is in the bounds of the container, false otherwise
+template <typename T, template <typename, typename = allocator<T>> class Container>
+bool in_bounds(const Container<T> &c, int index) {
+	return index >= 0 && index < c.size();
 }
 
 #endif // HELPERS_CPP
