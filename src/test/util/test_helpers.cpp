@@ -33,10 +33,10 @@ void test_in_bounds()
 	vector<int> v(5);
 
 	assert(in_bounds(v, -1) == false);
-	for (int i=0; i<5; i++) {
+	for (int i = 0; i < 5; i++) {
 		assert(in_bounds(v, i) == true);
 	}
-	for (int i=5; i<10; i++) {
+	for (int i = 5; i < 10; i++) {
 		assert(in_bounds(v, i) == false);
 	}
 
