@@ -77,8 +77,6 @@ public:
 	}
 };
 
-int MOD = 20183;
-
 // up, down, left, right
 int dir_x[] = {0, 0, -1, 1};
 int dir_y[] = {-1, 1, 0, 0};
@@ -94,15 +92,10 @@ int pathfind(vector<vector<rock>> &grid, pii start, pii target) {
 		return grid[a.y][a.x].f < grid[b.y][b.x].f;
 	};
 
-	// typedef priority_queue<state, vector<state>, decltype(compare_state)> state_pq;
-	// state_pq a(compare_state);
-	// priority_queue<state, vector<state>, compare_state> a;
-
 	vector<state> fringe; // need to know the equipment when at a location
 	set<state> closed; // maybe revert to set<pii>
 
 	fringe.push_back(state(start, 1)); // start w/ torch
-	// fringe.push(state(start, 1)); // start w/ torch
 
 	grid[start.second][start.first].f = 0;
 	grid[start.second][start.first].g = 0;
@@ -114,23 +107,14 @@ int pathfind(vector<vector<rock>> &grid, pii start, pii target) {
 		}
 	}
 
-	// for (size_t i=0; i<target.first + 5; i++) {
-	// 	for (size_t j=0; j<target.second + 5; j++) {
-	// 		cout << setw(2) << setfill('0') << grid[i][j].h << " ";
-	// 	}
-	// 	cout << endl;
-	// }
-
 	while (!fringe.empty()) {
 
 		// sort by grid cost
 		sort(all(fringe), compare_state);
+
+		// get element with lowest cost
 		state current = fringe.front();
 		fringe.erase(fringe.begin());
-		// state current = fringe.top();
-		// fringe.pop();
-
-		// cout << "current is " << current << endl;
 
 		if (current == target) {
 			if (current.eq != 1) {
@@ -156,30 +140,27 @@ int pathfind(vector<vector<rock>> &grid, pii start, pii target) {
 			// for each tool
 			for (int j = 0; j < 3; j++) {
 
-				// calculate cost (if any) of changing equipment
-				int dest = grid[step.second][step.first].risk;
+				state neighbour(step, j);
 
-				if (dest == j) {
+				if (grid[neighbour.y][neighbour.x].risk == j) {
 					continue;
 				}
 
 				// update costs (minutes)
 				int step_cost = 1;
 
+				// calculate cost (if any) of changing equipment
 				if (j != current.eq) {
 					step_cost += 7;
 				}
 
-				grid[step.second][step.first].g = grid[current.y][current.x].g + step_cost;
-				grid[step.second][step.first].set_cost();
-				// step.g = current.g + step_cost; // cumulative cost
-				// step.f = step.g + step.h; // plus heuristic
+				// apply cumulative and heuristic cost
+				grid[neighbour.y][neighbour.x].g = grid[current.y][current.x].g + step_cost;
+				grid[neighbour.y][neighbour.x].set_cost();
 
-				state temp(step, j);
-				if (find(all(fringe), temp) == fringe.end()) {
-					fringe.push_back(temp);
+				if (find(all(fringe), neighbour) == fringe.end()) {
+					fringe.push_back(neighbour);
 				}
-				// fringe.push(temp);
 			}
 		}
 
@@ -204,22 +185,10 @@ void calc_rock_attr(vector<vector<rock>> &grid, int x, int y, int depth, const p
 		grid[y][x].gi = grid[y-1][x].el * grid[y][x-1].el;
 	}
 
-	// el
-	grid[y][x].el = (grid[y][x].gi + depth) % MOD;
+	// el, risk, type
+	grid[y][x].el = (grid[y][x].gi + depth) % 20183;
 	grid[y][x].risk = grid[y][x].el % 3;
-
-	// type
-	switch (grid[y][x].risk) {
-		case 0:
-			grid[y][x].type = '.';
-			break;
-		case 1:
-			grid[y][x].type = '=';
-			break;
-		case 2:
-			grid[y][x].type = '|';
-			break;
-	}
+	grid[y][x].type = ".=|"[grid[y][x].risk];
 }
 
 int solve(vs &input, bool part_two) {
@@ -228,7 +197,8 @@ int solve(vs &input, bool part_two) {
 	vi temp_target = extract_nums_from(input[1]);
 	pii target = make_pair(temp_target[0], temp_target[1]);
 
-	pii dim_limits = make_pair(max(20, target.first + 1), max(20, target.second + 1));
+	// pii dim_limits = make_pair(max(1000, target.first + 1), max(1000, target.second + 1));
+	pii dim_limits = make_pair(target.first + 100, target.second + 100);
 
 	// build the grid
 	vector<vector<rock>> grid;
