@@ -48,9 +48,6 @@ int manhattan_distance_4d(int w1, int w2, int x1, int x2, int y1, int y2, int z1
 // merge the sets together
 int solve(vector<star> input, bool part_two)
 {
-
-	// a constellation is a set of stars
-
 	// keep track of all constellations
 	// set<star> = constellation
 	vector<set<star>> constellations;
@@ -62,72 +59,37 @@ int solve(vector<star> input, bool part_two)
 		constellations.push_back(temp);
 	}
 
-	int old_size = -1;
-	while (old_size != constellations.size())
-	{
-		old_size = constellations.size();
+	// for each constellation
+	for (size_t i = 0; i < constellations.size(); i++) {
 
-		// for (auto c : constellations)
-		// {
-		// 	cout << "constellation: " << c << endl;
-		// }
-		// cout << endl;
-		// for each constellation
-		for (size_t i = 0; i < constellations.size(); i++)
-		{
+		// for each other constellation
+		for (size_t j = 0; j < constellations.size(); j++) {
+			if (i == j) {
+				continue;
+			}
 
-			// for each other constellation
-			for (size_t j = 0; j < constellations.size(); j++)
-			{
-				// cout << "j = " << j << endl;
-				if (i == j)
-				{
-					continue;
-				}
-
-				// if any of the stars in con1 are in range of anything in con2
-				// merge con2 into con1
-				if (any_of(all(constellations[i]), [j, &constellations](const star a) {
-						for (star b : constellations[j])
-						{
-							if (manhattan_distance_4d(a.w, b.w, a.x, b.x, a.y, b.y, a.z, b.z) <= 3)
-							{
-								// cout << a << " is in range of " << b << endl;
-								return true;
-							}
+			// if any of the stars in con1 are in range of anything in con2
+			// merge con2 into con1 and delete con2
+			if (any_of(all(constellations[i]), [j, &constellations](const star &a) {
+					for (star b : constellations[j]) {
+						if (manhattan_distance_4d(a.w, b.w, a.x, b.x, a.y, b.y, a.z, b.z) <= 3) {
+							return true;
 						}
-						return false;
-					})) {
-				for (auto it : constellations[j]) {
+					}
+					return false;
+				})) {
+				for (auto &it : constellations[j]) {
 					constellations[i].insert(it);
 				}
 
-				// cout << "constellation " << i << " is now " << constellations[i] << endl;
-				// merge(all(constellations[i]), all(constellations[j]), constellations[i].begin());
 				auto it = constellations.erase(constellations.begin() + j);
 				j = distance(constellations.begin(), it) - 1;
 				if (i) {
 					i--;
 				}
 			}
-			// else {
-			// 	j++;
-			// }
-
-			// if (manhattan_distance_4d(con1->w, con2->w, con1->x, con2->x, con1->y, con2->y, con1->z, con2->z) <= 3) {
-
-			// }
 		}
 	}
-
-	}
-
-	// cout << "constellations are: " << endl;
-	// for (auto c : constellations)
-	// {
-	// 	cout << "constellation: " << c << endl;
-	// }
-	// cout << endl;
 
 	return constellations.size();
 }
