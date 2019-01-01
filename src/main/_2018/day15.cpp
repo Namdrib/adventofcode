@@ -17,13 +17,15 @@ public:
 	int x, y;
 
 	unit() : unit('E') {
-
+		;
 	}
 
 	unit(char c) : unit(c, 0, 0) {
+		;
 	}
 
 	unit(char c, int x, int y) : unit(c, x, y, 3) {
+		;
 	}
 
 	unit(char c, int x, int y, int ap) : ap(ap), c(c), x(x), y(y) {
@@ -145,7 +147,6 @@ vi distance_to(const vs &field, const vector<unit> &units, const unit &src, cons
 	return vi();
 }
 
-
 int battle(const vs &input, vector<unit> &units, bool part_two) {
 	// run move/combat steps
 	int num_rounds = 0;
@@ -215,13 +216,15 @@ int battle(const vs &input, vector<unit> &units, bool part_two) {
 
 			// determine all targest in range (adjacent)
 			vector<unit> attack_targets;
+			vector<int> current = {current_unit->x, current_unit->y}; // for manhattan distance
 			for (size_t j = 0; j < units.size(); j++) {
 				// same unit or same team
 				if (i == j || current_unit->c == units[j].c) {
 					continue;
 				}
 
-				if (manhattan_distance(current_unit->x, current_unit->y, units[j].x, units[j].y) == 1) {
+				vector<int> target = {units[j].x, units[j].y};
+				if (manhattan_distance(current, target) == 1) {
 					attack_targets.push_back(units[j]);
 				}
 			}
@@ -390,7 +393,6 @@ int main() {
 	assert(solve(e3, true) == 3478); // 15 power
 	assert(solve(e4, true) == 6474); // 12 power
 	assert(solve(e5, true) == 1140); // 34 power
-
 
 	cout << "Part 1: " << solve(input, false) << endl;
 	cout << "Part 2: " << solve(input, true) << endl; // 17 power
