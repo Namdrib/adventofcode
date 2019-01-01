@@ -29,8 +29,8 @@ public:
 		h = 0;
 	}
 
-	void set_heuristic(pii target) {
-		h = manhattan_distance(x, y, target.first, target.second);
+	void set_heuristic(const vi &target) {
+		h = manhattan_distance(vector<int>{x, y}, target);
 	}
 
 	void set_cost() {
@@ -72,8 +72,8 @@ public:
 		return x < a.x;
 	}
 
-	const bool operator == (const pii &a) const {
-		return x == a.first && y == a.second;
+	const bool operator == (const vi &a) const {
+		return x == a[0] && y == a[1];
 	}
 };
 
@@ -83,7 +83,7 @@ int dir_y[] = {-1, 1, 0, 0};
 
 
 // perform A* where the heuristic is manhattan distance
-int pathfind(vector<vector<rock>> &grid, pii start, pii target) {
+int pathfind(vector<vector<rock>> &grid, pii start, vi target) {
 
 	// equipment
 	// 0 = neither, 1 = torch, 2 = climbing
@@ -118,9 +118,9 @@ int pathfind(vector<vector<rock>> &grid, pii start, pii target) {
 
 		if (current == target) {
 			if (current.eq != 1) {
-				grid[target.second][target.first].f += 7;
+				grid[target[1]][target[0]].f += 7;
 			}
-			return grid[target.second][target.first].f;
+			return grid[target[1]][target[0]].f;
 		}
 
 		// for each direction
@@ -170,9 +170,9 @@ int pathfind(vector<vector<rock>> &grid, pii start, pii target) {
 	return numeric_limits<int>::max();
 }
 
-void calc_rock_attr(vector<vector<rock>> &grid, int x, int y, int depth, const pii &target) {
+void calc_rock_attr(vector<vector<rock>> &grid, int x, int y, int depth, const vi &target) {
 	// gi
-	if ((x == 0 && y == 0) || (x == target.first && y == target.second)) {
+	if ((x == 0 && y == 0) || (x == target[0] && y == target[1])) {
 		grid[y][x].gi = 0;
 	}
 	else if (y == 0) {
@@ -194,11 +194,10 @@ void calc_rock_attr(vector<vector<rock>> &grid, int x, int y, int depth, const p
 int solve(vs &input, bool part_two) {
 
 	int depth = extract_nums_from(input[0])[0];
-	vi temp_target = extract_nums_from(input[1]);
-	pii target = make_pair(temp_target[0], temp_target[1]);
+	vi target = extract_nums_from(input[1]);
 
 	// pii dim_limits = make_pair(max(1000, target.first + 1), max(1000, target.second + 1));
-	pii dim_limits = make_pair(target.first + 100, target.second + 100);
+	pii dim_limits = make_pair(target[0] + 100, target[1] + 100);
 
 	// build the grid
 	vector<vector<rock>> grid;
@@ -229,8 +228,8 @@ int solve(vs &input, bool part_two) {
 	}
 	else {
 
-		for (int i = 0; i <= target.second; i++) {
-			for (int j = 0; j <= target.first; j++) {
+		for (int i = 0; i <= target[1]; i++) {
+			for (int j = 0; j <= target[0]; j++) {
 				out += grid[i][j].risk;
 			}
 		}
