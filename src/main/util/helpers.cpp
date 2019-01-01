@@ -135,6 +135,18 @@ T manhattan_distance(T x1, T y1, T x2, T y2)
 	return abs(x1 - x2) + abs(y1 - y2);
 }
 
+// e.g. if a[0] is x1, b[0] is x2, a[1] is y1, etc.
+template <typename T>
+T manhattan_distance(const vector<T> &a, const vector<T> &b)
+{
+	return inner_product(
+		all(a), b.begin(), 0, plus<int>(),
+		[](const T &a, const T &b){
+			return abs(b - a);
+		}
+	);
+}
+
 bool to_bool(string s)
 {
 	return !(s[0] == '0');

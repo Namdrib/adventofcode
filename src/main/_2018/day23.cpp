@@ -6,10 +6,6 @@ using namespace std;
 
 // numeric_limits<int>::max();
 
-int manhattan_distance_3d(int x1, int x2, int y1, int y2, int z1, int z2) {
-	return abs(x2 - x1) + abs(y2 - y1) + abs(z2 - z1);
-}
-
 int solve(vvi &input, bool part_two) {
 
 	vvi distances;
@@ -19,7 +15,7 @@ int solve(vvi &input, bool part_two) {
 		vb temp2;
 
 		for (const vi &b : input) {
-			int dist = manhattan_distance_3d(a[0], b[0], a[1], b[1], a[2], b[2]);
+			int dist = manhattan_distance(vector<int>(a.begin(), a.begin()+3), vector<int>(b.begin(), b.begin()+3));
 			temp1.push_back(dist);
 			temp2.push_back(dist <= a[3]);
 		}
