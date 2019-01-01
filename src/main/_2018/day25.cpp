@@ -6,42 +6,38 @@ using namespace std;
 
 class star {
 public:
-	int w, x, y, z;
+	// int w, x, y, z;
+	vector<int> coords;
 
 	star() : star(0, 0, 0, 0) {
 		;
 	}
 
-	star(int w, int x, int y, int z) : w(w), x(x), y(y), z(z) {
+	star(int w, int x, int y, int z) {
+		coords.clear();
+		coords.push_back(w);
+		coords.push_back(x);
+		coords.push_back(y);
+		coords.push_back(z);
+	}
+
+	star(vector<int> &v) : coords(v) {
 		;
 	}
 
 	const bool operator < (const star &a) const {
-		if (w == a.w) {
-			if (x == a.x) {
-				if (y == a.y) {
-					return z < a.z;
-				}
-				return y < a.y;
-			}
-			return x < a.x;
-		}
-		return w < a.w;
+		return coords < a.coords;
 	}
 
 	const bool operator == (star &a) const {
-		return w == a.w && x == a.x && y == a.y && z == a.z;
+		return coords == a.coords;
 	}
 
 	friend ostream& operator << (ostream &os, const star &a) {
-		os << "[" << a.w << "," << a.x << "," << a.y << "," << a.z << "]";
+		os << "[" << a.coords << "]";
 		return os;
 	}
 };
-
-int manhattan_distance_4d(int w1, int w2, int x1, int x2, int y1, int y2, int z1, int z2) {
-	return abs(w2 - w1) + abs(x2 - x1) + abs(y2 - y1) + abs(z2 - z1);
-}
 
 // use a disjoint set data structure to hold each constellation
 // once a star is found that merges multiple constellations,
@@ -72,7 +68,7 @@ int solve(vector<star> input, bool part_two)
 			// merge con2 into con1 and delete con2
 			if (any_of(all(constellations[i]), [j, &constellations](const star &a) {
 					for (star b : constellations[j]) {
-						if (manhattan_distance_4d(a.w, b.w, a.x, b.x, a.y, b.y, a.z, b.z) <= 3) {
+						if (manhattan_distance(a.coords, b.coords) <= 3) {
 							return true;
 						}
 					}
@@ -100,7 +96,7 @@ int main() {
 
 	for (auto &s : input) {
 		vi a = extract_nums_from(s);
-		stars.push_back(star(a[0], a[1], a[2], a[3]));
+		stars.push_back(star(a));
 	}
 
 	cout << "Part 1: " << solve(stars, false) << endl;
