@@ -1,8 +1,6 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -131,16 +129,6 @@ public class day13 {
 
   public static void main(String[] args) {
     day13 a = new day13();
-    if (args.length > 0) {
-      List<String> input;
-      input = new ArrayList<>(Arrays.asList("0: 3", "1: 2", "4: 4", "6: 4"));
-
-      assertEquals(24, a.makeTrip(input));
-      assertEquals(10, a.lowestDelay(input));
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     List<String> input = new ArrayList<>();
 

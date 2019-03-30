@@ -1,11 +1,8 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
-// http://adventofcode.com/2017/day/8
+// http://adventofcode.com/2017/day/9
 
 public class day09 {
 
@@ -15,7 +12,7 @@ public class day09 {
 
   // Clear the effect of '!' in input
   // Should be used as the first "filter"
-  private String clearExclamation(String input) {
+  public String clearExclamation(String input) {
     String out = new String();
     for (int i = 0; i < input.length(); i++) {
       if (input.charAt(i) == '!') {
@@ -31,7 +28,7 @@ public class day09 {
   // ignore everything until first '>'
   // remove everything in between (inclusive)
   // repeat
-  private String clearGarbage(String input) {
+  public String clearGarbage(String input) {
     String out = "";
     boolean inGarbage = false;
     for (int i = 0; i < input.length(); i++) {
@@ -102,55 +99,6 @@ public class day09 {
 
   public static void main(String[] args) {
     day09 a = new day09();
-
-    if (args.length > 0) {
-      // Helper functions
-      List<String> garbageOnly =
-          Arrays.asList("<>", "<random characters>", "<<<<>", "<{}>", "<{o\"i,<{i<a>");
-      for (String s : garbageOnly) {
-        assertEquals("", a.clearGarbage(s));
-      }
-
-      // For garbage
-      assertEquals("<{}>", a.clearExclamation("<{!>}>"));
-      assertEquals("<>", a.clearExclamation("<!!>"));
-      assertEquals("<>", a.clearExclamation("<!!!>>"));
-      assertEquals("<{o\"i,<{i<a>", a.clearExclamation("<{o\"i!a,<{i<a>"));
-
-      // For normal
-      assertEquals("{}", a.clearExclamation("{}"));
-      assertEquals("{{{}}}", a.clearExclamation("{{{}}}"));
-      assertEquals("{{},{}}", a.clearExclamation("{{},{}}"));
-      assertEquals("{{{},{},{{}}}}", a.clearExclamation("{{{},{},{{}}}}"));
-      assertEquals("{<{},{},{{}}>}", a.clearExclamation("{<{},{},{{}}>}"));
-      assertEquals("{<a>,<a>,<a>,<a>}", a.clearExclamation("{<a>,<a>,<a>,<a>}"));
-      assertEquals("{{<a>},{<a>},{<a>},{<a>}", a.clearExclamation("{{<a>},{<a>},{<a>},{<a>}"));
-      assertEquals("{{<},{<},{<},{<a>}}", a.clearExclamation("{{<!>},{<!>},{<!>},{<a>}}"));
-      assertEquals("{{<>},{<>},{<>},{<>}}", a.clearExclamation("{{<!!>},{<!!>},{<!!>},{<!!>}}"));
-      assertEquals("{{<a},{<a},{<a},{<ab>}}", a.clearExclamation("{{<a!>},{<a!>},{<a!>},{<ab>}}"));
-
-      // Part 1
-      assertEquals(1, a.score("{}"));
-      assertEquals(6, a.score("{{{}}}"));
-      assertEquals(5, a.score("{{},{}}"));
-      assertEquals(16, a.score("{{{},{},{{}}}}"));
-      assertEquals(1, a.score("{<a>,<a>,<a>,<a>}"));
-      assertEquals(9, a.score("{{<ab>},{<ab>},{<ab>},{<ab>}}"));
-      assertEquals(9, a.score("{{<!!>},{<!!>},{<!!>},{<!!>}}"));
-      assertEquals(3, a.score("{{<a!>},{<a!>},{<a!>},{<ab>}}"));
-
-      // Part 2
-      assertEquals(0, a.charactersInGarbage("<>"));
-      assertEquals(17, a.charactersInGarbage("<random characters>"));
-      assertEquals(3, a.charactersInGarbage("<<<<>"));
-      assertEquals(2, a.charactersInGarbage("<{!>}>"));
-      assertEquals(0, a.charactersInGarbage("<!!>"));
-      assertEquals(0, a.charactersInGarbage("<!!!>>"));
-      assertEquals(10, a.charactersInGarbage("<{o\"i!a,<{i<a>"));
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     String input = new String();
     try (Scanner scanner = new Scanner(System.in)) {

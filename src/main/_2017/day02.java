@@ -1,8 +1,6 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -55,19 +53,6 @@ public class day02 {
 
   public static void main(String[] args) {
     day02 a = new day02();
-    if (args.length > 0) {
-      List<List<Integer>> input;
-      input = new ArrayList<List<Integer>>(Arrays.asList(Arrays.asList(5, 1, 9, 5),
-          Arrays.asList(7, 5, 3), Arrays.asList(2, 4, 6, 8)));
-      assertEquals(18, a.checksum_one(input));
-
-      input = new ArrayList<List<Integer>>(Arrays.asList(Arrays.asList(5, 9, 2, 8),
-          Arrays.asList(9, 4, 7, 3), Arrays.asList(3, 8, 6, 5)));
-      assertEquals(9, a.checksum_two(input));
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     List<List<Integer>> input = new ArrayList<List<Integer>>();
 

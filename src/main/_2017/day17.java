@@ -1,6 +1,5 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -76,13 +75,6 @@ public class day17 {
 
   public static void main(String[] args) {
     day17 a = new day17();
-
-    if (args.length > 0) {
-      assertEquals(638, a.solve(2017, 2017, 3, false));
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     int spinsPerInsert;
     try (Scanner scanner = new Scanner(System.in)) {

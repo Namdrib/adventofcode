@@ -1,8 +1,6 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -89,18 +87,6 @@ public class day08 {
 
   public static void main(String[] args) {
     day08 a = new day08();
-
-    if (args.length > 0) {
-      ArrayList<String> input = new ArrayList<>(Arrays.asList("b inc 5 if a > 1",
-          "a inc 1 if b < 5", "c dec -10 if a >= 1", "c inc -20 if c == 10"));
-      int[] maxValues = a.largestRegister(input);
-      assertEquals(2, maxValues.length);
-      assertEquals(1, maxValues[0]);
-      assertEquals(10, maxValues[1]);
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     List<String> input = new ArrayList<>();
 

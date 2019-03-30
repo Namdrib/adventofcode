@@ -78,14 +78,6 @@ public class day05 {
 
   public static void main(String[] args) {
     day05 a = new day05();
-    if (args.length > 0) {
-      // perform tests
-      assertEquals("18f47a30", a.solve("abc", 8, false));
-      assertEquals("05ace8e3", a.solve("abc", 8, true));
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     // Take input, turn into usable form
     String input = null;

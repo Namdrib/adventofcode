@@ -1,6 +1,5 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.util.Scanner;
 
 // https://adventofcode.com/2017/day/15
@@ -66,18 +65,6 @@ public class day15 {
 
   public static void main(String[] args) {
     day15 a = new day15();
-    if (args.length > 0) {
-      assertEquals(1, a.samePairs(65, 8921, 5, false));
-      assertEquals(588, a.samePairs(65, 8921, 40000000, false));
-
-      assertEquals(0, a.samePairs(65, 8921, 5, true));
-      assertEquals(0, a.samePairs(65, 8921, 1055, true));
-      assertEquals(1, a.samePairs(65, 8921, 1056, true));
-      assertEquals(309, a.samePairs(65, 8921, 5000000, true));
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     long startA, startB;
     try (Scanner scanner = new Scanner(System.in)) {

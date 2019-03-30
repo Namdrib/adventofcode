@@ -1,6 +1,5 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -98,19 +97,6 @@ public class day14 {
 
   public static void main(String[] args) {
     day14 a = new day14();
-    if (args.length > 0) {
-      // perform tests
-      // assertEquals(Arrays.asList(Arrays.asList(-1,0,-1,0,0,0,0,0,-1,-1,0,0,0,0,-1,0,0,0,0,0,0,0,0,-1,0,-1,-1,1,0,0,0,0)),
-      // a.generateGrid(Arrays.asList("a0c20170")));
-
-      List<String> hashes = a.generateHashes("flqrgnkx");
-      List<List<Integer>> grid = a.generateGrid(hashes);
-      assertEquals(8108, a.partOne(grid));
-      int numLabels = a.partTwo(grid);
-      assertEquals(1242, numLabels);
-      System.out.println("Tests successful!");
-      return;
-    }
 
     // Take input, turn into usable form
     String input = null;

@@ -1,8 +1,6 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -10,8 +8,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 // http://adventofcode.com/2017/day/11
-
-// Part 1: 1134 too high
 
 // Flat-topped hexagon movement
 
@@ -104,16 +100,6 @@ public class day11 {
 
   public static void main(String[] args) {
     day11 a = new day11();
-    if (args.length > 0) {
-      assertEquals(3, (a.fewestStepsTo(Arrays.asList("ne", "ne", "ne"))[0]));
-      assertEquals(0, (a.fewestStepsTo(Arrays.asList("ne", "ne", "sw", "sw"))[0]));
-      assertEquals(2, (a.fewestStepsTo(Arrays.asList("ne", "ne", "s", "s"))[0]));
-      assertEquals(3, (a.fewestStepsTo(Arrays.asList("se", "sw", "se", "sw", "sw"))[0]));
-      assertEquals(0, (a.fewestStepsTo(Arrays.asList("n", "ne", "nw", "s", "sw", "se"))[0]));
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     List<String> input = new ArrayList<>();
 
