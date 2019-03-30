@@ -1,9 +1,9 @@
 package _2018;
 
-import static org.junit.Assert.assertEquals;
-import java.util.*;
+import java.util.List;
 import template.day;
-import util.*;
+import util.Global;
+import util.Util;
 
 // https://adventofcode.com/2018/day/2
 
@@ -17,7 +17,7 @@ public class day02 extends day {
    * @param n the desired frequency of c in s
    * @return true iff `s` contains `c` exactly `n` times, false otherwise
    */
-  public boolean hasN(String s, char c, int n) {
+  boolean hasN(String s, char c, int n) {
     int freq = 0;
     for (int i = 0; i < s.length(); i++) {
       if (s.charAt(i) == c) {
@@ -96,20 +96,6 @@ public class day02 extends day {
 
   public static void main(String[] args) {
     day a = new day02();
-    if (args.length > 0) {
-      // perform tests
-
-      // Part 1
-      assertEquals("12", a.partOne(
-          Arrays.asList("abcdef", "bababc", "abbcde", "abcccd", "aabcdd", "abcdee", "ababab")));
-
-      // Part 2
-      assertEquals("fgij",
-          a.partTwo(Arrays.asList("abcde", "fghij", "klmno", "pqrst", "fguij", "axcye", "wvxyz")));
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     // Take input, turn into usable form
     String filename = Global.testPath + "_2018/day02_01" + Global.testExt;

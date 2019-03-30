@@ -141,23 +141,6 @@ public class day04 extends day {
   public static void main(String[] args) {
     day a = new day04();
 
-    if (args.length > 0) {
-      // perform tests
-      String filename = Global.testPath + "_2018/day04_00" + Global.testExt;
-      List<String> input = Util.readFileIntoListString(filename);
-
-      a.presolve(input);
-
-      // Part 1
-      assertEquals("240", a.partOne(input));
-
-      // Part 2
-      assertEquals("4455", a.partTwo(input));
-
-      System.out.println("Tests successful!");
-      return;
-    }
-
     // Take input, turn into usable form
     String filename = Global.testPath + "_2018/day04_01" + Global.testExt;
     List<String> input = Util.readFileIntoListString(filename);
