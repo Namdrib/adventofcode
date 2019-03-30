@@ -1,6 +1,5 @@
 package _2018;
 
-import static org.junit.Assert.assertEquals;
 import java.util.*;
 import java.util.Map.Entry;
 import util.*;
@@ -74,18 +73,6 @@ public class day03 {
 
   public static void main(String[] args) {
     day03 a = new day03();
-    if (args.length > 0) {
-      // perform tests
-
-      assertEquals(0, a.partOne(Arrays.asList()));
-
-
-
-      assertEquals(0, a.partTwo(Arrays.asList()));
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     // Take input, turn into usable form
     String filename = Global.testPath + "_2018/day03_01" + Global.testExt;
