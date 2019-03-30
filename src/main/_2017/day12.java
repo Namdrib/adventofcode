@@ -1,8 +1,6 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -124,17 +122,6 @@ public class day12 {
 
   public static void main(String[] args) {
     day12 a = new day12();
-
-    if (args.length > 0) {
-      ArrayList<String> input = new ArrayList<String>(Arrays.asList("0 <-> 2", "1 <-> 1",
-          "2 <-> 0, 3, 4", "3 <-> 2, 4", "4 <-> 2, 3, 6", "5 <-> 6", "6 <-> 4, 5"));
-
-      a.buildGraph(input);
-      assertEquals(6, a.programsWithID(0).size());
-      assertEquals(2, a.numberOfGroups());
-
-      System.out.println("Tests successful!");
-    }
 
     List<String> input = new ArrayList<>();
 

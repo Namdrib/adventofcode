@@ -1,8 +1,6 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -23,8 +21,6 @@ public class day16 {
     String line = new String(original);
 
     for (long i = 0; i < times; i++) {
-      if (i % 1000000 == 0)
-        System.out.println("Set " + i);
       for (String move : moves) {
         line = performMove(line, move);
       }
@@ -32,7 +28,6 @@ public class day16 {
       // Find a cycle (a point after which the line is the same as original
       // then we know don't need to keep repeating that same set.
       if (i > 0 && line.equals(original)) {
-        System.out.println("same after " + (i + 1) + " times");
         times %= (i + 1); // zero-indexed
         i = -1; // loop increments i after statement
       }
@@ -81,13 +76,6 @@ public class day16 {
 
   public static void main(String[] args) {
     day16 a = new day16();
-    if (args.length > 0) {
-      assertEquals("baedc", a.dance(5, Arrays.asList("s1", "x3/4", "pe/b"), 1));
-      assertEquals("ceadb", a.dance(5, Arrays.asList("s1", "x3/4", "pe/b"), 2));
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     List<String> input = new ArrayList<>();
 

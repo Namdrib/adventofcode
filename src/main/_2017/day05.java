@@ -1,8 +1,6 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -34,15 +32,6 @@ public class day05 {
 
   public static void main(String[] args) {
     day05 a = new day05();
-
-    if (args.length > 0) {
-      List<Integer> input = Arrays.asList(0, 3, 0, 1, -3);
-      assertEquals(5, a.numMovesToEscape(new ArrayList<>(input), false));
-      assertEquals(10, a.numMovesToEscape(new ArrayList<>(input), true));
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     List<Integer> input = new ArrayList<Integer>();
 

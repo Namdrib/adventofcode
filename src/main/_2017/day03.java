@@ -1,6 +1,5 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -15,16 +14,6 @@ public class day03 {
 
   public day03() {
     ;
-  }
-
-  private <T> void print2DList(List<List<T>> input) {
-    for (List<T> list : input) {
-      for (T elem : list) {
-        System.out.print(String.format("%7d", elem));
-      }
-      System.out.println();
-    }
-    System.out.println();
   }
 
   private int gridDimFor(int input) {
@@ -82,9 +71,6 @@ public class day03 {
 
     }
 
-    System.err.println("Final: ");
-    print2DList(out);
-
     return out;
   }
 
@@ -139,30 +125,7 @@ public class day03 {
 
   public static void main(String[] args) {
     day03 a = new day03();
-    String pathToSeq = "2017/tests/a141481.txt";
-
-    if (args.length > 0) {
-      // Part 1
-      assertEquals(0, a.stepsFromGrid(1));
-      assertEquals(3, a.stepsFromGrid(12));
-      assertEquals(2, a.stepsFromGrid(23));
-      assertEquals(31, a.stepsFromGrid(1024));
-
-      // Part 2
-      assertEquals(4, a.firstLargerThan(2, pathToSeq));
-      assertEquals(4, a.firstLargerThan(3, pathToSeq));
-      assertEquals(5, a.firstLargerThan(4, pathToSeq));
-      assertEquals(10, a.firstLargerThan(5, pathToSeq));
-      assertEquals(10, a.firstLargerThan(6, pathToSeq));
-      assertEquals(10, a.firstLargerThan(7, pathToSeq));
-      assertEquals(10, a.firstLargerThan(8, pathToSeq));
-      assertEquals(10, a.firstLargerThan(9, pathToSeq));
-      assertEquals(11, a.firstLargerThan(10, pathToSeq));
-      assertEquals(23, a.firstLargerThan(11, pathToSeq));
-
-      System.out.println("Tests successful!");
-      return;
-    }
+    String pathToSeq = "src/test/_2017/a141481.txt";
 
     // Take input, turn into usable form
     int input = 1;

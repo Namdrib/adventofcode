@@ -1,6 +1,5 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -149,17 +148,6 @@ public class day18 {
 
   public static void main(String[] args) {
     day18 a = new day18();
-    if (args.length > 0) {
-      // perform tests
-      String filename = Global.testPath + "_2017/day18_00" + Global.testExt;
-      List<String> instructions = Util.readFileIntoListString(filename);
-
-      assertEquals(4, a.partOne(instructions));
-      assertEquals(0, a.partTwo());
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     // Read a file name containing the instructions
     String filename = Global.testPath + "_2017/day18_01" + Global.testExt;

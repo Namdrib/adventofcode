@@ -1,8 +1,6 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -218,18 +216,6 @@ public class day07 {
 
   public static void main(String[] args) {
     day07 a = new day07();
-
-    if (args.length > 0) {
-      a.buildTree(Arrays.asList("pbga (66)", "xhth (57)", "ebii (61)", "havc (66)", "ktlj (57)",
-          "fwft (72) -> ktlj, cntj, xhth", "qoyq (66)", "padx (45) -> pbga, havc, qoyq",
-          "tknk (41) -> ugml, padx, fwft", "jptl (61)", "ugml (68) -> gyxo, ebii, jptl",
-          "gyxo (61)", "cntj (57)"));
-      assertEquals("tknk", a.getBottomNode().name);
-      assertEquals(60, a.getCorrectWeight());
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     List<String> input = new ArrayList<>();
 

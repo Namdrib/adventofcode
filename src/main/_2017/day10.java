@@ -1,6 +1,5 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -147,25 +146,6 @@ public class day10 {
 
   public static void main(String[] args) {
     day10 a = new day10();
-    if (args.length > 0) {
-      a.init(4);
-      assertEquals(Arrays.asList(3, 4, 2, 1, 0), a.partOne(Arrays.asList(3, 4, 1, 5)));
-
-      // Intermediate functions
-      assertEquals(Arrays.asList(64),
-          a.denseHash(Arrays.asList(65, 27, 9, 1, 4, 3, 40, 50, 91, 7, 6, 0, 2, 5, 68, 22)));
-
-      assertEquals("4007ff", a.toHexadecimal(Arrays.asList(64, 7, 255)));
-
-      // Part two
-      assertEquals("a2582a3a0e66e6e86e3812dcb672a272", a.partTwo(""));
-      assertEquals("33efeb34ea91902bb2f59c9920caa6cd", a.partTwo("AoC 2017"));
-      assertEquals("3efbe78a8d82f29979031a4aa0b16a9d", a.partTwo("1,2,3"));
-      assertEquals("63960835bcdc130f0b66d7ff4f6a5a8e", a.partTwo("1,2,4"));
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     // Take input, turn into usable form
     String input = null;

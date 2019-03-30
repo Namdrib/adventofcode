@@ -1,7 +1,5 @@
 package _2017;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,20 +49,6 @@ public class day04 {
 
   public static void main(String[] args) {
     day04 a = new day04();
-
-    if (args.length > 0) {
-      assertTrue(a.isValidPassphrase("aa bb cc dd ee", false));
-      assertFalse(a.isValidPassphrase("aa bb cc dd aa", false));
-      assertTrue(a.isValidPassphrase("aa bb cc dd aaa", false));
-
-      assertTrue(a.isValidPassphrase("abcde fghij", true));
-      assertFalse(a.isValidPassphrase("abcde xyz ecdab", true));
-      assertTrue(a.isValidPassphrase("a ab abc abd abf abj", true));
-      assertTrue(a.isValidPassphrase("iiii oiii ooii oooi oooo", true));
-      assertFalse(a.isValidPassphrase("oiii ioii iioi iiio", true));
-      System.out.println("Tests successful!");
-      return;
-    }
 
     List<String> inputs = new ArrayList<String>();
 

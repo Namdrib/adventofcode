@@ -1,13 +1,13 @@
 package _2017;
 
-import static org.junit.Assert.assertEquals;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import util.*;
+import util.Global;
+import util.IntegerPair;
 
 // https://adventofcode.com/2017/day/22
 
@@ -24,7 +24,7 @@ public class day22 {
   final static int[] dirX = {0, 1, 0, -1};
   final static int[] dirY = {-1, 0, 1, 0};
 
-  private enum InfectionState {
+  enum InfectionState {
     CLEAN, WEAKENED, INFECTED, FLAGGED
   };
 
@@ -38,7 +38,7 @@ public class day22 {
    * @param filename path to file containing a grid of dots and hashes
    * @return a set of infected nodes, each node given by an IntegerPair
    */
-  private Map<IntegerPair, InfectionState> readInfected(String filename) {
+  Map<IntegerPair, InfectionState> readInfected(String filename) {
     Map<IntegerPair, InfectionState> out = new HashMap<>();
 
     try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
@@ -148,20 +148,6 @@ public class day22 {
 
   public static void main(String[] args) {
     day22 a = new day22();
-    if (args.length > 0) {
-      // perform tests
-      String filename = Global.testPath + "_2017/day22_00" + Global.testExt;
-      Map<IntegerPair, InfectionState> infected = a.readInfected(filename);
-      assertEquals(5, a.solve(infected, 7, false));
-      assertEquals(41, a.solve(infected, 70, false));
-      assertEquals(5_587, a.solve(infected, 10_000, false));
-
-      assertEquals(26, a.solve(infected, 100, true));
-      assertEquals(2_511_944, a.solve(infected, 10_000_000, true));
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     // Do something with the input and a
     String filename = Global.testPath + "_2017/day22_01" + Global.testExt;

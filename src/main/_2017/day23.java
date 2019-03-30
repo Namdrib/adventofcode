@@ -115,11 +115,6 @@ public class day23 extends day {
 
   public static void main(String[] args) {
     day a = new day23();
-    if (args.length > 0) {
-      // perform tests
-      System.out.println("Tests successful!");
-      return;
-    }
 
     // Take input, turn into usable form
     String filename = Global.testPath + "_2017/day23_01" + Global.testExt;

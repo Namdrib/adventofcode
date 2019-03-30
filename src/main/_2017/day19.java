@@ -140,17 +140,6 @@ public class day19 {
 
   public static void main(String[] args) {
     day19 a = new day19();
-    if (args.length > 0) {
-      // perform tests
-      String filename = Global.testPath + "_2017/day19_00" + Global.testExt;
-      List<String> network = Util.readFileIntoListString(filename);
-      a.solve(network);
-      assertEquals("ABCDEF", a.partOne());
-      assertEquals(38, a.partTwo());
-
-      System.out.println("Tests successful!");
-      return;
-    }
 
     // Take input, turn into usable form
     String filename = Global.testPath + "_2017/day19_01" + Global.testExt;
