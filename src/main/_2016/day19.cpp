@@ -4,30 +4,55 @@ using namespace std;
 
 // https://adventofcode.com/2016/day/19
 
-int solve(int input, bool part_two)
+// every iteration, current_elf steals all the presents from target_elf
+// elves without presents are out
+// return the last elf remaining
+int solve(int input, int part_two)
 {
-	// create list with that number of elves
-	list<int> elves;
-	for (int i = 1; i <= input; i++)
+	// create elves from 1 to input
+	list<int> elves(input);
+	iota(all(elves), 1);
+
+	auto current_elf = elves.begin();
+	auto target_elf = current_elf;
+
+	if (part_two)
 	{
-		elves.push_back(i);
+		advance(target_elf, elves.size()/2);
 	}
 
-	auto it = elves.begin();
 	while (elves.size() > 1)
 	{
 		// advance and wrap-around
-		auto next = it;
-		if (++next == elves.end())
+		if (!part_two)
 		{
-			next = elves.begin();
+			target_elf = current_elf;
+			if (++target_elf == elves.end())
+			{
+				target_elf = elves.begin();
+			}
 		}
 
 		// steal presents and wrap-around if necessary
-		elves.erase(next);
-		if (++it == elves.end())
+		target_elf = elves.erase(target_elf);
+		if (target_elf == elves.end())
 		{
-			it = elves.begin();
+			target_elf = elves.begin();
+		}
+		if (part_two)
+		{
+			if (elves.size() % 2 == 0)
+			{
+				if (++target_elf == elves.end())
+				{
+					target_elf = elves.begin();
+				}
+			}
+		}
+
+		if (++current_elf == elves.end())
+		{
+			current_elf = elves.begin();
 		}
 	}
 
