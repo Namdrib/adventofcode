@@ -4,7 +4,7 @@ using namespace std;
 
 // https://adventofcode.com/2016/day/19
 
-// every iteration, current_elf steals all the presents from target_elf
+// every iteration, current_elf steals all the presents from steal_from
 // elves without presents are out
 // return the last elf remaining
 int solve(int input, int part_two)
@@ -14,42 +14,27 @@ int solve(int input, int part_two)
 	iota(all(elves), 1);
 
 	auto current_elf = elves.begin();
-	auto target_elf = current_elf;
-
-	if (part_two)
-	{
-		advance(target_elf, elves.size()/2);
-	}
+	auto steal_from = next(current_elf, part_two ? elves.size()/2 : 1);
 
 	while (elves.size() > 1)
 	{
-		// advance and wrap-around
-		if (!part_two)
-		{
-			target_elf = current_elf;
-			if (++target_elf == elves.end())
-			{
-				target_elf = elves.begin();
-			}
-		}
-
 		// steal presents and wrap-around if necessary
-		target_elf = elves.erase(target_elf);
-		if (target_elf == elves.end())
+		steal_from = elves.erase(steal_from);
+		if (steal_from == elves.end())
 		{
-			target_elf = elves.begin();
+			steal_from = elves.begin();
 		}
-		if (part_two)
+
+		// advance steal_from unless (part two and odd size remaining)
+		if (!(part_two && (elves.size() & 1)))
 		{
-			if (elves.size() % 2 == 0)
+			if (++steal_from == elves.end())
 			{
-				if (++target_elf == elves.end())
-				{
-					target_elf = elves.begin();
-				}
+				steal_from = elves.begin();
 			}
 		}
 
+		// advance current_elf and wrap-around
 		if (++current_elf == elves.end())
 		{
 			current_elf = elves.begin();
