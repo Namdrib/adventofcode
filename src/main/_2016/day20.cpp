@@ -39,6 +39,7 @@ size_t solve(const vector<pair<size_t, size_t>> &blocked_ranges, bool part_two) 
 	}
 	return collapsed_ranges[0].second + 1;
 }
+
 int main() {
 	// take input in pairs of numbers
 	vector<pair<size_t, size_t>> blocked_ranges;
