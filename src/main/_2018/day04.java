@@ -1,10 +1,7 @@
 package _2018;
 
-import static org.junit.Assert.assertEquals;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import template.day;
 import util.Global;
 import util.Util;
