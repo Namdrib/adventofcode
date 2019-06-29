@@ -1,9 +1,8 @@
 package _2016;
 
-import static org.junit.Assert.assertEquals;
-import java.util.Scanner;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Scanner;
 
 // https://adventofcode.com/2016/day/05
 
