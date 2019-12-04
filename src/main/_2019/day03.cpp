@@ -98,7 +98,7 @@ int solve(vector<string> line1, vector<string> line2, bool part_two = false)
 	// Search through points_visited to find
 	// the points where line1 and line2 have been through
 	// calculate the output
-	int answer = INT_MAX;
+	int answer = numeric_limits<int>::max();
 	for (auto p : points_visited)
 	{
 		if (p.second.first == 1)
