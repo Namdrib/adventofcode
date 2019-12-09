@@ -94,9 +94,7 @@ int main()
 {
 	string s;
 	getline(cin, s);
-	vector<long long> v = extract_integrals_from<long long>(s);
-
-	// cout << "input is " << v << endl;
+	vector<long long> v = extract_nums_from<long long>(s);
 
 	map<size_t, long long> m;
 	for (size_t i = 0; i < v.size(); i++)
@@ -104,6 +102,6 @@ int main()
 		m[i] = v[i];
 	}
 
-	cout << "Part 1: " << solve(m, false) << endl; // 209 too low, 2934832134 too high
+	cout << "Part 1: " << solve(m, false) << endl;
 	cout << "Part 2: " << solve(m, true) << endl;
 }
