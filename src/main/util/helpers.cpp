@@ -163,15 +163,23 @@ vector<int> digits_of(string s) {
 // extracts all tokens resembling numbers (positive and negative)
 // does not work with decimal numbers or scientific notation (e.g. 9e9)
 vector<int> extract_nums_from(string s) {
+	return extract_nums_from<int>(s);
+}
+
+// extracts all tokens resembling numbers (positive and negative)
+// does not work with decimal numbers or scientific notation (e.g. 9e9)
+// integrals only
+template <typename T>
+vector<T> extract_integrals_from(string s) {
 	const regex digits_regex("(-?\\d+)+");
 
 	auto begin_it = sregex_iterator(all(s), digits_regex);
 	auto end_it = sregex_iterator();
 
-	vector<int> out;
+	vector<T> out;
 	for (auto it = begin_it; it != end_it; ++it) {
 		smatch match = *it;
-		out.push_back(stoi(match.str()));
+		out.push_back((T) stoll(match.str()));
 	}
 
 	return out;
