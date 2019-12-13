@@ -116,14 +116,10 @@ int solve(vector<long long> v, bool part_two)
 		v[0] = 2;
 	}
 
-	long long score;
-
-	int max_x = 0;
-	int max_y = 0;
-
+	long long score = 0;
 	int paddle_x = 0;
 	int ball_x = 0;
-	int input;
+	int input = 0;
 
 	intcode_runner icr(v);
 	map<pair<int, int>, int> board;
@@ -140,8 +136,6 @@ int solve(vector<long long> v, bool part_two)
 		}
 		else
 		{
-			max_x = max(max_x, x);
-			max_y = max(max_y, y);
 			board[make_pair(x, y)] = id;
 
 			if (id == 3)
@@ -154,18 +148,8 @@ int solve(vector<long long> v, bool part_two)
 			}
 		}
 
-		if (paddle_x < ball_x)
-		{
-			input = 1;
-		}
-		else if (paddle_x == ball_x)
-		{
-			input = 0;
-		}
-		else
-		{
-			input = -1;
-		}
+		input = paddle_x < ball_x ? 1 :
+		        paddle_x > ball_x ? -1 : 0;
 	}
 
 	if (part_two)

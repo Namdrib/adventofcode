@@ -11,9 +11,7 @@ class moon_t
 public:
 
 	int id;
-
 	vector<int> pos;
-
 	vector<int> vel;
 
 	moon_t(int x, int y, int z)
@@ -24,7 +22,6 @@ public:
 		this->pos[2] = z;
 
 		vel.resize(pos.size(), 0);
-
 		id = global_moon_id++;
 	}
 
@@ -190,6 +187,6 @@ int main()
 		moons.push_back(moon_t(temp[0], temp[1], temp[2]));
 	}
 
-	cout << "Part 1:" << solve(moons, false) << endl;
+	cout << "Part 1: " << solve(moons, false) << endl;
 	cout << "Part 2: " << solve(moons, true) << endl;
 }
