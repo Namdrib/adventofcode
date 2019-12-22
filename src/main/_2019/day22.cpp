@@ -11,7 +11,6 @@ size_t deal_into_new_stack(size_t num_elements, size_t pos)
 
 size_t cut(size_t num_elements, long long pos, long long n)
 {
-	// return (pos - n) % num_elements;
 	if (n < 0)
 	{
 		n += num_elements;
@@ -25,15 +24,9 @@ size_t cut(size_t num_elements, long long pos, long long n)
 	return pos;
 }
 
-// not feasible for huge numbers
 size_t deal_with_increment(size_t num_elements, size_t pos, size_t n)
 {
-	long long current_position = 0;
-	for (size_t i = 0; i < pos; i++)
-	{
-		current_position = (current_position + n) % num_elements;
-	}
-	return current_position;
+	return (pos * n) % num_elements;
 }
 
 int solve(const vector<vector<string>> &input, bool part_two)
@@ -110,5 +103,6 @@ int main()
 	}
 
 	cout << "Part 1: " << solve(instructions, false) << endl;
-	// cout << "Part 2: " << solve(instructions, true) << endl;
+	reverse(all(instructions));
+	cout << "Part 2: " << solve(instructions, true) << endl;
 }
