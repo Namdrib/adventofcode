@@ -123,6 +123,22 @@ public:
 	}
 };
 
+// find the value at position (x, y)
+int get_value_at(vector<long long> v, int x, int y)
+// int get_value_at(intcode_runner icr, int x, int y)
+{
+	intcode_runner icr(v);
+	int out = 0;
+	icr.set_input(vector<int>{x, y});
+	while (icr.keep_running)
+	{
+		out = icr.process_intcode();
+	}
+
+	cout << "out = " << out << endl;
+	return out;
+}
+
 int solve(vector<long long> v, bool part_two)
 {
 	if (part_two)
@@ -130,29 +146,40 @@ int solve(vector<long long> v, bool part_two)
 		// v[0] = 2;
 	}
 
+	// const int x_start = 350;
+	// const int y_start = 500;
+	// const int x_end = 425;
+	// const int y_end = 550;
 	const int x_start = 0;
-	const int y_start = 0;
-	const int x_end = 50;
-	const int y_end = 50;
-	vector<vector<int>> board(y_end - y_start + 1, vector<int>(x_end - x_start + 1, 0));
+	const int y_start = 10;
+	const int x_end = 0;
+	const int y_end = 10;
+	vector<vector<int>> board(y_end - y_start, vector<int>(x_end - x_start, 0));
 
 	int out = 0;
 	for (size_t y = y_start; y < y_end; y++)
 	{
 		for (size_t x = x_start; x < x_end; x++)
 		{
-			intcode_runner icr(v);
-			icr.set_input(vector<int>{x - x_start, y - y_start});
-			while (icr.keep_running)
-			{
-				int output = icr.process_intcode();
-				if (output == 1)
+			// intcode_runner icr(v);
+			int output = get_value_at(v, x, y);
+			// icr.set_input(vector<int>{x, y});
+			// while (icr.keep_running)
+			// {
+			// 	int output = icr.process_intcode();
+			// 	cout << "get_at(" << x << ", " << y << ") = " << output << endl;
+				// if (output > 0)
 				{
-					board[y][x] = output;
+					board[y - y_start][x - x_start] = output;
 					out++;
 				}
-			}
+			// }
 		}
+	}
+
+	for (auto i : board)
+	{
+		cout << i << endl;
 	}
 
 	return out;
