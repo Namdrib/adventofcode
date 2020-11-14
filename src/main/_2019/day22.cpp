@@ -4,6 +4,10 @@ using namespace std;
 
 // http://adventofcode.com/2019/day/22
 
+// to find the element at position N at the end,
+// need to apply the instructions in reverse
+// and apply the inverse of the steps
+
 size_t deal_into_new_stack(size_t num_elements, size_t pos)
 {
 	return num_elements - pos - 1;
@@ -33,6 +37,8 @@ int solve(const vector<vector<string>> &input, bool part_two)
 {
 	long long num_cards = part_two ? 119315717514047 : 10007;
 	long long pos = part_two ? 2020 : 2019;
+	long long a = 1;
+	long long b = 0;
 
 	for (auto instruction : input)
 	{
