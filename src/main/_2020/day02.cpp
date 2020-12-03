@@ -83,4 +83,3 @@ int main()
 	cout << "Part 1: " << solve(policies, false) << endl;
 	cout << "Part 2: " << solve(policies, true) << endl;
 }
-

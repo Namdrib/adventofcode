@@ -11,7 +11,7 @@ int part_one(const vector<int> &in, int target)
 
 	// start at the ends of the sorted vector
 	int start = 0;
-	int end = v.size()-1;
+	int end = v.size() - 1;
 
 	// tick in from the ends until the sum is right
 	while (true)
@@ -44,9 +44,9 @@ int part_two(const vector<int> &in, int target)
 	vector<int> v(in);
 	sort(all(v));
 
-	for (size_t i=0; i<v.size()-2; i++)
+	for (size_t i = 0; i < v.size() - 2; i++)
 	{
-		for (size_t j=i+1; j<v.size()-1; j++)
+		for (size_t j = i + 1; j < v.size() - 1; j++)
 		{
 			// if the sum of two is already larger than target, don't bother with more
 			int sum_i_j = v[i] + v[j];
@@ -56,7 +56,7 @@ int part_two(const vector<int> &in, int target)
 			}
 
 			// check the sum of three
-			for (size_t k=j+1; k<v.size(); k++)
+			for (size_t k = j + 1; k  <v.size(); k++)
 			{
 				if (sum_i_j + v[k] == target)
 				{
@@ -76,4 +76,3 @@ int main()
 	cout << "Part 1: " << part_one(input, 2020) << endl;
 	cout << "Part 2: " << part_two(input, 2020) << endl;
 }
-
