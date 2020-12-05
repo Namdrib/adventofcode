@@ -187,10 +187,21 @@ vector<int> extract_nums_from(string s) {
 	return extract_nums_from<int>(s);
 }
 
+// whether target is between lo and hi (inclusive both sides)
+template <typename R, typename S, typename T>
+bool in_range(R target, S lo, T hi) {
+	return target >= lo && target <= hi;
+}
+
 // returns true iff index is in the bounds of the container, false otherwise
 template <typename T, template <typename, typename = allocator<T>> class Container>
 bool in_bounds(const Container<T> &c, int index) {
 	return index >= 0 && index < c.size();
 }
 
+bool roughly_equal(double d1, double d2, double tolerance = 0.005) {
+	return abs(d1 - d2) <= tolerance;
+}
+
 #endif // HELPERS_CPP
+

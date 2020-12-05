@@ -34,20 +34,21 @@ class passport
 				return false;
 			}
 
+
 			int byr = extract_nums_from<int>(fields["byr"])[0];
-			if (byr < 1920 || byr > 2002)
+			if (!in_range(byr, 1920, 2002))
 			{
 				return false;
 			}
 
 			int iyr = extract_nums_from<int>(fields["iyr"])[0];
-			if (iyr < 2010 || iyr > 2020)
+			if (!in_range(iyr, 2010, 2020))
 			{
 				return false;
 			}
 
 			int eyr = extract_nums_from<int>(fields["eyr"])[0];
-			if (eyr < 2020 || eyr > 2030)
+			if (!in_range(eyr, 2020, 2030))
 			{
 				return false;
 			}
@@ -64,14 +65,14 @@ class passport
 
 			if (hgt_unit == "cm")
 			{
-				if (hgt < 150 || hgt > 193)
+				if (!in_range(hgt, 150, 193))
 				{
 					return false;
 				}
 			}
 			else if (hgt_unit == "in")
 			{
-				if (hgt < 59 || hgt > 76)
+				if (!in_range(hgt, 59, 76))
 				{
 					return false;
 				}

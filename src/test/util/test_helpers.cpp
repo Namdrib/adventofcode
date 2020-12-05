@@ -28,6 +28,15 @@ void test_extract_nums_from()
 	assert(extract_nums_from("x=498, y=2..4") == (vector<int>{498, 2, 4})); // 2018 day 17
 }
 
+void test_in_range()
+{
+	assert(in_range(1, 1, 1) == true);
+	assert(in_range(2, 1, 2) == true);
+	assert(in_range(2, 1, 2) == true);
+	assert(in_range(3, 1, 2) == false);
+	assert(in_range(-1, 1, 2) == false);
+}
+
 void test_in_bounds()
 {
 	vector<int> v(5);
@@ -36,12 +45,17 @@ void test_in_bounds()
 	for (int i = 0; i < 5; i++) {
 		assert(in_bounds(v, i) == true);
 	}
-	for (int i = 5; i < 10; i++) {
-		assert(in_bounds(v, i) == false);
+	for (int j = 5; j < 10; j++) {
+		assert(in_bounds(v, j) == false);
 	}
 
 	v.resize(0);
 	assert(in_bounds(v, 0) == false);
+}
+
+void test_roughly_equal()
+{
+	// TODO
 }
 
 int main()
@@ -49,5 +63,6 @@ int main()
 	test_clamp();
 	test_extract_nums_from();
 	test_in_bounds();
+	test_roughly_equal();
 	cout << "Tests successful" << endl;
 }
