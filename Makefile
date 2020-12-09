@@ -9,6 +9,9 @@ JFLAGS = -Xlint
 %.class: %.java
 	javac $^ $(JFLAGS)
 
+%.exe: %.cs
+	mcs /out:$@ $^
+
 clean:
 	find ./ -type f \( -iname a -o -iname \*.class -o -iname \*.exe -o -name \*.bin \) -print0 -delete
 
