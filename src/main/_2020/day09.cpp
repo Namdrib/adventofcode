@@ -57,11 +57,6 @@ size_t solve(const vector<int> &in, bool part_two = false)
 
 	// from each position, accumulate the numbers leading up to invalid_number
 	// use this to determine which indices mark the start/end fo the set
-	// thus, each element in the matrix is the cumulative sum of numbers starting
-	// from the row number, until the column number
-	vector<vector<size_t>> matrix(in.size(), vector<size_t>(in.size(), 0));
-	size_t start_index = 0;
-	size_t end_index = 0;
 	for (size_t i = 0; i < in.size(); i++)
 	{
 		if (i == invalid_number_index)
@@ -72,20 +67,20 @@ size_t solve(const vector<int> &in, bool part_two = false)
 		size_t sum = in[i];
 		for (size_t j = i + 1; j < in.size(); j++)
 		{
+			// don't search the invalid number
 			if (j == invalid_number_index)
 			{
 				continue;
 			}
 
 			sum += in[j];
-			matrix[i][j] = sum;
 
 			// got the range, breaking
 			if (sum == invalid_number)
 			{
-				start_index = i;
-				end_index = j + 1;
-				goto outer_loop;
+				// return the sum of the smallest and largest elements in that range
+				auto result = minmax_element(in.begin() + i, in.begin() + j + 1);
+				return *result.first + *result.second;
 			}
 
 			// everything after this will continue to be > invalid_number
@@ -96,11 +91,7 @@ size_t solve(const vector<int> &in, bool part_two = false)
 		}
 	}
 
-outer_loop: // fuck
-
-	// return the sum of the smallest and largest elements in that range
-	auto result = minmax_element(in.begin() + start_index, in.begin() + end_index);
-	return *result.first + *result.second;
+	return -1;
 }
 
 
