@@ -86,6 +86,22 @@ vector<T> split_str_by_whitespace(const string &str)
 	return vector<T>(begin, end);
 }
 
+vector<string> split_string_by(string s, const string delim)
+{
+	vector<string> out;
+
+	size_t pos = 0;
+	string token;
+	while ((pos = s.find(delim)) != string::npos)
+	{
+		token = s.substr(0, pos);
+		out.push_back(token);
+		s.erase(0, pos + delim.length());
+	}
+	out.push_back(s);
+	return out;
+}
+
 // used to input into a vector from input stream
 // could be stdin (pass cin), or a file stream
 template <typename T>
