@@ -58,22 +58,6 @@ public:
 
 };
 
-vector<string> split_string_by(string s, const string delim) {
-
-	vector<string> out;
-
-	size_t pos = 0;
-	string token;
-	while ((pos = s.find(delim)) != string::npos) {
-	
-		token = s.substr(0, pos);
-		out.push_back(token);
-		s.erase(0, pos + delim.length());
-	}
-	out.push_back(s);
-	return out;
-}
-
 void construct_set(set<string> &s, string &str) {
 	if (str.empty()) {
 		return;
@@ -118,7 +102,7 @@ void fight(vector<group> &a, vector<group> &b)
 	{
 		int best_damage = -1;
 		int target = -1;
-		
+
 		for(size_t j = 0; j < b.size(); j++) {
 			int damage = a[i].damage_to(b[j]);
 			if (damage > best_damage) {
