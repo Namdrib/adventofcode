@@ -20,7 +20,7 @@ bool two_nums_sum_to(const vector<int> &search_space, int target)
 	return false;
 }
 
-size_t solve(const vector<int> &in, bool part_two = false)
+size_t solve(const vector<long> &in, bool part_two = false)
 {
 	const int preamble_size = 25;
 
@@ -97,12 +97,7 @@ size_t solve(const vector<int> &in, bool part_two = false)
 
 int main(int argc, char** argv)
 {
-	vector<string> raw_input = split_istream_per_line(cin);
-	vector<int> input;
-	for (auto s : raw_input)
-	{
-		input.push_back(stol(s));
-	}
+	vector<long> input = split_istream_by_whitespace<long>(cin);
 
 	cout << "Part 1: " << solve(input, false) << endl;
 	cout << "Part 2: " << solve(input, true) << endl;
