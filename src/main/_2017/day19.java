@@ -141,7 +141,7 @@ public class day19 {
     day19 a = new day19();
 
     // Take input, turn into usable form
-    String filename = Global.testPath + "_2017/day19_01" + Global.testExt;
+    String filename = Global.testPath + "_2017/day19_00" + Global.testExt;
     List<String> network = Util.readFileIntoListString(filename);
     a.solve(network);
 

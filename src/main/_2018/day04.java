@@ -139,7 +139,7 @@ public class day04 extends day {
     day a = new day04();
 
     // Take input, turn into usable form
-    String filename = Global.testPath + "_2018/day04_01" + Global.testExt;
+    String filename = Global.testPath + "_2018/day04_00" + Global.testExt;
     List<String> input = Util.readFileIntoListString(filename);
     a.presolve(input);
 
