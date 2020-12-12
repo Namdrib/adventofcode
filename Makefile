@@ -16,8 +16,9 @@ clean:
 	find ./ -type f \( -iname a -o -iname \*.class -o -iname \*.exe -o -name \*.bin \) -print0 -delete
 
 # Run tests like this:
-## compile
-# a = "src/main/_2018/day01(.bin)" # .bin if c++
+# compile
+# a="src/main/_2020/day01.bin"
 
-## run
-# ./"$a" < src/test/_2018/day01_01.in
+# run main input
+# make "$a" && time ./$a < $(echo "${a%*.*}_00.in" | sed 's/main/test/')
+
