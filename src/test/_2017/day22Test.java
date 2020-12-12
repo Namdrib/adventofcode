@@ -16,7 +16,7 @@ public class day22Test {
   @Before
   public void setUp() throws Exception {
     a = new day22();
-    String filename = Global.testPath + "_2017/day22_00" + Global.testExt;
+    String filename = Global.testPath + "_2017/day22_01" + Global.testExt;
     infected = a.readInfected(filename);
   }
 
@@ -27,7 +27,7 @@ public class day22Test {
     assertEquals(5_587, a.solve(infected, 10_000, false));
 
     assertEquals(26, a.solve(infected, 100, true));
-    
+
     // this one takes a long time
     // assertEquals(2_511_944, a.solve(infected, 10_000_000, true));
   }

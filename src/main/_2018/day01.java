@@ -40,7 +40,7 @@ public class day01 extends day {
     day01 a = new day01();
 
     // Take input, turn into usable form
-    String filename = Global.testPath + "_2018/day01_01" + Global.testExt;
+    String filename = Global.testPath + "_2018/day01_00" + Global.testExt;
 
     List<String> input = Util.readFileIntoListString(filename);
 

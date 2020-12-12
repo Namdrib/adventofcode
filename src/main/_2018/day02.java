@@ -11,7 +11,7 @@ public class day02 extends day {
 
   /**
    * Return true if `s` contains `c` exactly `n` times
-   * 
+   *
    * @param s the input string
    * @param c the character to search for
    * @param n the desired frequency of c in s
@@ -55,7 +55,7 @@ public class day02 extends day {
   }
 
   /**
-   * 
+   *
    * @param a first query string
    * @param b second query string
    * @return the number of indices at which a and b have differing letters
@@ -98,7 +98,7 @@ public class day02 extends day {
     day a = new day02();
 
     // Take input, turn into usable form
-    String filename = Global.testPath + "_2018/day02_01" + Global.testExt;
+    String filename = Global.testPath + "_2018/day02_00" + Global.testExt;
     List<String> input = Util.readFileIntoListString(filename);
 
     // Do something with the input and a

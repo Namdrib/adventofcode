@@ -15,7 +15,7 @@ public class day18Test {
   @Before
   public void setUp() throws Exception {
     a = new day18();
-    String filename = Global.testPath + "_2017/day18_00" + Global.testExt;
+    String filename = Global.testPath + "_2017/day18_01" + Global.testExt;
     instructions = Util.readFileIntoListString(filename);
   }
 

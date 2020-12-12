@@ -15,7 +15,7 @@ public class day19Test {
   @Before
   public void setUp() throws Exception {
     a = new day19();
-    String filename = Global.testPath + "_2017/day19_00" + Global.testExt;
+    String filename = Global.testPath + "_2017/day19_01" + Global.testExt;
     network = Util.readFileIntoListString(filename);
     a.solve(network);
   }

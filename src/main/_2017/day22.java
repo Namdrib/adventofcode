@@ -34,7 +34,7 @@ public class day22 {
 
   /**
    * Initialise the program state by reading an infected file
-   * 
+   *
    * @param filename path to file containing a grid of dots and hashes
    * @return a set of infected nodes, each node given by an IntegerPair
    */
@@ -66,7 +66,7 @@ public class day22 {
   }
 
   /**
-   * 
+   *
    * @param initialInfected
    * @param numBursts the number of bursts of activity
    * @param partTwo
@@ -150,7 +150,7 @@ public class day22 {
     day22 a = new day22();
 
     // Do something with the input and a
-    String filename = Global.testPath + "_2017/day22_01" + Global.testExt;
+    String filename = Global.testPath + "_2017/day22_00" + Global.testExt;
     Map<IntegerPair, InfectionState> infected = a.readInfected(filename);
 
     System.out.println("Part 1: " + a.solve(infected, 10_000, false));

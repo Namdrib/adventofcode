@@ -23,7 +23,7 @@ public class day18 {
 
   /**
    * Determine whether s refers to a register entry or a value
-   * 
+   *
    * @param s either a register entry or a value
    * @return true if the value given by <code>s</code> is a register entry
    */
@@ -38,7 +38,7 @@ public class day18 {
 
   /**
    * Return the value being referred to by s (whether directly or indirectly)
-   * 
+   *
    * @param s either a register entry or a value
    * @return the value given by register.get(s) if s is a register entry or the value s represents
    */
@@ -48,7 +48,7 @@ public class day18 {
 
   /**
    * Modify <code>registers</code> appropriately according to the provided instruction
-   * 
+   *
    * A list of all instructions are as follows:
    * <ul>
    * <li><code>snd X</code> plays a sound with a frequency equal to the value of X.
@@ -64,9 +64,9 @@ public class day18 {
    * greater than zero. (An offset of 2 skips the next instruction, an offset of -1 jumps to the
    * previous instruction, and so on.)
    * </ul>
-   * 
+   *
    * Assume all instructions are correctly formatted
-   * 
+   *
    * @param instruction instruction to process
    */
   private void processInstructions(List<String> instructions) {
@@ -150,7 +150,7 @@ public class day18 {
     day18 a = new day18();
 
     // Read a file name containing the instructions
-    String filename = Global.testPath + "_2017/day18_01" + Global.testExt;
+    String filename = Global.testPath + "_2017/day18_00" + Global.testExt;
 
     // Do something with the input and a
     List<String> instructions = Util.readFileIntoListString(filename);
