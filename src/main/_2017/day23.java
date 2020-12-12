@@ -21,7 +21,7 @@ public class day23 extends day {
 
   /**
    * Determine whether s refers to a register entry or a value
-   * 
+   *
    * @param s either a register entry or a value
    * @return true if the value given by <code>s</code> is a register entry
    */
@@ -36,7 +36,7 @@ public class day23 extends day {
 
   /**
    * Return the value being referred to by s (whether directly or indirectly)
-   * 
+   *
    * @param s either a register entry or a value
    * @return the value given by register.get(s) if s is a register entry or the value s represents
    */
@@ -117,7 +117,7 @@ public class day23 extends day {
     day a = new day23();
 
     // Take input, turn into usable form
-    String filename = Global.testPath + "_2017/day23_01" + Global.testExt;
+    String filename = Global.testPath + "_2017/day23_00" + Global.testExt;
 
     List<String> input = Util.readFileIntoListString(filename);
 
