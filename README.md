@@ -1,5 +1,15 @@
 # Advent of Code
 
+## Running days
+To run a day (c++ only) with main input, use:
+```
+a="src/main/_2020/day01.bin"
+make "$a" && time ./$a < $(echo "${a%*.*}_00.in" | sed 's/main/test/')
+```
+
+Some java files are hardcoded to run with the main input already
+Otherwise, anything that expects input to come from stdin, can be done similarly
+
 ## Directory sturcture
 ```
 adventofcode/Makefile (file)
@@ -38,5 +48,5 @@ Later, I'll move all my unit testing into here under `TestDayXX.java` (probably 
 - refer to year/day combinations as year/day (e.g. 2018/day01)
 
 - where possible, commit with the year/day combination to be as explicit as possible
-  - avoids unwanted confusion with mixing up the years
+	- this avoids unwanted confusion with mixing up the years
 
