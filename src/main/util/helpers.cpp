@@ -211,8 +211,8 @@ bool in_range(R target, S lo, T hi) {
 
 // returns true iff index is in the bounds of the container, false otherwise
 template <typename T, template <typename, typename = allocator<T>> class Container>
-bool in_bounds(const Container<T> &c, int index) {
-	return index >= 0 && index < c.size();
+bool in_bounds(const Container<T> &c, long index) {
+	return index >= 0 && index < static_cast<long>(c.size());
 }
 
 bool roughly_equal(double d1, double d2, double tolerance = 0.005) {
@@ -220,4 +220,3 @@ bool roughly_equal(double d1, double d2, double tolerance = 0.005) {
 }
 
 #endif // HELPERS_CPP
-

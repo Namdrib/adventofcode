@@ -4,7 +4,7 @@ using namespace std;
 
 // https://adventofcode.com/2020/day/3
 
-char extrapolate(const string &in, int pos)
+char extrapolate(const string &in, size_t pos)
 {
 	return in[pos % in.size()];
 }
@@ -25,7 +25,7 @@ size_t solve(const vector<string> &in, bool part_two = false)
 		// calculate the number of trees encountered going down a slope
 		// given by y_inc[i] and x_inc[i]
 		size_t num_trees = 0;
-		for (int y = 0, x = 0; y < in.size(); y += y_inc[i], x += x_inc[i])
+		for (size_t y = 0, x = 0; y < in.size(); y += y_inc[i], x += x_inc[i])
 		{
 			if (extrapolate(in[y], x) == '#')
 			{

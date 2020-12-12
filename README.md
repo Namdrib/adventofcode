@@ -27,7 +27,7 @@ contains test cases for each of the corresponding solutions, formatted as such:
 ```
 where xx is the day, and nn is the test case for that day
 
-Should use `*_00.txt` for the example small input/solution set and `*_01.in` for the actual input
+Should use `*_00.txt` for the actual input/solution set and `*_0[1-9].in` for smaller test inputs
 
 Later, I'll move all my unit testing into here under `TestDayXX.java` (probably c++ too, but not sure how yet)
 
@@ -39,3 +39,4 @@ Later, I'll move all my unit testing into here under `TestDayXX.java` (probably 
 
 - where possible, commit with the year/day combination to be as explicit as possible
   - avoids unwanted confusion with mixing up the years
+

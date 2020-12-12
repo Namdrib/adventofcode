@@ -77,6 +77,8 @@ size_t solve(const vector<string> &in, bool part_two = false)
 		// since it was pre-sorted, this is the highest
 		return seat_ids.back();
 	}
+
+	return 0;
 }
 
 
@@ -87,4 +89,3 @@ int main(int argc, char** argv)
 	cout << "Part 1: " << solve(input, false) << endl;
 	cout << "Part 2: " << solve(input, true) << endl;
 }
-

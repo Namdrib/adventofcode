@@ -10,10 +10,10 @@ public abstract class day {
    * Used for when there is common work to be done before partOne and partTwo then call this in
    * main. It is most likely some form of intermediary output is saved as a class member, then used
    * in solve or part 1 or part 2
-   * 
+   *
    * This usually involves processing the input in some way to work with something easier
    * e.g. creating a data type or map, etc. to hold more accessible input
-   * 
+   *
    * @param input
    */
   public void presolve(List<String> input) {
@@ -23,12 +23,12 @@ public abstract class day {
 
   /**
    * solve and partX can treat each other like wrapper functions
-   * 
+   *
    * sometimes they can both be under the same function with an if/else to determine switching logic
    * between the two parts rather than copy/pasting entire functions of logic
-   * 
+   *
    * if the two functions are entirely different, edit them to not call solve()
-   * 
+   *
    * @param input
    * @param partTwo whether to solve for partTwo
    * @return
@@ -43,7 +43,7 @@ public abstract class day {
 
   /**
    * Return the solution to a day's part 1
-   * 
+   *
    * @param input
    * @return the solution to the day's part 1
    */
@@ -53,7 +53,7 @@ public abstract class day {
 
   /**
    * Return the solution to a day's part 2
-   * 
+   *
    * @param input
    * @return the solution to the day's part 2
    */
@@ -76,7 +76,7 @@ public abstract class day {
   // }
   //
   // // Take input, turn into usable form
-  // String filename = "_YEAR/dayDAY_01.in";
+  // String filename = "_YEAR/dayDAY_00.in";
   // List<String> input = Util.readFileIntoListString(filename);
   //
   // // Do something with the input and a
