@@ -10,7 +10,7 @@ import util.Util;
 public class day04Test {
 
   private day04 a;
-  String filename = Global.testPath + "_2018/day04_00" + Global.testExt;
+  String filename = Global.testPath + "_2018/day04_01" + Global.testExt;
   List<String> input;
 
   @Before
