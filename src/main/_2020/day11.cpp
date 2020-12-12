@@ -26,8 +26,8 @@ int calc_num_visible_occupied_seats(const vector<string> &in, long row, long col
 			long new_x = col + dx[dir] * (scale + 1);
 			long new_y = row + dy[dir] * (scale + 1);
 
-			if (new_y < 0 || new_y >= in.size()) continue;
-			if (new_x < 0 || new_x >= in[new_y].size()) continue;
+			if (new_y < 0 || new_y >= static_cast<long>(in.size())) continue;
+			if (new_x < 0 || new_x >= static_cast<long>(in[new_y].size())) continue;
 			if (new_y == row && new_x == col) continue;
 
 			// we have found a seat, stop looking further in this direction
@@ -74,9 +74,9 @@ vector<string> step(const vector<string> &in, bool part_two)
 {
 	vector<string> out(in.size(), string(in[0].size(), ' '));
 
-	for (long i = 0; i < in.size(); i++)
+	for (long i = 0; i < static_cast<long>(in.size()); i++)
 	{
-		for (long j = 0; j < in[i].size(); j++)
+		for (long j = 0; j < static_cast<long>(in[i].size()); j++)
 		{
 			char c = process_rules(in, i, j, part_two);
 			out[i][j] = c;
