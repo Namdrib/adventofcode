@@ -157,9 +157,9 @@ T manhattan_distance(const vector<T> &a, const vector<T> &b)
 	);
 }
 
-bool to_bool(string s)
+bool to_bool(string s, char zero = '0')
 {
-	return !(s[0] == '0');
+	return !(s[0] == zero);
 }
 
 // return the digits of the string s
