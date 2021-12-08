@@ -219,4 +219,14 @@ bool roughly_equal(double d1, double d2, double tolerance = 0.005) {
 	return abs(d1 - d2) <= tolerance;
 }
 
+int binary_to_decimal(const string &binary_digits) {
+	int sum=0;
+	for (int i=binary_digits.size()-1; i>=0; i--) {
+		if (binary_digits[i] == '1') {
+			sum+=(pow(2, (binary_digits.size()-i-1)));
+		}
+	}
+	return sum;
+}
+
 #endif // HELPERS_CPP
