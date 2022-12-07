@@ -135,11 +135,8 @@ class Day07:
         global directory_sizes
         self._filesystem_root.update_cumulative_size()
 
-        total_size: int = 0
-        for _, size in directory_sizes.items():
-            if size <= 100000:
-                total_size += size
-        return total_size
+        # The sum of all directories smaller than 100000
+        return sum(size for _, size in directory_sizes.items() if size <= 100000)
 
     def part_two(self) -> int:
         """
@@ -154,14 +151,8 @@ class Day07:
         currently_unused_space: int = total_available_space - currently_used_space
         minimum_space_to_delete: int = required_space - currently_unused_space
 
-        # Find the directories that we can delete to get the space
-        deletion_candidates: dict = {}
-        for name, size in directory_sizes.items():
-            if size >= minimum_space_to_delete:
-                deletion_candidates[name] = size
-
-        # Get the size of the smallest one
-        return min(deletion_candidates.values())
+        # The delete smallest directory that gives us enough space
+        return min(size for _, size in directory_sizes.items() if size >= minimum_space_to_delete)
 
 def main() -> None:
     """
