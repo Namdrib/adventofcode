@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 import sys
 
-directory_sizes: dict = {}
-
 class Node:
     """
     A node in a file system tree
@@ -41,25 +39,23 @@ class Node:
         for child in self.children:
             child.pretty_print()
 
-    def update_cumulative_size(self):
+    def update_cumulative_size(self, directory_sizes: dict):
         """
         Calculate this Node's cumulative size, which is the size of all the
         files and directories under this Node
         """
-        global directory_sizes
         new_size: int = 0
 
         for child in self.children:
             if child.size == 0:
-                child.update_cumulative_size()
+                child.update_cumulative_size(directory_sizes)
                 new_size += child.cumulative_size
             else:
                 new_size += child.size
 
         self.cumulative_size = new_size
 
-        # Store the cumulative size in a global dict so it is accessible from Day07
-        # got kinda lazy here
+        # Store the cumulative size in the dict so it is accessible from Day07
         # when storing in the dictionary, not all dirs/file names are unique.
         # prepend with parent name to reduce the chance of clashes
         name = self.name
@@ -79,6 +75,7 @@ class Day07:
         """
         self._input: list = None
         self._filesystem_root: Node = None
+        self._directory_sizes: dict = {}
 
     def read_input(self) -> None:
         """
@@ -132,27 +129,25 @@ class Day07:
         """
         Return the sum of the dirs whose cumulative size is less than 10000
         """
-        global directory_sizes
-        self._filesystem_root.update_cumulative_size()
+        self._filesystem_root.update_cumulative_size(self._directory_sizes)
 
         # The sum of all directories smaller than 100000
-        return sum(size for _, size in directory_sizes.items() if size <= 100000)
+        return sum(size for size in self._directory_sizes.values() if size <= 100000)
 
     def part_two(self) -> int:
         """
         Return the smalelst directory we can delete to get the required space
         """
-        global directory_sizes
         total_available_space: int = 70000000
         required_space: int = 30000000
 
         # Calculate how much space we need to delete
-        currently_used_space: int = directory_sizes['/']
+        currently_used_space: int = self._directory_sizes['/']
         currently_unused_space: int = total_available_space - currently_used_space
-        minimum_space_to_delete: int = required_space - currently_unused_space
+        min_space_to_delete: int = required_space - currently_unused_space
 
         # The delete smallest directory that gives us enough space
-        return min(size for _, size in directory_sizes.items() if size >= minimum_space_to_delete)
+        return min(size for size in self._directory_sizes.values() if size >= min_space_to_delete)
 
 def main() -> None:
     """
