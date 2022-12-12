@@ -1,23 +1,7 @@
 #!/usr/bin/python3
 import sys
 
-class Coord:
-    """
-    A class representing co-ordinates in a 2D plane
-    """
-
-    def __init__(self, x=0, y=0):
-        self.x = x
-        self.y = y
-
-    def __str__(self) -> str:
-        return f'({self.x}, {self.y})'
-
-    def __eq__(self, obj) -> bool:
-        return isinstance(obj, Coord) and self.x == obj.x and self.y == obj.y
-
-    def __hash__(self) -> int:
-        return int(0.5 * (self.x + self.y) * (self.x + self.y + 1) + self.y)
+from Coord import Coord2D
 
 class Day09:
     """
@@ -35,7 +19,7 @@ class Day09:
         # The number of times the tail has visited each location
         self._tail_visited: dict = {}
 
-        # A list of Coords for each segment of the body
+        # A list of Coord2Ds for each segment of the body
         self._body: list = []
 
         # All of the valid directions
@@ -60,7 +44,7 @@ class Day09:
         Initialise a new body with size n
         Reset the places the tail has visited
         """
-        self._body = [Coord(0, 0) for _ in range(length)]
+        self._body = [Coord2D(0, 0) for _ in range(length)]
         self._tail_visited = set()
         self.record_tail_location()
 
@@ -89,7 +73,7 @@ class Day09:
         """
         Move the given body part towards its previous connection if it is no longer touching
         """
-        parent_pos: Coord = self._body[my_pos-1]
+        parent_pos: Coord2D = self._body[my_pos-1]
         x_distance: int = abs(self._body[my_pos].x - parent_pos.x)
         y_distance: int = abs(self._body[my_pos].y - parent_pos.y)
         distance: int = x_distance + y_distance
@@ -131,7 +115,7 @@ class Day09:
         """
         Record where the tail is
         """
-        tail_copy = Coord(self._body[-1].x, self._body[-1].y)
+        tail_copy = Coord2D(self._body[-1].x, self._body[-1].y)
         self._tail_visited.add(tail_copy)
 
     def run_instructions(self) -> None:
