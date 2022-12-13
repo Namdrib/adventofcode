@@ -10,7 +10,7 @@ class DayXX:
         """
         Constructor
         """
-        self._input: list = None
+        self.input: list = None
 
     def read_input(self) -> None:
         """
@@ -19,8 +19,11 @@ class DayXX:
         """
         raw_input = sys.stdin.read()
 
-        self._input = raw_input.split('\n')
-        self._input = self._input[0:-1]
+        self.input = raw_input.split('\n')
+        self.input = self.input[0:-1]
+
+        for item in self.input:
+            pass
 
     def part_one(self) -> int:
         """
