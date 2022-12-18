@@ -20,6 +20,7 @@ public:
 		int dist_x = dest_x - x;
 		int dist_y = dest_y - y;
 
+		// calculated in such a fashion that directly up from us is zero degrees
 		distance = sqrt(pow(dist_x, 2) + pow(dist_y, 2));
 		angle = atan2(dist_x, -dist_y) * 180 / M_PI;
 	}
@@ -51,10 +52,10 @@ set<double> get_unique_angles_from(const vector<string> &v, size_t x, size_t y)
 				continue;
 			}
 
+			// calculated in such a fashion that directly up from us is zero degrees
 			int dist_x = j - x;
 			int dist_y = i - y;
 			double angle = atan2(dist_x, -dist_y) * 180 / M_PI;
-			cout << "Angle from " << x << "," << y << " to " << j << "," << i << " = " << angle << endl;
 			unique_angles.insert(angle);
 		}
 	}
@@ -68,7 +69,7 @@ size_t calculate_best_monitoring_location(vector<string> v, pair<size_t, size_t>
 	size_t best_y = 0;
 	size_t best_x = 0;
 
-	// for each position with a asteroid
+	// for each position with an asteroid
 	for (size_t i = 0; i < v.size(); i++)
 	{
 		for (size_t j = 0; j < v[i].size(); j++)
@@ -78,10 +79,10 @@ size_t calculate_best_monitoring_location(vector<string> v, pair<size_t, size_t>
 				continue;
 			}
 
-			size_t visible_asteroids = 0;
+			// calculate how many asteroids we can see
+			// this is base on the amount of unique angles to other asteroids from here
 			set<double> unique_angles = get_unique_angles_from(v, j, i);
-			visible_asteroids = unique_angles.size();
-			// cout << j << ", " << i << " can see " << visible_asteroids << endl;
+			size_t visible_asteroids = unique_angles.size();
 
 			// save best
 			if (visible_asteroids > best_visible_asteroids)
@@ -93,7 +94,6 @@ size_t calculate_best_monitoring_location(vector<string> v, pair<size_t, size_t>
 		}
 	}
 
-	cout << "best is " << best_visible_asteroids << " at " << best_x << ", " << best_y << endl;
 	location.first = best_x;
 	location.second = best_y;
 	return best_visible_asteroids;
@@ -101,6 +101,8 @@ size_t calculate_best_monitoring_location(vector<string> v, pair<size_t, size_t>
 
 size_t part_one(vector<string> v, bool part_two = false)
 {
+	// find the asteroid that can see the most other asteroids
+	// return the number of asteroids visible from there
 	pair<size_t, size_t> position;
 	size_t asteroids_detected = calculate_best_monitoring_location(v, position);
 	return asteroids_detected;
@@ -108,8 +110,12 @@ size_t part_one(vector<string> v, bool part_two = false)
 
 size_t part_two(vector<string> v)
 {
+	// from the best viewing position, start shooting at (and destroying) asteroids
+	// start facing up, and rotate clockwise to the next visible asteroid
+	// this means that asteroids directly behind other asteroids have to wait a full rotation
+	// before being destroyed
 	pair<size_t, size_t> position;
-	size_t asteroids_detected = calculate_best_monitoring_location(v, position);
+	calculate_best_monitoring_location(v, position);
 	size_t best_x = position.first;
 	size_t best_y = position.second;
 
@@ -129,39 +135,30 @@ size_t part_two(vector<string> v)
 			blasts.push_back(temp);
 		}
 	}
+	// the next blasts element will always be the next in order
+	// except for when there are multiple asteroids behind each other
 	sort(all(blasts));
 
 	set<double> unique_angles = get_unique_angles_from(v, best_x, best_y);
-	cout << unique_angles << endl;
 
+	// We want to know the co-ordinates of the Xth asteroid we destroy
 	const size_t blast_limit = 200;
+
 	double current_angle = 0.0;
 	size_t index = 0;
 	size_t last_index = 0;
 	size_t final_x = 0;
 	size_t final_y = 0;
 
-  // TODO: Logic in here is still a bit broken
+	// rotate until we are looking at the one directly up from where we are
 	while (blasts[index].angle != current_angle)
 	{
 		index++;
 	}
-	for (size_t blast_number = 0; !blasts.empty(); blast_number++)
+
+	// keep blasting until all the asteroids are gone!
+	for (size_t blast_number = 1; !blasts.empty(); blast_number++)
 	{
-		// skip all the ones of the same angle (since they're behind the current one)
-		while (blasts[index].angle == current_angle)
-		{
-			cout << "doin g stuff" << endl;
-			index = (index + 1) % blasts.size();
-
-			if (last_index == index)
-			{
-				index = 0;
-				break;
-			}
-		}
-		cout << "index=" << index << endl;
-
 		// save coordinates of the blast_limit blast
 		if (blast_number == blast_limit)
 		{
@@ -172,15 +169,27 @@ size_t part_two(vector<string> v)
 		// blast the asteroid away!
 		last_index = index;
 		current_angle = blasts[index].angle;
-		if (blast_number == 0)
-		{
-			cout << "rirst angle is " << current_angle << endl;
-		}
-		cout << "blasting asteroid " << blast_number << " at " << blasts[index].x << ", " << blasts[index].y << " with angle " << current_angle << endl;
 		blasts.erase(blasts.begin() + index);
+
+		// the nxet bit segfaults if we don't break early
+		if (blasts.empty())
+		{
+			break;
+		}
+
+		// skip all the ones of the same angle (since they're behind the current one)
+		while (blasts[index].angle == current_angle)
+		{
+			index = (index + 1) % blasts.size();
+
+			if (last_index == index)
+			{
+				index = 0;
+				break;
+			}
+		}
 	}
 
-	cout << "Blasting " << blast_limit << "th asteroid at " << final_x << ", " << final_y << endl;
 	size_t out = final_x * 100 + final_y;
 	return out;
 }
@@ -193,9 +202,6 @@ int main()
 		input.push_back(temp);
 	}
 
-	cout << input.size() << endl;
-
-	// cout << atan2(0, 1) * 180 / M_PI << " " << atan2(1, 0) * 180 / M_PI << endl;
 	cout << "Part 1: " << part_one(input) << endl;
-	cout << "Part 2: " << part_two(input) << endl; // incomplete, 2320 too high
+	cout << "Part 2: " << part_two(input) << endl;
 }
