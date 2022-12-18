@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from ast import literal_eval
 from functools import cmp_to_key
 import sys
 
@@ -33,8 +34,7 @@ class Day13:
         self.packets = []
         for item in self.input:
             if item:
-                # dirty, but the inputs are already valid python lists
-                self.packets.append(eval(item))
+                self.packets.append(literal_eval(item))
 
     def elements_in_order(self, a, b, depth: int=0, debug: bool=False) -> bool:
         """
