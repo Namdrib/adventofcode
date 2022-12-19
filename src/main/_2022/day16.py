@@ -1,16 +1,11 @@
 #!/usr/bin/python3
-import copy
 import sys
 
 class Day16:
     """
     Solution for https://adventofcode.com/2022/day/16
 
-    Trying to do a depth-first branch and bound of the problem space.
-    From every position, try every possible action, etc.
-
-    Calculate the bounding constraint by how much "wasted" pressure we have at this point
-    e.g. if there's no way we can do better than the current best solution, then bound the branch
+    Only part 1
     """
 
     def __init__(self) -> None:
@@ -19,24 +14,22 @@ class Day16:
         """
         self.input: list = None
 
-        # An adjacency list of all the locations
-        self.graph: dict = {}
+        # An adjacency graph of all the valves
+        self.graph: list[list] = []
 
-        # str: int. The flow rate of a valve
-        self.flow_rate: dict = {}
+        # Translate a valve name to its index in the graph
+        self.valve_names: list[str] = []
 
-        # str: bool. True if open, False if closed
-        self.valve_state: dict = {}
+        # The flow rate of a valve
+        self.flow_rate: list[int] = []
 
-        # str: int. The eventual flow rate (how much flow from now to time=0)
-        self.eventual_flow: dict = {}
+        # True if open, False if closed
+        self.valve_state: list[bool] = []
 
-        # each action is either a move or turning a valve on
-        self.actions: list = []
-
+        # Record the best outcome so far
         self.best_epr: int = 0
-        self.best_actions: list = []
-        self.min_wasted_flow: int = 99999999
+        self.best_actions: dict[int: int] = []
+        self.best_wasted_flow: int = 99999
 
     def read_input(self) -> None:
         """
@@ -48,149 +41,164 @@ class Day16:
         self.input = raw_input.split('\n')
         self.input = self.input[0:-1]
 
+        # Initialise the adjacency graph to infinite
+        self.graph = [[99999 for _ in range(len(self.input))] for _ in range(len(self.input))]
+
+        # Get the names of all the valves
         for item in self.input:
             tokens = item.split()
-            location = tokens[1]
+            self.valve_names.append(tokens[1])
+
+        # Initialise sizes
+        self.flow_rate = [0 for _ in range(len(self.valve_names))]
+        self.valve_state = [False for _ in range(len(self.valve_names))]
+
+        for item in self.input:
+            tokens = item.split()
+
+            # Store the valve and turn it into a unique index for the adjacency graph
+            valve = tokens[1]
+            index = self.valve_names.index(valve)
+
             rate = tokens[4].split('=')[1].strip(';')
+            self.flow_rate[index] = int(rate)
 
-            self.flow_rate[location] = int(rate)
-            self.valve_state[location] = False
-            self.eventual_flow[location] = 0
+            # All valves start closed
+            self.valve_state[index] = False
 
-            # Read the runnels
-            valves_pos = 0
+            # Read the tunnels
             tunnels = ''
             if 'valve ' in item:
+                # Only one tunnel
                 tunnels = [tokens[-1]]
             else:
+                # Multiple tunnels
                 valves = item.split('valves')[1]
-                tunnels = list(map(lambda x: x.strip(), valves.split(', ')))
+                tunnels = list(map(str.strip, valves.split(', ')))
 
-            self.graph[location] = tunnels
+            # Index-ify all of the valves that can be reached from here
+            destinations = list(map(self.valve_names.index, tunnels))
 
-        for item in self.graph.items():
-            print(f'{item} rate={self.flow_rate[item[0]]}, state={self.valve_state[item[0]]}')
+            for destination in destinations:
+                self.graph[index][destination] = 1
 
-    def total_eventual_pressure_release(self) -> int:
-        return sum(self.eveutual_flow.values())
+        # Finalise the weightings from each valve to each other valve
+        self.calculate_shortest_path_to_each_valve()
 
-    def calculate_eventual_pressure_release_from_actions(self, actions: list) -> int:
+        # for i, name in enumerate(self.valve_names):
+        #     print(f'Tunnel {name}: {self.graph[i]}: rate={self.flow_rate[i]}')
+
+    def calculate_shortest_path_to_each_valve(self):
+        """
+        Populate self.graph with the shortest distances from each valve to every other
+        Floyd-Warshall algorithm
+        """
+        # Distances to every other place has already been initialised to a large number
+        # Distance to self is 0
+        for i in range(len(self.graph)):
+            self.graph[i][i] = 0
+
+        for k in range(len(self.graph)):
+            for i in range(len(self.graph)):
+                for j in range(len(self.graph)):
+                    if self.graph[i][j] > self.graph[i][k] + self.graph[k][j]:
+                        self.graph[i][j] = self.graph[i][k] + self.graph[k][j]
+
+    def calculate_eventual_pressure_release_from_actions(self, actions: dict[int, int]) -> int:
         """
         Simulate how much eventual pressure release we achieve if we take the current actions
+        Each action takes into account travel + time to turn the valve
+        Each item in action is the {valve, time turned on}
         """
         epr: int = 0
 
-        location = 'AA'
-        for i, item in enumerate(actions):
-            if item == 'turn':
-                # calcualte eventual flow rate for that valve
-                # i.e. how much that valve will release from now until time=30
-                epr += (30-i+1) * self.flow_rate[location]
-            else:
-                location = item
+        # Each valve gives off a rate for the entire remaining time
+        for valve, time in actions.items():
+            epr += (30-time) * self.flow_rate[valve]
 
-        print(f'epr from the following actions: {actions} = {epr}')
         return epr
 
-    def calculate_best_amount_of_remaining_flow(self, time) -> int:
+    def calculate_max_wasted_flow(self) -> int:
         """
-        Calculate how much flow we could potentially have lft if we turned on all of the remaining
-        valves on one-by-one
-        This is unrealistic as it assumes no travel time
-        However it provides an upper bound of how well we could possible do
+        The maximum wasted flow is if we open no valves
         """
-        wasted_flow: int = 0
+        return sum(map(lambda x: x * 30, self.flow_rate))
 
-        unopened_locations: list = [self.flow_rate[x] for x in self.graph.keys() if not self.valve_state[x]]
-        unopened_locations.sort(reverse=True)
-
-        current_time = time
-        for flow_rate in unopened_locations:
-            if current_time >= 30:
-                break
-
-            wasted_flow += (30-current_time) * flow_rate
-            current_time += 1
-
-        print(f'The amount of wasted flow up till now: {wasted_flow}')
-        return wasted_flow
-
-    def calculate_wasted_flow(self, actions, time) -> int:
+    def calculate_approximate_wasted_flow_so_far(self, actions) -> int:
         """
-        How much wasted flow at a given time (how many valves are closed)
+        Approximate wasted flow so far is the sum of unopened valves up till now
         """
-        wasted_flow: int = 0
+        current_time: int = max(actions.values())
+        wasted_flow_from_closed_valves: int = sum(map(lambda x: x * current_time, self.flow_rate))
 
-        max_flow: int = sum(self.flow_rate.values()) * 30
-        return max_flow - self.calculate_eventual_pressure_release_from_actions(actions)
-        for location, rate in self.flow_rate.items():
-            if not self.valve_state[location]:
-                wasted_flow += (30-time) * rate
+        return wasted_flow_from_closed_valves
 
-        return wasted_flow
-
-    def pathfind_recurse(self, location: str, time: int, current_epr: int, actions: list) -> int:
+    def pathfind_recurse(self, valve: int, time: int, current_epr: int, actions: dict) -> int:
         """
         Do a branch and bound on every possible action we can do here
         """
         # If we've hit the end, stop
-        if time == 30:
-            print(f'At the end. Current actions: {actions}')
-            # If we've done better than a previous run, record our results
-            if current_epr > self.best_epr:
-                self.best_epr = current_epr
-                self.best_actions = actions
-
-                wasted_flow: int = self.calculate_wasted_flow(actions, time)
-                print(f'amount of wasted flow: {wasted_flow}')
-                self.min_wasted_flow = wasted_flow
+        if time >= 30:
+            # print(f'At the end. Current actions: {actions}')
             return
 
-        # If we've already missed more flow than the best solution
-        # No point going down this path
-        # wasted_flow: int = self.calculate_wasted_flow(actions, time)
-        wasted_flow: int = self.calculate_best_amount_of_remaining_flow(time)
-        if wasted_flow >= self.min_wasted_flow:
-            print(f'wasted flow from {actions} = {wasted_flow}')
-            return
+        # If we've done better than a previous run, record our results
+        if current_epr > self.best_epr:
+            self.best_epr = current_epr
+            self.best_actions = actions
+            self.best_wasted_flow = self.calculate_max_wasted_flow() - self.best_epr
 
-        # Explore all the possible options
-        # Turn the valve in this location if it hasn't already been turned
-        if not self.valve_state[location]:
-            actions.append('turn')
-            self.valve_state[location] = True
+        # Calculate the wasted flow so far (the upper bound)
+        # If we can't do better than the best, then prune this branch
+        if actions:
+            wasted_flow: int = self.calculate_approximate_wasted_flow_so_far(actions)
+            if wasted_flow >= self.best_wasted_flow:
+                return
+
+        # Greedily explore the best path first
+        # This lets us get a better wasted flow earlier on
+        # This takes into account the amount of flow we lose out on in transit
+        neighbours_sorted: list = list(range(len(self.graph)))
+        neighbours_sorted.sort(key=lambda x: self.flow_rate[x]-time, reverse=True)
+
+        # Explore all the possible valves from here
+        for next_valve in neighbours_sorted:
+            weight: int = self.graph[valve][next_valve]
+
+            # We'll have activated valve x in weight time + 1 to open it
+            next_time: int = time + weight + 1
+            if self.valve_state[next_valve]:
+                # What is open may never (be) open(ed again)
+                continue
+            if self.flow_rate[next_valve] == 0:
+                # No point opening something that will give nothing
+                continue
+            if next_time > 30:
+                # Won't have enough time to explore this option
+                continue
+
+            actions[next_valve] = next_time
+            self.valve_state[next_valve] = True
             epr = self.calculate_eventual_pressure_release_from_actions(actions)
-            self.pathfind_recurse(location, time+1, epr, actions)
-            actions.pop()
-            self.valve_state[location] = False
+            self.pathfind_recurse(next_valve, next_time, epr, actions)
+            self.valve_state[next_valve] = False
+            actions.pop(next_valve)
 
-        # Go down each tunnel
-        for tunnel in self.graph[location]:
-            actions.append(tunnel)
-            epr = self.calculate_eventual_pressure_release_from_actions(actions)
-            self.pathfind_recurse(tunnel, time+1, epr, actions)
-            actions.pop()
-
-    def pathfind(self, start: str = 'AA') -> int:
+    def find_best_path(self, start: str = 'AA'):
         """
         Find the best path that allows us to provide as much eventual pressure as possible
+        Store the best path and cost in self
         """
-        best_eventual_flow: int = 0
-        actions: list = []
-
-        self.pathfind_recurse(start, 0, 0, actions)
-        return 0
+        actions: dict = {}
+        start_index: int = self.valve_names.index(start)
+        self.pathfind_recurse(start_index, 0, 0, actions)
 
     def part_one(self) -> int:
         """
-        Return the ...
+        Return the most pressure we can release in 30 minutes
         """
-        # actions = ['DD', 'turn', 'CC', 'BB', 'turn', 'AA', 'II', 'JJ', 'turn', 'II', 'AA', 'DD', 'EE', 'FF', 'GG', 'HH', 'turn', 'GG', 'FF', 'EE', 'turn', 'DD', 'CC', 'turn']
-        # epr = self.calculate_eventual_pressure_release_from_actions(actions)
-        # print(epr)
-        self.pathfind('AA')
-        print(self.best_epr)
-        return 0
+        self.find_best_path('AA')
+        return self.best_epr
 
     def part_two(self) -> int:
         """
