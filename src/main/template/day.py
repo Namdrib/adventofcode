@@ -19,8 +19,7 @@ class DayXX:
         """
         raw_input = sys.stdin.read()
 
-        self.input = raw_input.split('\n')
-        self.input = self.input[0:-1]
+        self.input = raw_input.splitlines()
 
         for item in self.input:
             pass
