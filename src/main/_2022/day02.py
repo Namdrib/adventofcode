@@ -114,7 +114,7 @@ class Day02:
 
     def part_one(self) -> int:
         """
-        Return the score assumign the [XYZ] correspond to moves for perfect play
+        Return the score assuming the [XYZ] correspond to moves for perfect play
         """
         total_score: int = 0
         for item in self._input:
