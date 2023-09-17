@@ -11,7 +11,7 @@ class MixData:
     def __init__(self, value, original_index) -> None:
         self.value = value
         self.original_index = original_index
-    
+
     def __eq__(self, other) -> bool:
         return self.value == other.value and self.original_index == other.original_index
 
@@ -92,7 +92,7 @@ class Day20:
         Return the sum of the grove coordinates after mixing the file once
         """
         # Mixing occurs in-place, so make a copy of the original
-        decrypted_file: list = [x for x in self.original]
+        decrypted_file: list = list(self.original)
         self.mix(decrypted_file)
         print(f'Decrypted: {decrypted_file}')
 
@@ -109,11 +109,11 @@ class Day20:
         self.original = [MixData(x.value * decryption_key, x.original_index) for x in self.original]
 
         # Mixing occurs in-place, so make a copy of the original
-        decrypted_file: list = [x for x in self.original]
+        decrypted_file: list = list(self.original)
 
-        for x in range(10):
+        for mix_round in range(10):
             self.mix(decrypted_file)
-            print(f'After {x+1} round of mixing: {decrypted_file}')
+            print(f'After {mix_round+1} round of mixing: {decrypted_file}')
 
         grove_coordinates: list = self.get_grove_coords(decrypted_file)
         return sum(grove_coordinates)
