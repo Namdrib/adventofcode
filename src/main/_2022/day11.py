@@ -238,14 +238,14 @@ class Day11:
         self.monkeys = copy.deepcopy(self.original_monkeys)
 
         # All of the divisors in the puzzle input are prime.
-        # Calculate the product of all of the divisors and pass sthat to the inspect() method
+        # Calculate the lowest common multiple of all of the divisors and pass that to inspect()
         # The worry must be able to be divided by this
         # This keeps the numbers from getting too large
-        all_divisors: list = [monkey.division_test for monkey in self.monkeys]
-        product_of_divisors = functools.reduce(lambda a, b: a * b, all_divisors)
+        all_divisors: list = [int(monkey.division_test) for monkey in self.monkeys]
+        lcm_divisors: int = math.lcm(*all_divisors)
 
         for _ in range(10000):
-            self.do_round(reset_worry=False, lowest_common_factor=product_of_divisors)
+            self.do_round(reset_worry=False, lowest_common_factor=lcm_divisors)
 
         return self.calculate_product_of_two_most_active_monkeys()
 
