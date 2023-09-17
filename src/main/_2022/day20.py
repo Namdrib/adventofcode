@@ -1,5 +1,25 @@
-#e!/usr/bin/python3
+#!/usr/bin/python3
 import sys
+
+class MixData:
+    """
+    A data structure to assist with mixing
+    Keep track of a value, its index, and its original index
+    There may be multiple MixData objects that have the same value
+    """
+
+    def __init__(self, value, original_index) -> None:
+        self.value = value
+        self.original_index = original_index
+    
+    def __eq__(self, other) -> bool:
+        return self.value == other.value and self.original_index == other.original_index
+
+    def __repr__(self) -> str:
+        return f'MixData({self.value}, {self.original_index})'
+
+    def __str__(self) -> str:
+        return f'{self.value}'
 
 class Day20:
     """
@@ -12,7 +32,8 @@ class Day20:
         """
         self.input: list = None
 
-        self.encrypted_file: list = []
+        # A list of MixData, used to keep track of the original values _and_ their positions
+        # This is used to determine the order in which the items will move when mixing
         self.original: list = []
 
     def read_input(self) -> None:
@@ -24,52 +45,45 @@ class Day20:
 
         self.input = raw_input.splitlines()
 
-        self.encrypted_file = list(map(int, self.input))
-        print(self.encrypted_file)
+        # Turn the input into a list
+        input_list: list = list(map(int, self.input))
 
-        # Keep track of the original values and positions
-        # This is used to determine which item to move at each step of the mixing
-        self.original: list = [[x, i] for i, x in enumerate(self.encrypted_file)]
+        # Create MixData out of each item in the input list
+        self.original: list = [MixData(x, i) for i, x in enumerate(input_list)]
 
-    def mix(self, encrypted_file: list) -> list:
+    def mix(self, encrypted_file: list) -> None:
         """
-        Mix an encrypted file, returning the result
-        To mix the file, move each number forward or backward in the file a
+        Mix an encrypted file in place
+        1) To mix the file, move each number forward or backward in the file a
         number of positions equal to the value of the number being moved. The
         list is circular, so moving a number off one end of the list wraps back
         around to the other end as if the ends were connected.
+        2) The numbers are moved in the order they appeared in the original,
+        pre-mixed list.
         """
-        # The order of the original numbers
-        # TODO: make this work for subsequent runs.
-        # The encrypted_file gets out of sync with self.original
-        copy: list = [[x, i] for i, x in enumerate(encrypted_file)]
-        # Set the i in copy to match the original index for that number
-        for index, item in enumerate(copy):
-            original_i = [i for x, i in self.original if x == item[0]][0]
-            copy[index][1] = original_i
-        # print(f'Copy: {copy}')
+        # Because the MixData class has both the value and the original index,
+        # we won't accidentally operate on a different with the same value
 
-        for item, index in self.original:
-            # print(f'  Looking for index {index} (value is {item})')
-            # Find the index of the item that matches the original order
-            item_index: int = [i for i, x in enumerate(copy) if x[1] == index][0]
-            # Move the thing at that index to its new position
-            # print(f'{item} is at {item_index} - deleting item at {item_index}')
-            thing = copy.pop(item_index)
-            new_index: int = (item_index + item) % len(copy)
-            copy.insert(new_index, thing)
-            # print(f'{thing} moves from {item_index} to {new_index}')
+        # Because of 2), the original list is used to determine the move order
+        for item in self.original:
+            # Find where the item is in the current list
+            current_index = encrypted_file.index(item)
 
-            # print(f'{[x[0] for x in copy]}\n')
-
-        return [x for (x, i) in copy]
+            # Move it to its new position
+            data: MixData = encrypted_file.pop(current_index)
+            new_index: int = (current_index + item.value) % len(encrypted_file)
+            encrypted_file.insert(new_index, data)
+            # print(f'Moved {data} from {item_index} to {new_index}')
 
     def get_grove_coords(self, file) -> list:
         """
         Return the numbers at the 1000th, 2000th and 3000th pos after 0
+        Because the file is a circular list, it doesn't matter where 0 is
         """
-        zero_index = file.index(0)
-        coords = [file[(zero_index+k) % len(file)] for k in [1000, 2000, 3000]]
+        # Find where zero is
+        zero_index = [x.value for x in file].index(0)
+
+        coords = [file[(zero_index+k) % len(file)].value for k in [1000, 2000, 3000]]
         print(f'Coords: {coords}')
         return coords
 
@@ -77,7 +91,9 @@ class Day20:
         """
         Return the sum of the grove coordinates after mixing the file once
         """
-        decrypted_file: list = self.mix(self.encrypted_file)
+        # Mixing occurs in-place, so make a copy of the original
+        decrypted_file: list = [x for x in self.original]
+        self.mix(decrypted_file)
         print(f'Decrypted: {decrypted_file}')
 
         grove_coordinates: list = self.get_grove_coords(decrypted_file)
@@ -88,15 +104,18 @@ class Day20:
         Apply the decryption key to the file
         Then return the sum of the grove coordinates after mixing the file ten times
         """
-        decryption_key = 811589153
-        file = [x * decryption_key for x in self.encrypted_file]
-        self.original = [[x * decryption_key, i] for x, i in self.original]
+        # Apply the decryption key to the file, transforming all its values
+        decryption_key: int = 811589153
+        self.original = [MixData(x.value * decryption_key, x.original_index) for x in self.original]
 
-        # print(f'Initial arrangement: {file}')
+        # Mixing occurs in-place, so make a copy of the original
+        decrypted_file: list = [x for x in self.original]
+
         for x in range(10):
-            file = self.mix(file)
-            # print(f'After {x+1} round of mixing: {file}')
-        grove_coordinates: list = self.get_grove_coords(file)
+            self.mix(decrypted_file)
+            print(f'After {x+1} round of mixing: {decrypted_file}')
+
+        grove_coordinates: list = self.get_grove_coords(decrypted_file)
         return sum(grove_coordinates)
 
 def main() -> None:
