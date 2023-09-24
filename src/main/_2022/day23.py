@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-import math
 import sys
 
 class Day23:
@@ -13,45 +12,33 @@ class Day23:
         """
         self._input: list = None
 
-        # Represents a 2D grid of Elves and their positions
-        self._elf_positions: list = []
+        # Store all Elf positions in a set as a tuple of (x, y)
+        # Makes it cheap to query if a given position is in the set
+        self._elf_positions: set = set()
 
+        self._dir_names: list = ['NORTH', 'SOUTH', 'WEST', 'EAST']
         self._dx: list = [0, 0, -1, 1]
         self._dy: list = [-1, 1, 0, 0]
 
         # The first direction the Elves will consider when moving
-        self._starting_dir: int = 0
-
-        self._border_size: int = 1000
+        # This changes after each round of movement
+        self._start_dir: int = 0
 
     def read_input(self) -> None:
         """
         Read input from stdin and parse it into a useful data structure
         In this case, each line contains a grid of empty space (.) or an Elf (#)
-        are separated by an empty line
-        Each group contains the items carried by a single elf
+        Store each Elf's position into a set of tuples
         """
         _input = sys.stdin.read()
 
-        input_height: int = len(_input.split('\n'))
-        input_width: int = len(_input.split('\n')[0])
-
-        # Initialise the Elf grid
-        # There will be 10 rounds
-        # So at most, a single Elf can move 10 steps away from their starting position
-        # Initialise the grid to be the size of the input + 10 in every direction
-        for y in range(input_height + (self._border_size * 2)):
-            self._elf_positions.append(['.' for i in range(input_width + (self._border_size * 2))])
-
-        # Represents the inventory of a single elf
         for y, line in enumerate(_input.split('\n')):
             line = line.strip()
 
             for x, char in enumerate(line):
                 if char == '#':
-                    # Set the elf's position
-                    # Offset it by 10 in each direction
-                    self._elf_positions[y+self._border_size][x+self._border_size] = '#'
+                    # Store the Elf's position
+                    self._elf_positions.add((x, y))
 
     def calculate_bounding_rectangle(self) -> int:
         """
@@ -64,13 +51,12 @@ class Day23:
         max_x: int = 0
         max_y: int = 0
 
-        for y, line in enumerate(self._elf_positions):
-            if '#' in line:
-                min_y = min(min_y, y)
-                max_y = max(max_y, y)
+        for position in self._elf_positions:
+            min_y = min(min_y, position[1])
+            max_y = max(max_y, position[1])
 
-                min_x = min(min_x, ''.join(line).index('#'))
-                max_x = max(max_x, ''.join(line).rfind('#'))
+            min_x = min(min_x, position[0])
+            max_x = max(max_x, position[0])
 
         print(f'Bounding rectangle spans from ({min_x},{min_y}) to ({max_x},{max_y})')
         return min_x, min_y, max_x, max_y
@@ -79,32 +65,38 @@ class Day23:
         """
         Return the number of empty ground tiles described in a bounding rectangle
         """
-        num_empty_ground_tiles: int = 0
-
-        for y in range(min_y, max_y+1):
-            tiles_in_row: int = ''.join(self._elf_positions[y]).count('.', min_x, max_x+1)
-            num_empty_ground_tiles += tiles_in_row
-
-        return num_empty_ground_tiles
+        # The rectangle covers all elves, so calculate its area, minus the number of elves
+        return (max_x - min_x + 1) * (max_y - min_y + 1) - len(self._elf_positions)
 
     def is_elf_adjacent_to(self, x: int, y: int) -> bool:
         """
         Return whether there is an elf adjacent (including diagonals) to a given (x,y) position
         """
-        return '#' in self._elf_positions[y-1][x-1:x+2] \
-            or '#' in self._elf_positions[y+1][x-1:x+2] \
-            or self._elf_positions[y][x-1] == '#' \
-            or self._elf_positions[y][x+1] == '#'
+        # For each position adjacent to the Elf, see if that position is in self._elf_positions
+        for dy in range(-1, 2):
+            for dx in range(-1, 2):
+                # Ignore the Elf's own position
+                if (dx != 0) or (dy != 0):
+                    neighbour = (x + dx, y + dy)
+                    if neighbour in self._elf_positions:
+                        # print(f'\tHas neighbour {neighbour}. Looks to move')
+                        return True
+
+        return False
 
     def print_positions(self) -> None:
         """
         Pretty print the Elf positions
+        Very useful for debugging ;)
         """
-        digits = math.ceil(math.log10(len(self._elf_positions)))
-        for i, item in enumerate(self._elf_positions):
-            index_part: str = str(i).rjust(digits, '0')
-            str_out: str = ''.join(item)
-            print(f'{index_part}: {str_out}')
+        print(self._elf_positions)
+        min_x, min_y, max_x, max_y = self.calculate_bounding_rectangle()
+
+        for y in range(min_y, max_y+1):
+            for x in range(min_x, max_x+1):
+                position = (x, y)
+                sys.stdout.write('#' if position in self._elf_positions else '.')
+            sys.stdout.write('\n')
 
     def calculate_proposed_moves(self) -> dict:
         """
@@ -123,44 +115,47 @@ class Day23:
             the Elf proposes moving east one step.
         """
         # A dictionary of {new_location: [old_locations]}
+        # This makes it easier to tell if multiple Elves are moving to the same spot
         proposed_moves: dict = {}
 
         # For each position
-        for y, line in enumerate(self._elf_positions):
-            for x, char in enumerate(line):
-                # If there is an Elf, check for neighbours
-                if char == '#' and self.is_elf_adjacent_to(x, y):
-                    # There is a neighbour, so look for a move
-                    for dir_index in range(4):
-                        # The proposed move direction
-                        new_dir_index: int = (self._starting_dir + dir_index) % len(self._dx)
-                        dx: int = self._dx[new_dir_index]
-                        dy: int = self._dy[new_dir_index]
+        for position in self._elf_positions:
+            if not self.is_elf_adjacent_to(position[0], position[1]):
+                continue
 
-                        # The proposed move location
-                        new_x: int = x + dx
-                        new_y: int = y + dy
+            # There is an adjacent Elf, so it wants to move
+            for dir_offset in range(len(self._dx)):
+                # The proposed move direction
+                new_dir_index: int = (self._start_dir + dir_offset) % len(self._dx)
+                dx: int = self._dx[new_dir_index]
+                dy: int = self._dy[new_dir_index]
 
-                        elf_in_dir: bool = False
-                        # Check the three cells in that direction (e.g. for N, check N, NE, NW)
-                        if dx:
-                            elf_in_dir = self._elf_positions[new_y-1][new_x] == '#' or self._elf_positions[new_y][new_x] == '#' or self._elf_positions[new_y+1][new_x] == '#'
-                        if dy:
-                            elf_in_dir = '#' in self._elf_positions[new_y][x-1:x+2]
+                # The proposed move location
+                new_x: int = position[0] + dx
+                new_y: int = position[1] + dy
 
-                        # The chosen location is vacant - propose a move
-                        if not elf_in_dir:
-                            # Announce that the Elf at (x, y) will move to (new_x, new_y)
-                            new_location: tuple = (new_x, new_y)
-                            if new_location in proposed_moves:
-                                proposed_moves[new_location].append((x, y))
-                            else:
-                                proposed_moves[new_location] = [(x, y)]
-                            # print(f'Elf at ({x},{y}) wants to move to ({new_x},{new_y})')
-                            break
+                # Check the three cells in that direction (e.g. for N, check N, NE, NW)
+                if dx:
+                    dir_spaces: list = [(new_x, new_y-1), (new_x, new_y), (new_x, new_y+1)]
+                if dy:
+                    dir_spaces: list = [(new_x-1, new_y), (new_x, new_y), (new_x+1, new_y)]
+                elf_in_dir: bool = any([True for x in dir_spaces if x in self._elf_positions])
+
+                # Nothing to do if an Elf is in that position
+                if elf_in_dir:
+                    continue
+
+                # The chosen location is vacant - propose a move
+                # Announce that the Elf at (x, y) will move to (new_x, new_y)
+                new_location: tuple = (new_x, new_y)
+                if new_location in proposed_moves:
+                    proposed_moves[new_location].append((position[0], position[1]))
+                else:
+                    proposed_moves[new_location] = [(position[0], position[1])]
+                break
 
         # Update the starting direction
-        self._starting_dir = (self._starting_dir + 1) % len(self._dx)
+        self._start_dir = (self._start_dir + 1) % len(self._dx)
 
         return proposed_moves
 
@@ -174,8 +169,10 @@ class Day23:
             # Only move if there is exactly one Elf proposing to move to (x, y)
             if len(old_pos) == 1:
                 # Move it from old_pos to new_pos
-                self._elf_positions[old_pos[0][1]][old_pos[0][0]] = '.'
-                self._elf_positions[new_pos[1]][new_pos[0]] = '#'
+                self._elf_positions.remove(old_pos[0])
+                self._elf_positions.add(new_pos)
+                # self._elf_positions[old_pos[0][1]][old_pos[0][0]] = '.'
+                # self._elf_positions[new_pos[1]][new_pos[0]] = '#'
 
     def part_one(self) -> int:
         """
@@ -185,30 +182,37 @@ class Day23:
         print('== Initial State ==')
         # self.print_positions()
 
-        # Run 10 rounds of movement
-        for current_round in range(10000):
+        current_round: int = 1
+        empty_tiles: int = -1
+
+        while True:
             proposed_moves: dict = self.calculate_proposed_moves()
 
-            elves_will_move: bool = False
-            for item in proposed_moves:
-                if any(item):
-                    elves_will_move = True
-
-            if elves_will_move:
+            if any(proposed_moves):
                 self.apply_proposed_moves(proposed_moves)
             else:
-                print(f'No movement in round {current_round+1}, stopping')
+                # Part 2: the round in which the Elves stop moving
+                print(f'No movement in round {current_round}, stopping')
                 break
-            print(f'== End of Round {current_round+1} ==')
+
+            print(f'== End of Round {current_round} ==')
             # self.print_positions()
 
-        min_x, min_y, max_x, max_y = self.calculate_bounding_rectangle()
-        return self.count_empty_ground_tiles_in(min_x, min_y, max_x, max_y)
+            if current_round == 10:
+                # The answer for part 1
+                min_x, min_y, max_x, max_y = self.calculate_bounding_rectangle()
+                empty_tiles = self.count_empty_ground_tiles_in(min_x, min_y, max_x, max_y)
+
+            current_round += 1
+
+        return empty_tiles, current_round
 
     def part_two(self) -> int:
         """
         Return the number of rounds after which the Elves stop moving
         """
+        # This is rolled up into part_one because it relies on continuous running,
+        # and I don't want to build in logic to start a new run again
         return 0
 
 def main() -> None:
@@ -223,4 +227,3 @@ def main() -> None:
 
 if __name__ == '__main__':
     main()
-
