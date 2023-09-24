@@ -139,7 +139,7 @@ class Day23:
                     dir_spaces: list = [(new_x, new_y-1), (new_x, new_y), (new_x, new_y+1)]
                 if dy:
                     dir_spaces: list = [(new_x-1, new_y), (new_x, new_y), (new_x+1, new_y)]
-                elf_in_dir: bool = any([True for x in dir_spaces if x in self._elf_positions])
+                elf_in_dir: bool = any(True for x in dir_spaces if x in self._elf_positions)
 
                 # Nothing to do if an Elf is in that position
                 if elf_in_dir:
