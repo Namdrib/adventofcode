@@ -22,7 +22,7 @@ class Day23:
         # The first direction the Elves will consider when moving
         self._starting_dir: int = 0
 
-        self._border_size: int = 10
+        self._border_size: int = 1000
 
     def read_input(self) -> None:
         """
@@ -151,7 +151,7 @@ class Day23:
                         if not elf_in_dir:
                             # Announce that the Elf at (x, y) will move to (new_x, new_y)
                             proposed_moves[new_y][new_x].append((x, y))
-                            print(f'Elf at ({x},{y}) wants to move to ({new_x},{new_y})')
+                            # print(f'Elf at ({x},{y}) wants to move to ({new_x},{new_y})')
                             break
 
         self._starting_dir = (self._starting_dir + 1) % 4
@@ -173,7 +173,8 @@ class Day23:
                     self._elf_positions[proposals[0][1]][proposals[0][0]] = '.'
                     self._elf_positions[y][x] = '#'
                 elif len(proposals) > 1:
-                    print(f'Multiple elves want to move to ({x},{y}): {proposals}')
+                    # print(f'Multiple elves want to move to ({x},{y}): {proposals}')
+                    pass
 
     def part_one(self) -> int:
         """
@@ -181,15 +182,24 @@ class Day23:
         rectangle that contains every Elf.
         """
         print('== Initial State ==')
-        self.print_positions()
+        # self.print_positions()
 
         # Run 10 rounds of movement
-        for current_round in range(10):
+        for current_round in range(1000000):
             proposed_moves: list = self.calculate_proposed_moves()
-            self.apply_proposed_moves(proposed_moves)
 
+            elves_will_move: bool = False
+            for item in proposed_moves:
+                if any(item):
+                    elves_will_move = True
+
+            if elves_will_move:
+                self.apply_proposed_moves(proposed_moves)
+            else:
+                print(f'No movement in round {current_round+1}, stopping')
+                break
             print(f'== End of Round {current_round+1} ==')
-            self.print_positions()
+            # self.print_positions()
 
         min_x, min_y, max_x, max_y = self.calculate_bounding_rectangle()
         return self.count_empty_ground_tiles_in(min_x, min_y, max_x, max_y)
