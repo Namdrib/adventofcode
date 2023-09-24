@@ -106,7 +106,7 @@ class Day23:
             str_out: str = ''.join(item)
             print(f'{index_part}: {str_out}')
 
-    def calculate_proposed_moves(self) -> list:
+    def calculate_proposed_moves(self) -> dict:
         """
         Each Elf considers the eight positions adjacent to themself. If no
         other Elves are in one of those eight positions, the Elf does not do
@@ -122,15 +122,15 @@ class Day23:
         - If there is no Elf in the E, NE, or SE adjacent positions,
             the Elf proposes moving east one step.
         """
-        # a 2D grid where each entry is a list of Elves that are going to move into that position
-        # Each entry of the list is a (x, y), signifying which Elf is moving into that positions
-        proposed_moves: list = [[[] for x in y] for y in self._elf_positions]
+        # A dictionary of {new_location: [old_locations]}
+        proposed_moves: dict = {}
 
         # For each position
         for y, line in enumerate(self._elf_positions):
             for x, char in enumerate(line):
+                # If there is an Elf, check for neighbours
                 if char == '#' and self.is_elf_adjacent_to(x, y):
-                    # Look for a move
+                    # There is a neighbour, so look for a move
                     for dir_index in range(4):
                         # The proposed move direction
                         new_dir_index: int = (self._starting_dir + dir_index) % len(self._dx)
@@ -138,8 +138,8 @@ class Day23:
                         dy: int = self._dy[new_dir_index]
 
                         # The proposed move location
-                        new_x = x + dx
-                        new_y = y + dy
+                        new_x: int = x + dx
+                        new_y: int = y + dy
 
                         elf_in_dir: bool = False
                         # Check the three cells in that direction (e.g. for N, check N, NE, NW)
@@ -148,33 +148,34 @@ class Day23:
                         if dy:
                             elf_in_dir = '#' in self._elf_positions[new_y][x-1:x+2]
 
+                        # The chosen location is vacant - propose a move
                         if not elf_in_dir:
                             # Announce that the Elf at (x, y) will move to (new_x, new_y)
-                            proposed_moves[new_y][new_x].append((x, y))
+                            new_location: tuple = (new_x, new_y)
+                            if new_location in proposed_moves:
+                                proposed_moves[new_location].append((x, y))
+                            else:
+                                proposed_moves[new_location] = [(x, y)]
                             # print(f'Elf at ({x},{y}) wants to move to ({new_x},{new_y})')
                             break
 
-        self._starting_dir = (self._starting_dir + 1) % 4
+        # Update the starting direction
+        self._starting_dir = (self._starting_dir + 1) % len(self._dx)
+
         return proposed_moves
 
-    def apply_proposed_moves(self, proposed_moves: list) -> None:
+    def apply_proposed_moves(self, proposed_moves: dict) -> None:
         """
         Simultaneously, each Elf moves to their proposed destination tile if
         they were the only Elf to propose moving to that position. If two or
         more Elves propose moving to the same position, none of those Elves move.
         """
-        # proposed_moves is as per self.calculate_proposed_moves()
-
-        for y, line in enumerate(proposed_moves):
-            for x, proposals in enumerate(line):
-                # Only move if there is exactly one Elf proposing to move to (x, y)
-                if len(proposals) == 1:
-                    # Move the sole Elf listed in the proposal to (x, y)
-                    self._elf_positions[proposals[0][1]][proposals[0][0]] = '.'
-                    self._elf_positions[y][x] = '#'
-                elif len(proposals) > 1:
-                    # print(f'Multiple elves want to move to ({x},{y}): {proposals}')
-                    pass
+        for new_pos, old_pos in proposed_moves.items():
+            # Only move if there is exactly one Elf proposing to move to (x, y)
+            if len(old_pos) == 1:
+                # Move it from old_pos to new_pos
+                self._elf_positions[old_pos[0][1]][old_pos[0][0]] = '.'
+                self._elf_positions[new_pos[1]][new_pos[0]] = '#'
 
     def part_one(self) -> int:
         """
@@ -185,8 +186,8 @@ class Day23:
         # self.print_positions()
 
         # Run 10 rounds of movement
-        for current_round in range(1000000):
-            proposed_moves: list = self.calculate_proposed_moves()
+        for current_round in range(10000):
+            proposed_moves: dict = self.calculate_proposed_moves()
 
             elves_will_move: bool = False
             for item in proposed_moves:
@@ -206,7 +207,7 @@ class Day23:
 
     def part_two(self) -> int:
         """
-        Return the sum of the top 3 inventories
+        Return the number of rounds after which the Elves stop moving
         """
         return 0
 
