@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from collections import namedtuple
+from math import prod
 import sys
 
 class Game:
@@ -22,7 +23,7 @@ class Game:
         :param sample_str: A string like "3 blue, 4 red"
         :type sample_str: str
         """
-        print(f'Adding {sample_str=}')
+        # print(f'Adding {sample_str=}')
         sample_result = [0, 0, 0]
         for sample_components in sample_str.split(', '):
             number, colour = sample_components.split(' ')
@@ -42,6 +43,7 @@ class Game:
             out[1] = max(out[1], sample[1])
             out[2] = max(out[2], sample[2])
 
+        print(f'{self.id} max: {out}')
         return out
 
     def can_be_played_with(self, contents: list) -> bool:
@@ -54,6 +56,9 @@ class Game:
         """
         max_cubes: list = self.potential_max_cubes()
         return all(max_cubes[i] <= contents[i] for i in range(len(contents)))
+
+    def calculate_power(self) -> int:
+        return prod(self.potential_max_cubes())
 
 class Day02:
     """
@@ -118,7 +123,7 @@ class Day02:
         Return the sum of all of the calibration values after pre-processing the document
         """
         # Represents the calibration doc after translating the number words to digits
-        return 0
+        return sum(x.calculate_power() for x in self._games)
 
 def main() -> None:
     """
