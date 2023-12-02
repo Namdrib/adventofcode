@@ -1,10 +1,9 @@
 #!/usr/bin/python3
-from collections import OrderedDict
 import sys
 
 class Day01:
     """
-    Solution for https://adventofcode.com/2022/day/1
+    Solution for https://adventofcode.com/2023/day/1
     """
 
     def __init__(self) -> None:
@@ -15,8 +14,6 @@ class Day01:
 
         # Represents the initial calibration document
         self._calibration_doc: list = []
-
-        self._calibration_digits: list = []
 
         # Mapping of each digit word to a digit character
         self._digit_words: dict = {
