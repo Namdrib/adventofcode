@@ -1,10 +1,9 @@
 #!/usr/bin/python3
-from collections import OrderedDict
 import sys
 
 class Day01:
     """
-    Solution for https://adventofcode.com/2022/day/1
+    Solution for https://adventofcode.com/2023/day/1
     """
 
     def __init__(self) -> None:
