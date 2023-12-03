@@ -33,12 +33,10 @@ class Day01:
         Read input from stdin and parse it into a useful data structure
         In this case, each line contains an alphanumeric string
         """
-        _input = sys.stdin.read()
+        self._input = sys.stdin.read()
 
-        for line in _input.split('\n'):
-            line = line.strip()
-            if line:
-                self._calibration_doc.append(line)
+        for line in self._input.splitlines(keepends=False):
+            self._calibration_doc.append(line)
 
     def get_digits_from(self, line: str) -> str:
         """
