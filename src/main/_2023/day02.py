@@ -75,21 +75,19 @@ class Day02:
         Read input from stdin and parse it into a useful data structure
         In this case, each line contains a game with a number of samples with numbers of coloured cubes
         """
-        _input = sys.stdin.read()
+        self._input = sys.stdin.read()
 
-        for line in _input.split('\n'):
-            line = line.strip()
-            if line:
-                game_id_str, sample_str = line.split(': ')
-                game_id: int = int(game_id_str[game_id_str.find(' ')+1:])
-                g = Game(game_id)
+        for line in self._input.splitlines(keepends=False):
+            game_id_str, sample_str = line.split(': ')
+            game_id: int = int(game_id_str[game_id_str.find(' ')+1:])
+            g = Game(game_id)
 
-                # Build up the list of samples the game has seen
-                samples: list = sample_str.split('; ')
-                for sample in samples:
-                    g.add_sample(sample)
+            # Build up the list of samples the game has seen
+            samples: list = sample_str.split('; ')
+            for sample in samples:
+                g.add_sample(sample)
 
-                self._games.append(g)
+            self._games.append(g)
 
     def calculate_power(self, cubes: list) -> int:
         """
