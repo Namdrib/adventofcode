@@ -171,8 +171,6 @@ class Day23:
                 # Move it from old_pos to new_pos
                 self._elf_positions.remove(old_pos[0])
                 self._elf_positions.add(new_pos)
-                # self._elf_positions[old_pos[0][1]][old_pos[0][0]] = '.'
-                # self._elf_positions[new_pos[1]][new_pos[0]] = '#'
 
     def part_one(self) -> int:
         """
