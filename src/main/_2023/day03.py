@@ -29,7 +29,8 @@ class Day03:
         self._input = sys.stdin.read()
 
         for row, line in enumerate(self._input.splitlines(keepends=False)):
-            self._grid.append(line)
+            # Add another row so the regex in is_part_number works...
+            self._grid.append(line+'.')
             matching_nums: list = [int(x) for x in re.findall(self._numbers_regex, line)]
             for item in matching_nums:
                 self._numbers.append(item)
@@ -47,7 +48,7 @@ class Day03:
         """
         return (not char.isdigit()) and char != '.'
 
-    def get_neighbours_of_pos(self, x, y, length) -> list:
+    def get_neighbours_of_number_starting_at_pos(self, x, y, length) -> list:
         """
         Return a list of neighbouring locations of a given position
         If the position is the beginning of a number (e.g. 123), the neighbours are
@@ -100,12 +101,13 @@ class Day03:
         """
         x_pos: int = 0
         line = self._grid[number_row]
+        pattern: str = fr'[^d]{number}[^d]'
         match_index: int = line.find(str(number), x_pos)
         if match_index == -1:
             return False
 
         x_pos = match_index
-        neighbours: list = self.get_neighbours_of_pos(x_pos, number_row, len(str(number)))
+        neighbours: list = self.get_neighbours_of_number_starting_at_pos(x_pos, number_row, len(str(number)))
 
         part_number: bool = any(self.is_symbol(x) for x in neighbours)
         print(f'Neighbours of {str(number).rjust(3)}: {"".join(neighbours).rjust(12)} -> {part_number}')
@@ -113,13 +115,31 @@ class Day03:
 
     def part_one(self) -> int:
         """
-        Return the sum of all of the game IDs that can be played with the available cubes
+        Return the sum of all of the part numbers in the engine schematic
         """
-        print(self._numbers)
+        # Oh my word this is bad
         total: int = 0
-        for number, row in zip(self._numbers, self._number_row):
-            if self.is_part_number(number, row):
-                total += number
+        for i, line in enumerate(self._grid):
+            j: int = 0
+            while j < len(line):
+                # When we locate a digit, substring forwards until it is no longer a digit
+                # This is why read_input has the extra dot at the end
+                # Then, get the neighbours of that entire number to see if it is a symbol
+                if line[j].isdigit():
+                    match_: int = re.search(r'[^\d]', line[j:])
+                    if match_:
+                        non_digit_pos = match_.start()
+                        number: int = int(line[j:j+non_digit_pos])
+
+                        neighbours: list = self.get_neighbours_of_number_starting_at_pos(j, i, non_digit_pos)
+                        part_number: bool = any(self.is_symbol(x) for x in neighbours)
+                        print(f'  Neighbours of {str(number).rjust(3)}: {"".join(neighbours).rjust(12)} -> {part_number}')
+                        if part_number:
+                            total += number
+
+                        j += non_digit_pos
+                j += 1
+
         return total
 
     def part_two(self) -> int:
@@ -136,8 +156,6 @@ def main() -> None:
     solver = Day03()
     solver.read_input()
 
-    # 535440 too low
-    # 544733 too high
     print(f'Part 1: {solver.part_one()}')
     print(f'Part 2: {solver.part_two()}')
 
