@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-import re
 import sys
 
 class Card:
@@ -8,10 +7,22 @@ class Card:
         self.winning_numbers = winning_numbers
         self.have_numbers = have_numbers
 
-    def num_winning_numbers(self):
+    def num_winning_numbers(self) -> int:
+        """
+        The number of numbers we have that are also winning numbers
+
+        :return: the number of winning numbers that overlap
+        :rtype: int
+        """
         return len(set(self.have_numbers).intersection(self.winning_numbers))
 
-    def calculate_score(self):
+    def calculate_score(self) -> bool:
+        """
+        The score is defined as 1 for the first match, then doubled for each of the matches after the first
+
+        :return: The score of a given card
+        :rtype: int
+        """
         wn: int = self.num_winning_numbers()
         if not wn:
             return 0
@@ -42,7 +53,6 @@ class Day04:
         for line in self.input.splitlines(keepends=False):
             # Each line looks like:
             # Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
-            print(f'Reading {line}')
             id_, rest = line.split(': ')
             _, id_ = id_.split(' ', 1)
 
@@ -61,17 +71,19 @@ class Day04:
     def part_two(self) -> int:
         """
         Return the number of scratchcards you end up with with the new scoring mechanism
+        You win copies of the scratchcards below the winning card equal to the number of matches.
+        So, if card 10 were to have 5 matching numbers, you would win one copy each of cards 11, 12, 13, 14, and 15.
         """
-        card_stash: dict = {} # id: number of copies
-        for card in self.cards:
-            card_stash[card.id] = 1
+        # Keep track of how many cards we have
+        # Start with one of each, as we'll go through the entire list
+        card_stash: dict = {card.id: 1 for card in self.cards}
 
-        # For each card
-        for i, card in enumerate(self.cards):
+        # As each card wins more cards, add those upcoming cards to the stash
+        for card in self.cards:
             num_winning_numbers: int = card.num_winning_numbers()
             for j in range(num_winning_numbers):
-                if i+j+1 < len(self.cards):
-                    card_stash[i+j+2] += card_stash[i+1]
+                if card.id+j < len(self.cards):
+                    card_stash[card.id+j+1] += card_stash[card.id]
 
         return sum(v for k, v in card_stash.items())
 
