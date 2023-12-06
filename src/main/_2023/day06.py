@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from math import prod
 import sys
 
 class Day06:
@@ -37,6 +38,7 @@ class Day06:
         :return: The total distance travelled
         :rtype: int
         """
+        # Avoid having the calculation turn out negative
         if total_time <= 0:
             return 0
         if time_accelerating >= total_time:
@@ -55,19 +57,19 @@ class Day06:
         :return: The number of ways to beat `distance` with the available time
         :rtype: int
         """
+        # The distance travelled increases as more time is spent accelerating,
+        # then decreases again once too much time is spent accelerating.
+        # Look for the earliest and latest win we can get based on time spent accelerating.
+        # This is the range in which we can win
         first_win: int = 0
         for i in range(time+1):
-            distance_travelled: int = self.calculate_distance(time, i)
-            if distance_travelled > distance:
+            if self.calculate_distance(time, i) > distance:
                 first_win = i
-                print(f'Start winning at {first_win=}')
                 break
 
         last_win: int = 0
-        for i in range(time+1, 0, -1):
-            distance_travelled: int = self.calculate_distance(time, i)
-            if distance_travelled > distance:
-                print(f'Stop winning at {last_win=}')
+        for i in range(time, 0, -1):
+            if self.calculate_distance(time, i) > distance:
                 last_win = i+1
                 break
 
@@ -89,12 +91,7 @@ class Day06:
         """
         Find all of the numbers of ways to win each race, and multiple these numbers together
         """
-        result: int = 1
-        for time, distance in zip(self.times, self.distances):
-            ways_to_win: int = self.calculate_ways_to_win(time, distance)
-            result *= ways_to_win
-
-        return result
+        return prod(self.calculate_ways_to_win(time, distance) for time, distance in zip(self.times, self.distances))
 
     def part_two(self) -> int:
         """
