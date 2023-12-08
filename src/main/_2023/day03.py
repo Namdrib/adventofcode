@@ -11,143 +11,150 @@ class Day03:
         """
         Constructor
         """
-        self._input: list = None
+        self.input: list = None
 
         # Represents the grid (2D list)
-        self._grid: list = []
+        self.grid: list = []
 
-        self._numbers: list = []
-        self._number_row: list = []
-
-        self._numbers_regex: str = r'\d+'
+        # Each element is a tuple of a number and its x and y co-ordinates (n, x, y)
+        self.numbers: list = []
 
     def read_input(self) -> None:
         """
         Read input from stdin and parse it into a useful data structure
-        In this case, each line contains a game with a number of samples with numbers of coloured cubes
+        In this case, each line is a row in a grid. The grid contains numbers mixed in with other symbols
+        Store all of the numbers, along with their co-ordinates in the grid
         """
-        self._input = sys.stdin.read()
+        self.input = sys.stdin.read()
 
-        for row, line in enumerate(self._input.splitlines(keepends=False)):
-            # Add another row so the regex in is_part_number works...
-            self._grid.append(line+'.')
-            matching_nums: list = [int(x) for x in re.findall(self._numbers_regex, line)]
-            for item in matching_nums:
-                self._numbers.append(item)
-                self._number_row.append(row)
+        for row, line in enumerate(self.input.splitlines(keepends=False)):
+            # Add another column so the regex in is_part_number works...
+            line += '.'
+            self.grid.append(line)
 
-    def is_symbol(self, char) -> bool:
+            # Loop over the line, looking for numbers
+            # These are delimited by non-digit characters
+            col: int = 0
+            while col < len(line):
+                if line[col].isdigit():
+                    match_ = re.search(r'[^\d]', line[col:])
+                    non_digit_pos = match_.start()
+
+                    # Store the number, along with its position
+                    number: int = int(line[col:col+non_digit_pos])
+                    self.numbers.append((number, col, row))
+                    col += non_digit_pos
+
+                else:
+                    col += 1
+
+    def is_symbol(self, char: str) -> bool:
         """
         Return whether the given character is a symbol
         Symbols are anything that's not a number, and not `.`
 
-        :param char: _description_
-        :type char: _type_
+        :param char: The character to check for symbol-ness
+        :type char: str
         :return: True if the character is a symbol, False otherwise
         :rtype: bool
         """
         return (not char.isdigit()) and char != '.'
 
-    def get_neighbours_of_number_starting_at_pos(self, x, y, length) -> list:
+    def get_neighbours_of_thing_starting_at_pos(self, length: int, x_pos: int, y_pos: int) -> list:
         """
         Return a list of neighbouring locations of a given position
         If the position is the beginning of a number (e.g. 123), the neighbours are
         the locations surrounding the entire number
         Assumption: the length of the number is specified by length
 
-        :param x: _description_
-        :type x: _type_
-        :param y: _description_
-        :type y: _type_
-        :return: _description_
+        :param length: The length of the thing to get neighbours of
+        :type length: int
+        :param x_pos: The x position of the start of the number in the grid
+        :type x_pos: int
+        :param y_pos: The y position of the start of the number in the grid
+        :type y_pos: int
+        :return: A list of neighbours of the number in the grid
         :rtype: list
         """
         out: list = []
 
-        min_x: int = max(0, x-1)
-        max_x: int = min(len(self._grid[y])-1, x+length+1)
+        min_x: int = max(0, x_pos-1)
+        max_x: int = min(len(self.grid[y_pos])-1, x_pos+length+1)
 
         # Get top
-        if y > 0:
-            out.extend(self._grid[y-1][min_x:max_x])
+        if y_pos > 0:
+            out.extend(self.grid[y_pos-1][min_x:max_x])
             # print(f'Got top: {out}')
 
         # Get sides
-        if x > 0:
-            out.append(self._grid[y][x-1])
+        if x_pos > 0:
+            out.append(self.grid[y_pos][x_pos-1])
             # print(f'Got left: {out}')
-        if x+length < len(self._grid[y]):
-            out.append(self._grid[y][x+length])
+        if x_pos+length < len(self.grid[y_pos]):
+            out.append(self.grid[y_pos][x_pos+length])
             # print(f'Got right: {out}')
 
         # Get bottom
-        if y < len(self._grid)-1:
-            out.extend(self._grid[y+1][min_x:max_x])
+        if y_pos < len(self.grid)-1:
+            out.extend(self.grid[y_pos+1][min_x:max_x])
             # print(f'Got bottom: {out}')
 
         # print(f'Neighbours of {x=},{y=}: {out}')
         return out
 
-
-    def is_part_number(self, number, number_row) -> bool:
+    def is_part_number(self, number, x_pos, y_pos) -> bool:
         """
         Return whether a given number is a part number
         A part number is any number adjacent to a symbol, even diagonally
 
         :param number: The number to test for
-        :type number: _type_
+        :type number: int
+        :param x_pos: The x position of the start of the number in the grid
+        :type x_pos: int
+        :param y_pos: The y position of the start of the number in the grid
+        :type y_pos: int
         :return: True if `number` is a part number, False otherwise
         :rtype: bool
         """
-        x_pos: int = 0
-        line = self._grid[number_row]
-        pattern: str = fr'[^d]{number}[^d]'
-        match_index: int = line.find(str(number), x_pos)
-        if match_index == -1:
-            return False
-
-        x_pos = match_index
-        neighbours: list = self.get_neighbours_of_number_starting_at_pos(x_pos, number_row, len(str(number)))
-
-        part_number: bool = any(self.is_symbol(x) for x in neighbours)
-        print(f'Neighbours of {str(number).rjust(3)}: {"".join(neighbours).rjust(12)} -> {part_number}')
-        return part_number
+        neighbours: list = self.get_neighbours_of_thing_starting_at_pos(len(str(number)), x_pos, y_pos)
+        print(f'Neighbours of {str(number).rjust(3)}: {"".join(neighbours).rjust(12)} -> {number}')
+        return any(self.is_symbol(x) for x in neighbours)
 
     def part_one(self) -> int:
         """
         Return the sum of all of the part numbers in the engine schematic
+        See: self.is_part_number(...)
         """
-        # Oh my word this is bad
-        total: int = 0
-        for i, line in enumerate(self._grid):
-            j: int = 0
-            while j < len(line):
-                # When we locate a digit, substring forwards until it is no longer a digit
-                # This is why read_input has the extra dot at the end
-                # Then, get the neighbours of that entire number to see if it is a symbol
-                if line[j].isdigit():
-                    match_: int = re.search(r'[^\d]', line[j:])
-                    if match_:
-                        non_digit_pos = match_.start()
-                        number: int = int(line[j:j+non_digit_pos])
-
-                        neighbours: list = self.get_neighbours_of_number_starting_at_pos(j, i, non_digit_pos)
-                        part_number: bool = any(self.is_symbol(x) for x in neighbours)
-                        print(f'  Neighbours of {str(number).rjust(3)}: {"".join(neighbours).rjust(12)} -> {part_number}')
-                        if part_number:
-                            total += number
-
-                        j += non_digit_pos
-                j += 1
-
-        return total
+        return sum(number for number, col, row in self.numbers if self.is_part_number(number, col, row))
 
     def part_two(self) -> int:
         """
-        Return the sum of the powers of the minimal possible set of cubes in a game
+        A gear is any `*` symbol that is adjacent to exactly two part numbers.
+        Its gear ratio is the result of multiplying those two numbers together.
+        Return the sum of all of the gear ratios in the engine schematic
         """
-        thing = []
-        return sum(x for x in thing)
+        total: int = 0
+        for i, line in enumerate(self.grid):
+            j: int = 0
+            while j < len(line):
+                # Found a potential gear
+                if line[j] == '*':
+                    neighbours: list = self.get_neighbours_of_thing_starting_at_pos(1, j, i)
+                    print(f'Neighbours of {j=},{i=}: {neighbours}')
+
+                    neighbouring_numbers: list = []
+
+                    for neighbour in neighbours:
+                        if neighbour.isdigit():
+                            # TODO: Look left and right for the number to figure out what it is
+                            pass
+
+                    # It is a gear! Calculate its ratio, and add that to the total
+                    if len(neighbouring_numbers) == 2:
+                        total += neighbouring_numbers[0] * neighbouring_numbers[1]
+                j += 1
+
+        return total
 
 def main() -> None:
     """
