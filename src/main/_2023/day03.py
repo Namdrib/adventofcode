@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import math
 import re
 import sys
 
@@ -84,22 +85,62 @@ class Day03:
         # Get top
         if y_pos > 0:
             out.extend(self.grid[y_pos-1][min_x:max_x])
-            # print(f'Got top: {out}')
 
         # Get sides
         if x_pos > 0:
             out.append(self.grid[y_pos][x_pos-1])
-            # print(f'Got left: {out}')
+
         if x_pos+length < len(self.grid[y_pos]):
             out.append(self.grid[y_pos][x_pos+length])
-            # print(f'Got right: {out}')
 
         # Get bottom
         if y_pos < len(self.grid)-1:
             out.extend(self.grid[y_pos+1][min_x:max_x])
-            # print(f'Got bottom: {out}')
 
-        # print(f'Neighbours of {x=},{y=}: {out}')
+        return out
+
+    def get_neighbouring_digits_of(self, x_pos: int, y_pos: int) -> tuple:
+        """
+        Return a list of positions of the digits that surround the given co-ordinates
+        Note: it's possible the same number is represented by multiple digits
+
+        :param x_pos: The x position of the element to check
+        :type x_pos: int
+        :param y_pos: The y position of the element to check
+        :type y_pos: int
+        :return: The x and y positions of all of the digits surrounding the element
+        :rtype: tuple
+        """
+        out: list = []
+
+        min_x: int = max(0, x_pos-1)
+        max_x: int = min(len(self.grid[y_pos])-1, x_pos+2)
+
+        # Check the top for digits
+        if y_pos > 0:
+            row_above: str = self.grid[y_pos-1][min_x:max_x]
+            for i, char in enumerate(row_above):
+                if char.isdigit():
+                    out.append((x_pos-1+i, y_pos-1))
+
+        # Check the sides for digits
+        if x_pos > 0:
+            left: str = self.grid[y_pos][x_pos-1]
+            if left.isdigit():
+                out.append((x_pos-1, y_pos))
+
+        if x_pos < len(self.grid[y_pos]) - 1:
+            right: str = self.grid[y_pos][x_pos+1]
+            if right.isdigit():
+                out.append((x_pos+1, y_pos))
+
+        # Check the bottom for digits
+        if y_pos < len(self.grid)-1:
+            row_below: str = self.grid[y_pos+1][min_x:max_x]
+            for i, char in enumerate(row_below):
+                if char.isdigit():
+                    out.append((x_pos-1+i, y_pos+1))
+
         return out
 
     def is_part_number(self, number, x_pos, y_pos) -> bool:
@@ -117,8 +158,26 @@ class Day03:
         :rtype: bool
         """
         neighbours: list = self.get_neighbours_of_thing_starting_at_pos(len(str(number)), x_pos, y_pos)
-        print(f'Neighbours of {str(number).rjust(3)}: {"".join(neighbours).rjust(12)} -> {number}')
         return any(self.is_symbol(x) for x in neighbours)
+
+    def number_containing(self, x_pos: int, y_pos: int) -> int:
+        """
+        Return the number containing the digit at the specified position
+
+        :param x_pos: The x position of the digit to check
+        :type x_pos: int
+        :param y_pos: The y position of the digit to check
+        :type y_pos: int
+        :return: The number that contains the digit at the given position. -1 if one is not found
+        :rtype: int
+        """
+        for number, col, row in self.numbers:
+            number_length: int = len(str(number))
+            if row == y_pos:
+                if col <= x_pos <= col + number_length:
+                    return number
+
+        return -1
 
     def part_one(self) -> int:
         """
@@ -135,24 +194,24 @@ class Day03:
         """
         total: int = 0
         for i, line in enumerate(self.grid):
-            j: int = 0
-            while j < len(line):
+            for j, char in enumerate(line):
                 # Found a potential gear
-                if line[j] == '*':
-                    neighbours: list = self.get_neighbours_of_thing_starting_at_pos(1, j, i)
-                    print(f'Neighbours of {j=},{i=}: {neighbours}')
+                if char == '*':
+                    neighbouring_digits: list = self.get_neighbouring_digits_of(j, i)
 
-                    neighbouring_numbers: list = []
+                    # Keep track of the unique whole numbers we've seen so far
+                    # It's a set because the same number can be represented by multiple digits
+                    neighbouring_numbers: set = set()
 
-                    for neighbour in neighbours:
-                        if neighbour.isdigit():
-                            # TODO: Look left and right for the number to figure out what it is
-                            pass
+                    # See which number corresponds to each neighbouring digit
+                    for neighbouring_digit in neighbouring_digits:
+                        number: int = self.number_containing(neighbouring_digit[0], neighbouring_digit[1])
+                        if number != -1:
+                            neighbouring_numbers.add(number)
 
                     # It is a gear! Calculate its ratio, and add that to the total
                     if len(neighbouring_numbers) == 2:
-                        total += neighbouring_numbers[0] * neighbouring_numbers[1]
-                j += 1
+                        total += math.prod(neighbouring_numbers)
 
         return total
 
