@@ -87,8 +87,7 @@ class Day08:
         """
         Find the number of steps required to reach ZZZ, starting from AAA
         """
-        starting_node: str = 'AAA'
-        return self.calculate_steps_to_end_condition(starting_node, lambda x: x == 'ZZZ')
+        return self.calculate_steps_to_end_condition('AAA', lambda x: x == 'ZZZ')
 
     def part_two(self) -> int:
         """
@@ -97,13 +96,14 @@ class Day08:
         Find how many steps it takes before all of the starting nodes are simultaneously on nodes that end with Z
         """
         starting_nodes: list = [x for x in self.nodes if x.endswith('A')]
+
         # Map how many steps each starting node takes to end on a node ending with Z
         steps_to_z: dict = {}
 
         # For each node
-        for node in starting_nodes:
+        for starting_node in starting_nodes:
             # Calculate how many steps to reach a node ending with Z
-            steps_to_z[node] = self.calculate_steps_to_end_condition(node, lambda x: x.endswith('Z'))
+            steps_to_z[starting_node] = self.calculate_steps_to_end_condition(starting_node, lambda x: x.endswith('Z'))
 
         # Find the lowest multiple that they will all end up on
         return math.lcm(*steps_to_z.values())
