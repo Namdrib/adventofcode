@@ -58,26 +58,37 @@ class Day08:
         """
         return self.nodes[node][0] if direction == 'L' else self.nodes[node][1]
 
-    def part_one(self) -> int:
+    def calculate_steps_to_end_condition(self, start: str, is_end_condition) -> int:
         """
-        Find the number of steps required to reach ZZZ, starting from AAA
-        """
-        current_node: str = 'AAA'
-        ending_node: str = 'ZZZ'
+        Calculate how many steps it takes to get from the node `start` to an end condition
 
+        :param start: The node to start from
+        :type start: str
+        :param is_end_condition: A Callable that determines whether the node has reached an end condition
+        :type is_end_condition: Callable[[str], int]
+        :return: The number of steps to get from the node `start` to the end condition
+        :rtype: int
+        """
+        current_node: str = start
         num_steps: int = 0
 
         # Keep following the instructions until we end up on ending_node
         for direction in itertools.cycle(self.instructions):
             next_node = self.get_next_node(current_node, direction)
-
             current_node = next_node
             num_steps += 1
 
-            if current_node == ending_node:
-                break
+            if is_end_condition(current_node):
+                return num_steps
 
-        return num_steps
+        return 0
+
+    def part_one(self) -> int:
+        """
+        Find the number of steps required to reach ZZZ, starting from AAA
+        """
+        starting_node: str = 'AAA'
+        return self.calculate_steps_to_end_condition(starting_node, lambda x: x == 'ZZZ')
 
     def part_two(self) -> int:
         """
@@ -89,22 +100,10 @@ class Day08:
         # Map how many steps each starting node takes to end on a node ending with Z
         steps_to_z: dict = {}
 
-        num_steps: int = 0
-
         # For each node
         for node in starting_nodes:
-            current_node = node
-            # Calculate how long it'll take to get to a spot ending with Z
-            # Assumes there is only one spot with Z that corresponds to this node
-            num_steps: int = 0
-            for direction in itertools.cycle(self.instructions):
-                next_node = self.get_next_node(current_node, direction)
-                current_node = next_node
-                num_steps += 1
-
-                if current_node.endswith('Z'):
-                    steps_to_z[current_node] = num_steps
-                    break
+            # Calculate how many steps to reach a node ending with Z
+            steps_to_z[node] = self.calculate_steps_to_end_condition(node, lambda x: x.endswith('Z'))
 
         # Find the lowest multiple that they will all end up on
         return math.lcm(*steps_to_z.values())
