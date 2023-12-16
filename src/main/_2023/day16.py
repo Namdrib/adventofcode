@@ -203,9 +203,9 @@ class Day16:
         Note: takes a while to run
         """
         max_energised_tiles: int = 0
-        for i in range(len(self.grid)):
+        for row in range(len(self.grid)):
             # Check all starting positions from the left edge
-            beam_start: Beam = Beam(0, i, Direction.RIGHT)
+            beam_start: Beam = Beam(0, row, Direction.RIGHT)
             beams: list = self.propagate(beam_start)
 
             # Count the number of energised tiles, see if it is the max
@@ -213,16 +213,16 @@ class Day16:
             max_energised_tiles = max(max_energised_tiles, num_energised_tiles)
 
             # Check all starting positions from the right edge
-            beam_start: Beam = Beam(len(self.grid[i])-1, i, Direction.LEFT)
+            beam_start: Beam = Beam(len(self.grid[row])-1, row, Direction.LEFT)
             beams: list = self.propagate(beam_start)
 
             # Count the number of energised tiles, see if it is the max
             num_energised_tiles: int = self.count_energised_tiles(beams)
             max_energised_tiles = max(max_energised_tiles, num_energised_tiles)
 
-        for j in range(len(self.grid[0])):
+        for col in range(len(self.grid[0])):
             # Check all starting positions from the top edge
-            beam_start: Beam = Beam(j, 0, Direction.DOWN)
+            beam_start: Beam = Beam(col, 0, Direction.DOWN)
             beams: list = self.propagate(beam_start)
 
             # Count the number of energised tiles, see if it is the max
@@ -230,7 +230,7 @@ class Day16:
             max_energised_tiles = max(max_energised_tiles, num_energised_tiles)
 
             # Check all starting positions from the bottom edge
-            beam_start: Beam = Beam(j, len(self.grid)-1, Direction.UP)
+            beam_start: Beam = Beam(col, len(self.grid)-1, Direction.UP)
             beams: list = self.propagate(beam_start)
 
             # Count the number of energised tiles, see if it is the max
