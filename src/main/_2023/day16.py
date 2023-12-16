@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 from enum import Enum
+from queue import Queue
 import sys
 
 class Direction(Enum):
@@ -130,7 +131,7 @@ class Day16:
             print()
         print()
 
-    def propagate(self, beam: Beam):
+    def propagate(self, starting_beam: Beam):
         """
         Propagate a beam heading in a direction
 
@@ -139,31 +140,39 @@ class Day16:
         :return: The new beams created by this beam, if any
         :rtype: list
         """
-        # If the beam is out of bounds, it cannot propagate
-        if beam.x < 0 or beam.x >= len(self.grid[0]) or beam.y < 0 or beam.y >= len(self.grid):
-            return
 
-        # There is a loop. No point continuing down this path
-        if beam.direction in self.beams[beam.y][beam.x]:
-            return
+        beam_queue: Queue = Queue()
 
-        # Record the beam
-        self.beams[beam.y][beam.x].append(beam.direction)
+        beam_queue.put(starting_beam)
 
-        # Energise this tile
-        print(f'Lighting up tile ({beam.x}, {beam.y})')
-        self.visualise_grid()
+        while not beam_queue.empty():
+            beam: Beam = beam_queue.get()
 
-        # See what to do with the current beam
-        current_tile: str = self.grid[beam.y][beam.x]
-        next_directions: list = self.calculate_next_directions(beam.direction, current_tile)
+            # If the beam is out of bounds, it cannot propagate
+            if beam.x < 0 or beam.x >= len(self.grid[0]) or beam.y < 0 or beam.y >= len(self.grid):
+                continue
 
-        for next_direction in next_directions:
-            direction_index: int = next_direction.value
-            new_x: int = beam.x + self.dx[direction_index]
-            new_y: int = beam.y + self.dy[direction_index]
-            new_beam: Beam = Beam(new_x, new_y, next_direction)
-            self.propagate(new_beam)
+            # There is a loop. No point continuing down this path
+            if beam.direction in self.beams[beam.y][beam.x]:
+                continue
+
+            # Record the beam
+            self.beams[beam.y][beam.x].append(beam.direction)
+
+            # Energise this tile
+            print(f'Lighting up tile ({beam.x}, {beam.y})')
+            # self.visualise_grid()
+
+            # See what to do with the current beam
+            current_tile: str = self.grid[beam.y][beam.x]
+            next_directions: list = self.calculate_next_directions(beam.direction, current_tile)
+
+            for next_direction in next_directions:
+                direction_index: int = next_direction.value
+                new_x: int = beam.x + self.dx[direction_index]
+                new_y: int = beam.y + self.dy[direction_index]
+                new_beam: Beam = Beam(new_x, new_y, next_direction)
+                beam_queue.put(new_beam)
 
     def part_one(self) -> int:
         """
