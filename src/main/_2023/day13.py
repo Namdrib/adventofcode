@@ -14,10 +14,17 @@ class Day13:
 
         self.grids: list = []
 
+        # These are used to capture how many differences there are in each grid's rows and columns
+        # Each element in the outer list represents a grid's rows/columns
+        # Each element in the inner list represents how many differences there are in that grid's rows/columns
+        # e.g. row_diffs[0] are the row differences for grids[0]
+        self.row_diffs: list = []
+        self.col_diffs: list = []
+
     def read_input(self) -> None:
         """
         Read input from stdin and parse it into a useful data structure
-        In this case, the input is a list of 2D grids, with each grid separated by an empty lien
+        In this case, the input is a list of 2D grids, with each grid separated by an empty line
         """
         self.input = sys.stdin.read()
 
@@ -33,60 +40,61 @@ class Day13:
         # Capture the last grid. Assumes the input ends with a newline, and not a new line
         self.grids.append(grid)
 
-    def is_mirror_row(self, grid: list, row: int) -> bool:
-        """
-        Check whether the given grid has a mirror between row `row` and `row+1`
+        # Set the size of each row_diffs and col_diffs entry to the the corresponding grid's size
+        for grid in self.grids:
+            self.row_diffs.append([-1 for x in grid])
+            self.col_diffs.append([-1 for x in grid[0]])
 
-        :param grid: The grid to check
-        :type grid: list
+    def scan_rows_for_diffs(self, grid_index: int, row: int) -> None:
+        """
+        Treat rows `row` and `row+1` as an axis of reflection
+        Record how many differences there are between the sides of the reflection
+
+        :param grid_index: The index of the grid to search for reflections
+        :type grid_index: int
         :param row: The row to check for
         :type row: int
-        :return: True if there is a mirror, False otherwise
-        :rtype: bool
         """
         # Keep comparing rows, moving further away from the given row until either:
         # - we go out of bounds, or
         # - there is a mismatch
+        grid: list = self.grids[grid_index]
+        num_differences: int = 0
         for dy in range(len(grid)):
             row_number_above = row - dy
             row_number_below = row + dy + 1
-            print(f'Comparing row {row_number_above+1}, {row_number_below+1}')
 
             if row_number_above < 0:
                 break
             if row_number_below >= len(grid):
                 break
 
-            print(f'  {grid[row_number_above]}')
-            print(f'  {grid[row_number_below]}')
-            if grid[row_number_above] != grid[row_number_below]:
-                print(f'Asymmetry detected at row {row+1}/{row+2}')
-                return False
+            # Find the hamming distance between the rows being compared
+            num_differences += sum(c1 != c2 for c1, c2 in zip(grid[row_number_above], grid[row_number_below]))
 
-        print(f'-----> Mirror at row {row+1}')
-        return True
+        self.row_diffs[grid_index][row] = num_differences
 
-
-    def is_mirror_column(self, grid: list, column: int) -> bool:
+    def scan_cols_for_diffs(self, grid_index: int, column: int) -> None:
         """
-        Check whether the given grid has a mirror between column `column` and `column+1`
+        Treat columns `col` and `col+1` as an axis of reflection
+        Record how many differences there are between the sides of the reflection
 
-        :param grid: The grid to check
-        :type grid: list
+        :param grid_index: The index of the grid to search for mirrors
+        :type grid_index: int
         :param column: The column to check for
         :type column: int
-        :return: True if there is a mirror, False otherwise
-        :rtype: bool
         """
+        # TODO: Would be nice to consolidate the logic of this and scan_rows_for_diffs
+        # as they are pretty much the same code. Maybe work on a rotated grid?
 
         # Keep comparing columns, moving further away from the given column until either:
         # - we go out of bounds, or
         # - there is a mismatch
+        num_differences: int = 0
+        grid: list = self.grids[grid_index]
         for dx in range(len(grid[0])):
             column_number_left = column - dx
             column_number_right = column + dx + 1
-
-            print(f'Comparing col {column_number_left+1}, {column_number_right+1}')
 
             if column_number_left < 0:
                 break
@@ -96,74 +104,79 @@ class Day13:
             column_left: list = [row[column_number_left] for row in grid]
             column_right: list = [row[column_number_right] for row in grid]
 
-            if column_left != column_right:
-                print(f'Asymmetry detected at column {column_number_left+1}/{column_number_right+1}')
-                return False
+            # Find the hamming distance between the columns being compared
+            num_differences += sum(c1 != c2 for c1, c2 in zip(column_left, column_right))
 
-        print(f'-----> Mirror at column {column+1}')
-        return True
+        self.col_diffs[grid_index][column] = num_differences
 
-    def get_mirror_row_in_grid(self, grid: list) -> int:
+    def get_mirror_position(self, grid_index: int, check_smudge: bool) -> tuple:
         """
-        Return the row where there is a mirror. Return -1 if there is no mirror
+        Find where the mirror is located for a given grid
 
-        :param grid: The grid to check for a mirror
+        :param grid_index: The index of the grid to search for mirrors
         :type grid: list
-        :return: The row where there is a mirror, if there is one
-        :rtype: int
+        :param check_smudge: Whether to check for smudges when determining the reflection location
+        :type check_smudge: bool
+        :return: The (mirror_row, mirror_column) in the grid. One of them will be -1, signifying no mirror for that axis
+        :rtype: tuple
         """
-        for row in range(0, len(grid)-1):
-            if self.is_mirror_row(grid, row):
-                return row+1
+        # Normally, the point of reflection will be the row/column where there are no differences
+        # along the axis of reflection
+        # With the smudge, there will be exactly one difference
+        try:
+            mirror_row = self.row_diffs[grid_index].index(1 if check_smudge else 0) + 1
+        except ValueError:
+            mirror_row = -1
 
-        return -1
+        try:
+            mirror_column = self.col_diffs[grid_index].index(1 if check_smudge else 0) + 1
+        except ValueError:
+            mirror_column = -1
 
-    def get_mirror_column_in_grid(self, grid: list) -> int:
-        """
-        Return the column where there is a mirror. Return -1 if there is no mirror
-
-        :param grid: The grid to check for a mirror
-        :type grid: list
-        :return: The column where there is a mirror, if there is one
-        :rtype: int
-        """
-        for column in range(0, len(grid[0])-1):
-            if self.is_mirror_column(grid, column):
-                return column+1
-
-        return -1
+        return (mirror_row, mirror_column)
 
     def part_one(self) -> int:
         """
-        Add up the number of columns to the left of each vertical line of reflection;
+        Summarise a reflection line by doing the following:
+        - Add up the number of columns to the left of each vertical line of reflection;
         to that, also add 100 multiplied by the number of rows above each horizontal line of reflection
+        Find the sum of all summarised reflection lines
         """
+        # This pre-processing will be used for both part_one and part_two
+        for grid_index, grid in enumerate(self.grids):
+            # Assess how many differences each potential axis of reflection has
+            for row in range(0, len(grid)-1):
+                self.scan_rows_for_diffs(grid_index, row)
+            for col in range(0, len(grid[0])-1):
+                self.scan_cols_for_diffs(grid_index, col)
 
         total: int = 0
-        for grid in self.grids:
-
-            nums: str = ''.join(str(x+1) for x in range(len(grid[0])))
-            print(f'   {nums}')
-            for i, line in enumerate(grid):
-                print(f'{i+1}: {line}')
-            print()
-
-            mirror_row: int = self.get_mirror_row_in_grid(grid)
-            print()
-            if mirror_row == -1:
-                mirror_column: int = self.get_mirror_column_in_grid(grid)
-                print()
+        for grid_index, _ in enumerate(self.grids):
+            # The original mirror position will have the axis of reflection where there are *no* differences
+            mirror_row, mirror_column = self.get_mirror_position(grid_index, False)
+            if mirror_row != -1:
+                total += (100 * mirror_row)
+            elif mirror_column != -1:
                 total += mirror_column
-            else:
-                total += (100* mirror_row)
 
         return total
 
     def part_two(self) -> int:
         """
-        Find how many tiles are enclosed by the loop
+        There is a smudge in the mirror. One pixel (either a '.' or a '#') should be flipped.
+        This results in a new reflection line in each grid
+        Find the sum of all summarised reflection lines
         """
-        return 0
+        total: int = 0
+        for grid_index, _ in enumerate(self.grids):
+            # The smudged mirror position will have the axis of reflection where there is *one* difference
+            mirror_row, mirror_column = self.get_mirror_position(grid_index, True)
+            if mirror_row != -1:
+                total += (100 * mirror_row)
+            elif mirror_column != -1:
+                total += mirror_column
+
+        return total
 
 def main() -> None:
     """
