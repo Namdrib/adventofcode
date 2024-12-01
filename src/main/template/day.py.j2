@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 import sys
 
-class DayXX:
+class Day{{ day_padded }}:
     """
-    Solution for https://adventofcode.com/2022/day/XX
+    Solution for https://adventofcode.com/{{ year }}/day/{{ day }}
     """
 
     def __init__(self) -> None:
@@ -40,7 +40,7 @@ def main() -> None:
     """
     Main
     """
-    solver = DayXX()
+    solver = Day{{ day_padded }}()
     solver.read_input()
 
     print(f'Part 1: {solver.part_one()}')
