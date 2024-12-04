@@ -1,5 +1,9 @@
 #!/usr/bin/python3
+import os
 import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
+from util import helpers
 
 class Day{{ day_padded }}:
     """
@@ -18,7 +22,6 @@ class Day{{ day_padded }}:
         In this case, each line ...
         """
         raw_input = sys.stdin.read()
-
         self.input = raw_input.splitlines()
 
         for item in self.input:
@@ -28,13 +31,17 @@ class Day{{ day_padded }}:
         """
         Return the ...
         """
-        return 0
+        count: int = 0
+
+        return count
 
     def part_two(self) -> int:
         """
         Return the ...
         """
-        return 0
+        count: int = 0
+
+        return count
 
 def main() -> None:
     """
