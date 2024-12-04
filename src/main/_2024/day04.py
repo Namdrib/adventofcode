@@ -1,5 +1,9 @@
 #!/usr/bin/python3
+import os
 import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
+from util import helpers
 
 class Day04:
     """
@@ -12,11 +16,7 @@ class Day04:
         """
         self.input: list = None
         self.grid: list = []
-        self.a_count: list = []
-
-        self.dir: list = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']
-        self.dx: list = [ 0,  1, 1, 1, 0, -1, -1, -1]
-        self.dy: list = [-1, -1, 0, 1, 1,  1,  0, -1]
+        self.midpoint_match_count: list = []
 
     def read_input(self) -> None:
         """
@@ -24,83 +24,80 @@ class Day04:
         In this case, each line ...
         """
         raw_input = sys.stdin.read()
-
         self.input = raw_input.splitlines()
 
         for item in self.input:
             self.grid.append(list(item))
-            self.a_count.append([0 for x in range(len(item))])
+            self.midpoint_match_count.append([0 for x in range(len(item))])
 
     def num_matches_at(self, x: int, y: int, target: str, mark_centre: bool = False) -> int:
         # See how many ways we can spell the target out
         # For each direction
 
         num_matches: int = 0
-        for dir_index, direction in enumerate(self.dir):
-            dx = self.dx[dir_index]
-            dy = self.dy[dir_index]
+        for direction in helpers.directions:
+            dx = direction['x']
+            dy = direction['y']
             end_x: int = x + (len(target)-1) * dx
             end_y: int = y + (len(target)-1) * dy
 
-            if 0 <= end_x < len(self.grid[0]) and 0 <= end_y < len(self.grid):
-                word: str = ""
-                for i, char in enumerate(target):
-                    word += self.grid[y + i * dy][x + i * dx]
+            if not helpers.in_range(self.grid[0], end_x):
+                # x would be out of bounds if we kept searching
+                continue
 
-                    if word == target:
-                        print(f'Found match at {y=}, {x=}, going {dy=}, {dx=}')
-                        num_matches += 1
+            if not helpers.in_range(self.grid, end_y):
+                # y would be out of bounds if we kept searching
+                continue
 
-                        if dir_index % 2 == 1 and mark_centre:
-                            print(f'Marking A at {y+dy}, {x+dx}')
-                            self.a_count[y + dy][x + dx] += 1
+            # Build up the word from the starting point to the end
+            word: str = ""
+            for i, char in enumerate(target):
+                word += self.grid[y + i * dy][x + i * dx]
+
+            # If we have a match
+            if word == target:
+                num_matches += 1
+
+                # We are going diagonally and doing part two
+                if dx and dy and mark_centre:
+                    # Mark the middle of the target word
+                    half_length: int = int(len(target) / 2)
+                    mid_x = x + dx * half_length
+                    mid_y = y + dy * half_length
+                    self.midpoint_match_count[mid_y][mid_x] += 1
 
         return num_matches
 
-    def search_grid_for(self, target: str) -> int:
-        """
-        Count how many times the target string appears in the grid
-        Allow forwards, backwards, up, down, left, right, diagonals
-
-        :param grid: _description_
-        :type grid: list
-        :param target: _description_
-        :type target: str
-        :return: _description_
-        :rtype: int
-        """
-
     def part_one(self) -> int:
         """
-        Return the ...
+        Return the number of times 'XMAS' appears in the grid, in any direction
         """
-        print(self.grid)
-        count: int = 0
+        num_xmas: int = 0
 
         # For each position
         for y in range(len(self.grid)):
             for x in range(len(self.grid[0])):
                 matches_at_pos: int = self.num_matches_at(x, y, 'XMAS')
-                count += matches_at_pos
+                num_xmas += matches_at_pos
 
-        return count
+        return num_xmas
 
     def part_two(self) -> int:
         """
-        Return the ...
+        Return the number of times 'MAS' appears in an 'X' shape
         """
-        count: int = 0
+        num_x_mas: int = 0
 
-        # For each position
+        # Count how many times A is at the centre of a diagonal match
         for y in range(len(self.grid)):
             for x in range(len(self.grid[0])):
                 self.num_matches_at(x, y, 'MAS', True)
 
-        for y in self.a_count:
-            for x in y:
-                if x >= 2:
-                    count += 1
-        return count
+        # A point is part of an X-MAS if it has multiple diagonal matches
+        for row in self.midpoint_match_count:
+            num_x_mas += sum(1 for x in row if x >= 2)
+
+        return num_x_mas
 
 def main() -> None:
     """
