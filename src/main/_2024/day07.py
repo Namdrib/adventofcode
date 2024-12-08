@@ -33,7 +33,8 @@ class Day07:
             nums: list = list(map(lambda x: int(x.strip(':')), item.split()))
             self.test_values.append(nums)
 
-    def _can_be_made_r(self, target: int, operands: list, index: int, acc: int, part_two: bool) -> bool:
+    @staticmethod
+    def _can_be_made_r(target: int, operands: list, index: int, acc: int, part_two: bool) -> bool:
         """
         Recursive helper method to work out whether target can be made out of
         the operands.
@@ -67,11 +68,12 @@ class Day07:
 
         # Keep searching - try adding and multiplying the next number with this one
         # For part two, add a new operator: Concatenate the next number to acc
-        return  self._can_be_made_r(target, operands, index+1,       acc + operands[index]   , part_two) \
-            or  self._can_be_made_r(target, operands, index+1,       acc * operands[index]   , part_two) \
-            or (self._can_be_made_r(target, operands, index+1, int(f'{acc}{operands[index]}'), part_two) if part_two else False)
+        return  Day07._can_be_made_r(target, operands, index+1,       acc + operands[index]   , part_two) \
+            or  Day07._can_be_made_r(target, operands, index+1,       acc * operands[index]   , part_two) \
+            or (Day07._can_be_made_r(target, operands, index+1, int(f'{acc}{operands[index]}'), part_two) if part_two else False)
 
-    def can_be_made(self, target: int, operands: list, part_two: bool) -> bool:
+    @staticmethod
+    def can_be_made(target: int, operands: list, part_two: bool) -> bool:
         """
         Return whether target can be made out of the operands.
 
@@ -84,7 +86,7 @@ class Day07:
         :return: True if the target can be made out of the operands and operators
         :rtype: bool
         """
-        return self._can_be_made_r(target, operands, 1, operands[0], part_two)
+        return Day07._can_be_made_r(target, operands, 1, operands[0], part_two)
 
     def part_one(self) -> int:
         """
