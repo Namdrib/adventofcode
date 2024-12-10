@@ -29,6 +29,7 @@ class Day06:
 
         for item in self.input:
             self.grid.append(list(item))
+            # Find the guard's start position
             if '^' in item:
                 x = item.find('^')
                 y = len(self.grid)-1
@@ -40,23 +41,23 @@ class Day06:
     def traverse_grid(self, grid: list) -> int:
         # Start at the start, facing up
         next_dir = helpers.Point(0, -1)
-        p: helpers.Point = helpers.Point(self.start_point.x, self.start_point.y)
+        p = helpers.Point(self.start_point.x, self.start_point.y)
 
         # We've been to the start
         points_traversed: int = 0
 
-        # used to determine whether we've already been here so we don't
+        # Used to determine whether we've already been here so we don't
         # double-count the same location
         seen = set()
-        seen.add((p.x, p.y))
+        seen.add(p)
         # Used to determine whether we're stuck in a loop
         seen_with_direction = set()
 
         # Walk forwards until we hit an obstacle (#)
         while True:
-            if (p.x, p.y) not in seen:
+            if p not in seen:
                 points_traversed += 1
-                seen.add((p.x, p.y))
+                seen.add(p)
 
             else:
                 if (p.x, p.y, next_dir.x, next_dir.y) not in seen_with_direction:
@@ -65,7 +66,7 @@ class Day06:
                     # In a loop!
                     return -1
 
-            next_point: helpers.Point = helpers.Point(p.x + next_dir.x, p.y + next_dir.y)
+            next_point = helpers.Point(p.x + next_dir.x, p.y + next_dir.y)
 
             # Out of bounds, the guard made it out of the grid.
             # Return how many points they've been to
