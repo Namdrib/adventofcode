@@ -43,6 +43,28 @@ class Point:
     def __repr__(self) -> str:
         return f'Point({self.x}, {self.y})'
 
+def rotate_clockwise(p: Point) -> Point:
+    """
+    Rotate a Point clockwise by 90 degrees
+
+    :param p: The original point
+    :type p: Point
+    :return: A new point, rotated 90 degrees clockwise
+    :rtype: Point
+    """
+    return Point(-p.y if p.y else p.y, p.x)
+
+def rotate_anticlockwise(p: Point) -> Point:
+    """
+    Rotate a Point anti-clockwise by 90 degrees
+
+    :param p: The original point
+    :type p: Point
+    :return: A new point, rotated 90 degrees anti-clockwise
+    :rtype: Point
+    """
+    return Point(p.y, -p.x if p.x else p.x)
+
 def in_range(thing, index: int) -> bool:
     """
     Return whether the index is in range fo the thing. i.e., is it safe to do thing[index]?

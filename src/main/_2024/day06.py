@@ -5,28 +5,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
 
-class Point:
-    def __init__(self, x, y) -> None:
-        self.x = x
-        self.y = y
-
-    def add(self, p) -> None:
-        self.x += p.x
-        self.y += p.y
-
-    def subtract(self, p) -> None:
-        self.x -= p.x
-        self.y -= p.y
-
-    def clone(self):
-        return Point(self.x, self.y)
-
-    def __eq__(self, p) -> bool:
-        return self.x == p.x and self.y == p.y
-
-    def __repr__(self) -> str:
-        return f'Point({self.x}, {self.y})'
-
 class Day06:
     """
     Solution for https://adventofcode.com/2024/day/6
@@ -39,7 +17,7 @@ class Day06:
         self.input: list = None
 
         self.grid: str = []
-        self.start_point: Point = None
+        self.start_point: helpers.Point = None
 
     def read_input(self) -> None:
         """
@@ -54,18 +32,15 @@ class Day06:
             if '^' in item:
                 x = item.find('^')
                 y = len(self.grid)-1
-                self.start_point = Point(x, y)
+                self.start_point = helpers.Point(x, y)
 
         # Don't get trapped
         self.grid[self.start_point.y][self.start_point.x] = '.'
 
-    def rotate_clockwise(self, p) -> list:
-        return Point(-p.y if p.y else p.y, p.x)
-
     def traverse_grid(self, grid: list) -> int:
         # Start at the start, facing up
-        next_dir = Point(0, -1)
-        p: Point = Point(self.start_point.x, self.start_point.y)
+        next_dir = helpers.Point(0, -1)
+        p: helpers.Point = helpers.Point(self.start_point.x, self.start_point.y)
 
         # We've been to the start
         points_traversed: int = 0
@@ -90,7 +65,7 @@ class Day06:
                     # In a loop!
                     return -1
 
-            next_point: Point = Point(p.x + next_dir.x, p.y + next_dir.y)
+            next_point: helpers.Point = helpers.Point(p.x + next_dir.x, p.y + next_dir.y)
 
             # Out of bounds, the guard made it out of the grid.
             # Return how many points they've been to
@@ -104,7 +79,7 @@ class Day06:
 
             # Obstacle in front, rotate 90 degrees clockwise
             elif grid[next_point.y][next_point.x] == '#':
-                next_dir = self.rotate_clockwise(next_dir)
+                next_dir = helpers.rotate_clockwise(next_dir)
 
             else:
                 print('What just happened?')
