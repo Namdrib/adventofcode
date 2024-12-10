@@ -22,7 +22,7 @@ class Day10:
     def read_input(self) -> None:
         """
         Read input from stdin and parse it into a useful data structure
-        In this case, each line ...
+        In this case, each line is a row in a grid of numbers from 0-9
         """
         raw_input = sys.stdin.read()
         self.input = raw_input.splitlines()
@@ -31,16 +31,27 @@ class Day10:
         for y, item in enumerate(self.input):
             row: list = []
             for x, char in enumerate(item):
+                # Just so we can run against some of the example test inputs
                 if char == '.':
                     row.append(-1)
                 else:
                     row.append(int(char))
 
+                # Found a starting point
                 if char == '0':
                     self.trail_start_points.add(helpers.Point(int(x), int(y)))
+
             self.grid.append(row)
 
     def get_neighbours(self, p: helpers.Point) -> list:
+        """
+        Return the neighbours of the given point p in self.grid
+
+        :param p: The point to look from
+        :type p: helpers.Point
+        :return: A list of neighbours in self.grid
+        :rtype: list
+        """
         neighbours: list = []
         for direction in helpers.cardinal_directions:
             new_x: int = p.x + direction['x']
@@ -50,44 +61,53 @@ class Day10:
                 neighbours.append(helpers.Point(new_x, new_y))
 
         return neighbours
-        
-    def calculate_reachable_endpoints(self, starting_point: helpers.Point):
-        # Perform a graph search to see how many endpoints (9) we can reach
-        print(f'Searching for reachable endpoints at {starting_point=}')
 
-        reachable_endpoints: set = set()
+    def calculate_reachable_endpoints(self, starting_point: helpers.Point) -> dict:
+        """
+        Perform breadth-first search (BFS) from the starting point to see how
+        many endpoints (with value 9) we can reach
 
+        :param starting_point: The starting point of the search
+        :type starting_point: helpers.Point
+        :return: A dictionary of all the endpoints we can reach, and how many
+        different ways we can get there
+        :rtype: dict
+        """
+        # Keep track of which endpoints we can get to, and how many different
+        # ways we can get there. The number of ways is used for part 2
+        reachable_endpoints: dict = {}
+
+        # Keep track of our current search options
         fringe: Queue = Queue()
         fringe.put(starting_point)
 
-        seen: set = set()
+        # Don't need to keep track of places we've seen, since we are only ever
+        # exploring uphill - never coming back downhill
 
         while not fringe.empty():
             current: helpers.Point = fringe.get()
 
-            # All of the valid neighbours on the grid
-            neighbours: list = self.get_neighbours(current)
-
-            for neighbour in neighbours:
+            # For each neighbour of the current spot
+            for neighbour in self.get_neighbours(current):
                 value_at_current: int = self.grid[current.y][current.x]
                 value_at_neighbour: int = self.grid[neighbour.y][neighbour.x]
+
+                # Did we reach an endpoint?
                 if value_at_neighbour == 9 and value_at_current == 8:
-                    print(f'\tFound endpoint at {neighbour=}')
-                    reachable_endpoints.add(neighbour)
+                    # Keep track of how many ways we ended up at this endpoint
+                    reachable_endpoints[neighbour] = reachable_endpoints.get(neighbour, 0) + 1
                     continue
 
-                # Must be in increments of 1
-                elif value_at_neighbour == value_at_current + 1:
+                # Our next step must be exactly one higher than we are
+                if value_at_neighbour == value_at_current + 1:
                     fringe.put(neighbour)
 
-            seen.add(current)
-
-        print(f'\tGot {len(reachable_endpoints)} points!')
         return reachable_endpoints
 
     def part_one(self) -> int:
         """
-        Return the ...
+        Return the sum of number of unique endpoints that can be reached from
+        each starting point
         """
         count: int = 0
 
@@ -99,9 +119,14 @@ class Day10:
 
     def part_two(self) -> int:
         """
-        Return the ...
+        Return the sum of number of unique ways we can get from each starting
+        point
         """
         count: int = 0
+
+        for start_point in self.trail_start_points:
+            reachable_endpoints = self.calculate_reachable_endpoints(start_point)
+            count += sum(x for x in reachable_endpoints.values())
 
         return count
 
