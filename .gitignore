@@ -1,3 +1,5 @@
+# Ignore puzzle inputs as per https://adventofcode.com/about#faq_copying
+day*_00.in
 
 # Created by https://www.gitignore.io/api/c++,java,python,eclipse
 # Edit at https://www.gitignore.io/?templates=c++,java,python,eclipse
