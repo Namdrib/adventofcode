@@ -76,11 +76,11 @@ class Day11:
 
         # At the end, each stone will no longer change
         if steps_left == 0:
-            if stone not in self.size_after_steps:
-                self.size_after_steps[stone] = {0: 1}
-            else:
+            if stone in self.size_after_steps:
                 self.size_after_steps[stone][0] = 1
-            return self.size_after_steps[stone][0]
+            else:
+                self.size_after_steps[stone] = {0: 1}
+            return 1
 
         # Pull the size of each new stone from the dictionary, calculating the
         # new value if it isn't already in there
@@ -90,7 +90,10 @@ class Day11:
             next_size += self.size_after_steps.get(stone, {}).get(steps_left, self.calculate_num_stones(next_stone, steps_left-1))
 
         # Save the calculated value for _this_ stone
-        self.size_after_steps.get(stone, {})[steps_left] = next_size
+        if stone in self.size_after_steps:
+            self.size_after_steps[stone][steps_left] = next_size
+        else:
+            self.size_after_steps[stone] = {steps_left: next_size}
         return next_size
 
     def part_one(self) -> int:
