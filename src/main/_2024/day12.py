@@ -17,7 +17,8 @@ class Region:
         self.plot_id: str = plot_id
         self.points: set = points
 
-        self.perimeter: int = 0
+        self.perimeter: int = 0 # Used for part 1
+        self.num_sides: int = 0 # Used for part 2
 
     def calculate_perimeter(self, grid: list) -> None:
         perimeter = 0
@@ -34,12 +35,24 @@ class Region:
 
         self.perimeter = perimeter
 
-    @property
-    def area(self) -> int:
-        return len(self.points)
+    def is_corner(self, p: helpers.Point, grid: list) -> bool:
+        # TODO: Not sure how to do this
+        return True
 
-    def contains(self, p: helpers.Point):
-        return p in self.points
+    def calculate_num_sides(self, grid: list) -> None:
+        """
+        The number of sides of a region is equal to the number of corners
+
+        :param grid: _description_
+        :type grid: list
+        """
+        num_sides = 0
+
+        for point in self.points:
+            if self.is_corner(point, grid):
+                num_sides += 1
+
+        self.num_sides = num_sides
 
 class Day12:
     """
@@ -138,7 +151,7 @@ class Day12:
                 # Are we part of any existing region?
                 for region in self.regions:
                     if self.grid[y][x] == region.plot_id:
-                        if region.contains(p):
+                        if p in region.points:
                             break
                 else:
                     # If not, make a new region by flood filling all adjacent
@@ -149,7 +162,8 @@ class Day12:
 
     def part_one(self) -> int:
         """
-        Return the ...
+        Return the sum of the price of all regions, which is calculated by
+        multiplying its perimeter with its area
         """
         self.initialise_regions()
 
@@ -157,15 +171,20 @@ class Day12:
 
         for region in self.regions:
             region.calculate_perimeter(self.grid)
-            count += region.perimeter * region.area
+            count += region.perimeter * len(region.points)
 
         return count
 
     def part_two(self) -> int:
         """
-        Return the ...
+        Return the sum of the price of all regions, which is calculated by
+        multiplying the number of sides with its area
         """
         count: int = 0
+
+        for region in self.regions:
+            region.calculate_num_sides(self.grid)
+            count += region.num_sides * len(region.points)
 
         return count
 
