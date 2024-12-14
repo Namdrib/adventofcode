@@ -78,19 +78,15 @@ class Day14:
         :return: A list of strings representing the grid
         :rtype: list
         """
+        # 2D grid of .
         out: list = []
-        for y in range(self.y):
-            line: str = ""
-            for x in range(self.x):
-                # Are there robots here? (we don't care how many)
-                for robot in robots:
-                    if robot[0] == x and robot[1] == y:
-                        line += 'X'
-                        break
-                else:
-                    line += '.'
+        for _ in range(self.y):
+            out.append(['.' for _ in range(self.x)])
 
-            out.append(line)
+        # Populate the robots. We don't care how many robots there are
+        for robot in robots:
+            out[robot[1]][robot[0]] = 'X'
+
         return out
 
     def calculate_safety_factor(self, robots: list) -> int:
@@ -138,7 +134,7 @@ class Day14:
         :return: True if the robots are in the shape of a Christmas tree, False otherwise
         :rtype: bool
         """
-        return any('XXXXXXXXXXXXXXXXXX' in x for x in plot)
+        return any('XXXXXXXXXXXXXXXXXX' in ''.join(x) for x in plot)
 
     def part_one(self) -> int:
         """
@@ -169,7 +165,7 @@ class Day14:
             plot: list = self.plot_robots(temp_robots)
             if self.is_xmas_tree(plot):
                 for line in plot:
-                    print(line)
+                    print(''.join(line))
                 break
 
         return count
