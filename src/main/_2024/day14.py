@@ -79,13 +79,12 @@ class Day14:
         :rtype: list
         """
         # 2D grid of .
-        out: list = []
-        for _ in range(self.y):
-            out.append(['.' for _ in range(self.x)])
+        out: list = ['.' * self.x for _ in range(self.y)]
 
         # Populate the robots. We don't care how many robots there are
         for robot in robots:
-            out[robot[1]][robot[0]] = 'X'
+            # The equivalent of out[robot[1]][robot[0]] = 'X'
+            out[robot[1]] = f'{out[robot[1]][:robot[0]]}X{out[robot[1]][robot[0]+1:]}'
 
         return out
 
@@ -134,7 +133,7 @@ class Day14:
         :return: True if the robots are in the shape of a Christmas tree, False otherwise
         :rtype: bool
         """
-        return any('XXXXXXXXXXXXXXXXXX' in ''.join(x) for x in plot)
+        return any('XXXXXXXXXXXXXXXXXX' in x for x in plot)
 
     def part_one(self) -> int:
         """
@@ -165,7 +164,7 @@ class Day14:
             plot: list = self.plot_robots(temp_robots)
             if self.is_xmas_tree(plot):
                 for line in plot:
-                    print(''.join(line))
+                    print(line)
                 break
 
         return count
