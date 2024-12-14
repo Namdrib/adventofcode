@@ -42,7 +42,7 @@ class Day14:
             px, py, vx, vy = list(map(int, re.findall(r'-?\d+', item)))
             self.robots.append([px, py, vx, vy])
 
-    def step(self, robots: list, n: int = 1) -> list:
+    def step(self, robots: list, n: int = 1) -> None:
         """
         Move each robot by its velocity
 
@@ -52,8 +52,6 @@ class Day14:
         :type robots: list
         :param n: How many times to move the robot, defaults to 1
         :type n: int, optional
-        :return: The new position (and velocity) of the robots
-        :rtype: list
         """
 
         for robot in robots:
@@ -67,8 +65,6 @@ class Day14:
                 robot[1] += self.y
             robot[0] = robot[0] % self.x
             robot[1] = robot[1] % self.y
-
-        return robots
 
     def plot_robots(self, robots: list) -> list:
         """
@@ -131,7 +127,7 @@ class Day14:
 
         return functools.reduce(mul, quad_counts, 1)
 
-    def is_xmas_tree(self, robots: list) -> bool:
+    def is_xmas_tree(self, plot: list) -> bool:
         """
         An approximate guess what what the Christmas tree would look like
         
@@ -142,15 +138,14 @@ class Day14:
         :return: True if the robots are in the shape of a Christmas tree, False otherwise
         :rtype: bool
         """
-        output = self.plot_robots(robots)
-        return any('XXXXXXXXXXXXXXXXXX' in x for x in output)
+        return any('XXXXXXXXXXXXXXXXXX' in x for x in plot)
 
     def part_one(self) -> int:
         """
         Return the safety factor of the robots after 100 steps
         """
         temp_robots: list = copy.deepcopy(self.robots)
-        temp_robots = self.step(temp_robots, 100)
+        self.step(temp_robots, 100)
 
         safety_factor: int = self.calculate_safety_factor(temp_robots)
         return safety_factor
@@ -168,11 +163,12 @@ class Day14:
         # tree pattern
         # When it happens, print the grid and return how many seconds has passed
         while True:
-            temp_robots = self.step(temp_robots)
+            self.step(temp_robots)
             count += 1
 
-            if self.is_xmas_tree(temp_robots):
-                for line in self.plot_robots(temp_robots):
+            plot: list = self.plot_robots(temp_robots)
+            if self.is_xmas_tree(plot):
+                for line in plot:
                     print(line)
                 break
 
