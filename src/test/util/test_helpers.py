@@ -3,6 +3,14 @@ import unittest
 from src.main.util import helpers
 
 class TestHelpers(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.grid = [
+            ['a', 'b', 'c'],
+            ['d', 'e', 'f'],
+            ['g', 'h', 'i'],
+            ['j', 'k', 'l'],
+        ]
 
     def test_point(self):
         p: helpers.Point = helpers.Point(1, 2)
@@ -42,3 +50,91 @@ class TestHelpers(unittest.TestCase):
 
         self.assertFalse(helpers.in_range(test_list, -1))
         self.assertFalse(helpers.in_range(test_list, len(test_list)))
+
+    def test_get_directions_default(self):
+        dirs: list = list(helpers.get_directions())
+        self.assertEqual(len(dirs), 4)
+
+    def test_get_directions_specified(self):
+        dirs_in: list = ['N']
+        dirs: list = list(helpers.get_directions(dirs_in))
+        self.assertEqual(len(dirs), len(dirs_in))
+
+    def test_get_neighbours_cardinal_no_oob_corner(self):
+        neighbours: list = list(helpers.get_neighbours(0, 0, self.grid))
+
+        points_in: list = [
+            [0, 1], # Down
+            [1, 0], # Right
+        ]
+
+        self.assertEqual(len(neighbours), 2)
+
+        # No need to test the sad case, because we've exhausted all 2
+        # possibilities here
+        for point in points_in:
+            with self.subTest(point=point):
+                self.assertIn(helpers.Point(point[0], point[1]), neighbours)
+
+    def test_get_neighbours_cardinal_no_oob_mid(self):
+        neighbours: list = list(helpers.get_neighbours(1, 1, self.grid))
+
+        points_in: list = [
+            [1, 0], # Up
+            [2, 1], # Right
+            [1, 2], # Down
+            [0, 1], # Left
+        ]
+
+        # No need to test the sad case, because we've exhausted all 4
+        # possibilities here
+        self.assertEqual(len(neighbours), 4)
+        for point in points_in:
+            with self.subTest(point=point):
+                self.assertIn(helpers.Point(point[0], point[1]), neighbours)
+
+    def test_get_neighbours_cardinal_with_oob(self):
+        neighbours: list = list(helpers.get_neighbours(0, 0, self.grid, include_oob=True))
+
+        points_in: list = [
+            [0, -1], # North
+            [1, 0], # East
+            [0, 1], # South
+            [-1, 0], # West
+        ]
+
+        self.assertEqual(len(neighbours), 4)
+
+        for point in points_in:
+            with self.subTest(point=point):
+                self.assertIn(helpers.Point(point[0], point[1]), neighbours)
+
+    def test_get_neighbours_ordinal_no_oob(self):
+        neighbours: list = list(helpers.get_neighbours(0, 0, self.grid, directions=helpers.ordinal_directions))
+
+        points_in: list = [
+            [0, 1], # South
+            [1, 0], # East
+            [1, 1], # South-East
+        ]
+
+        self.assertEqual(len(neighbours), 3)
+
+        for point in points_in:
+            with self.subTest(point=point):
+                self.assertIn(helpers.Point(point[0], point[1]), neighbours)
+
+    def test_get_neighbours_ordinal_with_oob(self):
+        neighbours: list = list(helpers.get_neighbours(0, 0, self.grid, directions=helpers.ordinal_directions, include_oob=True))
+
+        points_in: list = []
+        for x in range(-1, 2):
+            for y in range(-1, 2):
+                if x and y:
+                    points_in.append([x, y])
+
+        self.assertEqual(len(neighbours), 8)
+
+        for point in points_in:
+            with self.subTest(point=point):
+                self.assertIn(helpers.Point(point[0], point[1]), neighbours)
