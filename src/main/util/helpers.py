@@ -1,22 +1,72 @@
-# All of the cardinal directions + diagonals
-# If you don't want diagonals, skip every second one
-directions: list = [
-    { 'name': 'N ', 'x':  0, 'y': -1 },
-    { 'name': 'NE', 'x':  1, 'y': -1 },
-    { 'name': 'E' , 'x':  1, 'y':  0 },
-    { 'name': 'SE', 'x':  1, 'y':  1 },
-    { 'name': 'S' , 'x':  0, 'y':  1 },
-    { 'name': 'SW', 'x': -1, 'y':  1 },
-    { 'name': 'W' , 'x': -1, 'y':  0 },
-    { 'name': 'NW', 'x': -1, 'y': -1 },
-]
+direction_to_coords_map: dict = {
+    'N' : {'x':  0, 'y': -1 },
+    'NE': {'x':  1, 'y': -1 },
+    'E' : {'x':  1, 'y':  0 },
+    'SE': {'x':  1, 'y':  1 },
+    'S' : {'x':  0, 'y':  1 },
+    'SW': {'x': -1, 'y':  1 },
+    'W' : {'x': -1, 'y':  0 },
+    'NW': {'x': -1, 'y': -1 },
+}
 
 cardinal_directions: list = [
-    { 'name': 'N ', 'x':  0, 'y': -1 },
-    { 'name': 'E' , 'x':  1, 'y':  0 },
-    { 'name': 'S' , 'x':  0, 'y':  1 },
-    { 'name': 'W' , 'x': -1, 'y':  0 },
+    'N', 'E', 'S', 'W'
 ]
+
+ordinal_directions: list = [
+    'N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'
+]
+
+def get_directions(directions: list = None):
+    """
+    Turn a list of directions into a list of delta-points
+
+    :param directions: The directions to get co-ordinates for, defaults to cardinal_directions
+    :type directions: list
+    :yield: The next direction
+    :rtype: Iterator[dict]
+    """
+    # Default to using cardinal directions
+    # Get around having a mutable value as the default
+    if directions is None:
+        directions = cardinal_directions
+
+    for d in directions:
+        yield direction_to_coords_map[d]
+
+def get_neighbours(x: int, y: int, grid: list, directions: list = None, include_oob: bool = False):
+    """
+    Get the neighbours of a given point and directions
+
+    :param x: The x position of the point to get neighbours
+    :type x: int
+    :param y: The y position of the point to get neighbours
+    :type y: int
+    :param grid: The grid where the (x, y) co-ordinates are located
+    :type grid: list
+    :param directions: The directions to look for neighbours in, defaults to cardinal_directions
+    :type directions: list, optional
+    :param include_oob: Whether to include neighbours outside of the grid, defaults to False
+    :type include_oob: bool, optional
+    :yield: The next neighbour
+    :rtype: Iterator[Point]
+    """
+    # Default to using cardinal directions
+    # Get around having a mutable value as the default
+    if directions is None:
+        directions = cardinal_directions
+
+    # Look around the current point
+    for direction in directions:
+        next_x: int = x + direction_to_coords_map[direction]['x']
+        next_y: int = y + direction_to_coords_map[direction]['y']
+
+        # Skip OOB neighbours if include_oob isn't set
+        out_of_bounds: bool = not in_range(grid, next_y) or not in_range(grid[0], next_x)
+        if out_of_bounds and not include_oob:
+            continue
+
+        yield Point(next_x, next_y)
 
 class Point:
     def __init__(self, x, y) -> None:

@@ -6,12 +6,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
 
-def get_neighbours(p: helpers.Point) -> list:
-    out: list = []
-    for direction in helpers.cardinal_directions:
-        out.append(helpers.Point(p.x + direction['x'], p.y + direction['y']))
-    return out
-
 class Region:
     def __init__(self, plot_id: str, points: set) -> None:
         self.plot_id: str = plot_id
@@ -24,7 +18,7 @@ class Region:
         perimeter = 0
         for point in self.points:
             # For each neighbour,
-            for neighbour in get_neighbours(point):
+            for neighbour in helpers.get_neighbours(point.x, point.y, grid, include_oob=True):
                 # The perimeter increases by 1 if:
                 # The neighbour is out of bounds
                 if not helpers.in_range(grid, neighbour.y) or not helpers.in_range(grid[0], neighbour.x):
@@ -112,20 +106,10 @@ class Day12:
 
             if self.grid[current.y][current.x] != plot_id:
                 continue
-                # if current in area:
-                #     continue
 
-            for neighbour in get_neighbours(current):
+            for neighbour in helpers.get_neighbours(current.x, current.y, self.grid):
                 # Already explored here - save some CPU cycles
                 if neighbour in seen or neighbour in points:
-                    continue
-
-                # Bounds check y
-                if not helpers.in_range(self.grid, neighbour.y):
-                    continue
-
-                # Bounds check x
-                if not helpers.in_range(self.grid[0], neighbour.x):
                     continue
 
                 # Part of the same area

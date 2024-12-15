@@ -43,25 +43,6 @@ class Day10:
 
             self.grid.append(row)
 
-    def get_neighbours(self, p: helpers.Point) -> list:
-        """
-        Return the neighbours of the given point p in self.grid
-
-        :param p: The point to look from
-        :type p: helpers.Point
-        :return: A list of neighbours in self.grid
-        :rtype: list
-        """
-        neighbours: list = []
-        for direction in helpers.cardinal_directions:
-            new_x: int = p.x + direction['x']
-            new_y: int = p.y + direction['y']
-
-            if helpers.in_range(self.grid, new_y) and helpers.in_range(self.grid[0], new_x):
-                neighbours.append(helpers.Point(new_x, new_y))
-
-        return neighbours
-
     def calculate_reachable_endpoints(self, starting_point: helpers.Point) -> dict:
         """
         Perform breadth-first search (BFS) from the starting point to see how
@@ -88,7 +69,7 @@ class Day10:
             current: helpers.Point = fringe.get()
 
             # For each neighbour of the current spot
-            for neighbour in self.get_neighbours(current):
+            for neighbour in helpers.get_neighbours(current.x, current.y, self.grid):
                 value_at_current: int = self.grid[current.y][current.x]
                 value_at_neighbour: int = self.grid[neighbour.y][neighbour.x]
 

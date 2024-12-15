@@ -32,10 +32,9 @@ class Day04:
 
     def num_matches_at(self, x: int, y: int, target: str, mark_centre: bool = False) -> int:
         # See how many ways we can spell the target out
-        # For each direction
-
+        # For each direction, including diagonals
         num_matches: int = 0
-        for direction in helpers.directions:
+        for direction in helpers.get_directions(helpers.ordinal_directions):
             dx = direction['x']
             dy = direction['y']
             end_x: int = x + (len(target)-1) * dx
