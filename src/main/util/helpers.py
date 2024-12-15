@@ -7,6 +7,11 @@ direction_to_coords_map: dict = {
     'SW': {'x': -1, 'y':  1 },
     'W' : {'x': -1, 'y':  0 },
     'NW': {'x': -1, 'y': -1 },
+    # Arrows :)
+    '^' : {'x':  0, 'y': -1 },
+    '>' : {'x':  1, 'y':  0 },
+    'v' : {'x':  0, 'y':  1 },
+    '<' : {'x': -1, 'y':  0 },
 }
 
 cardinal_directions: list = [
