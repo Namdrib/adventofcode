@@ -22,6 +22,10 @@ ordinal_directions: list = [
     'N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'
 ]
 
+arrow_directions: list = [
+    '^', '>', 'v', '<'
+]
+
 def get_directions(directions: list = None):
     """
     Turn a list of directions into a list of delta-points
@@ -132,3 +136,6 @@ def in_range(thing, index: int) -> bool:
     :rtype: bool
     """
     return 0 <= index < len(thing)
+
+def in_range_2d(grid, x, y) -> bool:
+    return in_range(grid, y) and in_range(grid[y], x)
