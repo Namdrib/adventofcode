@@ -1,12 +1,15 @@
 #!/usr/bin/python3
 import os
-from queue import PriorityQueue, Queue
+from queue import PriorityQueue
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
 
 class Node:
+    """
+    A node used for pathfinding in 3D space (x, y, direction)
+    """
     def __init__(self, char: str, x: int, y: int, dir_: int, total_score: int) -> None:
         self.char: str = char
 
@@ -16,11 +19,14 @@ class Node:
 
         self.total_score: int = total_score
 
-    # For use with set
+        # To trace the path back from the end to the start
+        self.parent: Node = None
+
+    # For use with set/dict
     def __eq__(self, o) -> int:
         return self.x == o.x and self.y == o.y and self.dir == o.dir
 
-    # For use with set and queue.PriorityQueue
+    # For use with set/dict and queue.PriorityQueue
     def __hash__(self) -> int:
         return hash((self.x, self.y, self.dir))
 
@@ -29,7 +35,8 @@ class Node:
         return self.total_score < o.total_score
 
     def __repr__(self) -> str:
-        return f'Node({self.char}, {self.x}, {self.y}, {helpers.arrow_directions[self.dir]}, {self.total_score})'
+        arrow: str = helpers.arrow_directions[self.dir]
+        return f'Node({self.char}, {self.x}, {self.y}, {arrow}, {self.total_score})'
 
 class Day16:
     """
@@ -42,6 +49,9 @@ class Day16:
         """
         self.input: list = None
         self.grid: list = None
+
+        self.start_x: int = -1
+        self.start_y: int = -1
 
     def read_input(self) -> None:
         """
@@ -58,21 +68,32 @@ class Day16:
             row: list = []
             for x, char in enumerate(item):
                 dir_dim: list = []
+
+                if char == 'S':
+                    self.start_x = x
+                    self.start_y = y
+
+                # Consider all directions for all points
                 for i, _ in enumerate(helpers.arrow_directions):
                     n: Node = Node(char, x, y, i, 9e99)
                     dir_dim.append(n)
                 row.append(dir_dim)
             self.grid.append(row)
 
-    def find_xy_position(self, position: str) -> tuple:
-        for y, row in enumerate(self.grid):
-            for x, char in enumerate(row):
-                if char[0].char == position:
-                    return (x, y)
-
-        return (-1, -1)
-
     def get_neighbours(self, node: Node) -> list:
+        """
+        Get the neighbours of the given Node
+
+        The possible actions from a point are:
+        - Go straight one space (cost: 1)
+        - Rotate left 90 degrees (cost: 1000)
+        - Rotate right 90 degrees (cost: 1000)
+
+        :param node: The Node to get neighbours for
+        :type node: Node
+        :return: A list of all neighbours for the given Node
+        :rtype: list
+        """
         neighbours: list = []
 
         # Go straight (if we can)
@@ -83,84 +104,115 @@ class Day16:
         # Make sure we're in bounds and not in a wall
         if helpers.in_range_2d(self.grid, next_x, next_y):
             if self.grid[next_y][next_x][node.dir].char != '#':
-                node_straight: Node = Node(node.char, next_x, next_y, node.dir, node.running_cost + 1)
+                node_straight: Node = Node(node.char, next_x, next_y, node.dir, node.total_score + 1)
+                node_straight.parent = node
                 neighbours.append(node_straight)
 
         # Rotate left
         direction_left: int = node.dir - 1
         if direction_left < 0:
             direction_left += len(helpers.arrow_directions)
-        node_left: Node = Node(node.char, node.x, node.y, direction_left, node.running_cost + 1000)
+        node_left: Node = Node(node.char, node.x, node.y, direction_left, node.total_score + 1000)
+        node_left.parent = node
         neighbours.append(node_left)
 
         # Rotate right
         direction_right: int = node.dir + 1
         direction_right %= len(helpers.arrow_directions)
-        node_right: Node = Node(node.char, node.x, node.y, direction_right, node.running_cost + 1000)
+        node_right: Node = Node(node.char, node.x, node.y, direction_right, node.total_score + 1000)
+        node_right.parent = node
         neighbours.append(node_right)
 
         return neighbours
 
-    def pathfind(self, start_x: int, start_y: int) -> int:
+    def path_find(self, start_x: int, start_y: int, check_all_paths: bool = False) -> Node|list:
+        """
+        Use Dijkstra's algorithm to find the shortest path(s) from the given
+        start position to the end (denoted with E).
+        For part one, return the first shortest path to the end
+        For part two, return all shortest paths
+
+        :param start_x: The X position to start at
+        :type start_x: int
+        :param start_y: The Y position to start at
+        :type start_y: int
+        :param check_all_paths: Used for part two. Whether to check all paths, defaults to False
+        :type check_all_paths: bool, optional
+        :return: The shortest path (or paths, for part two)
+        :rtype: Node|list
+        """
         fringe: PriorityQueue = PriorityQueue()
 
         start_node: Node = Node('.', start_x, start_y, helpers.arrow_directions.index('>'), 0)
         fringe.put(start_node)
 
-        seen: set = set()
+        # For part 2, keep track of {node, best_score_so_far}
+        seen: dict = {}
 
-        counter: int = 0
+        end_paths: list = []
 
         while not fringe.empty():
             current: Node = fringe.get()
-            print(f'{current=}')
 
-            if current in seen:
+            # Only stop exploring this node if we're worse than the best so far
+            # Otherwise we might still have a chance to improve or be the same
+            # Used for part 2 to track all best paths
+            if current.total_score > seen.get(current, 9e99):
                 continue
 
             # We've hit the end
             if self.grid[current.y][current.x][current.dir].char == 'E':
-                print(f'Found end at {current.x}, {current.y} after {counter} iterations')
-                return current.running_cost
+                # For part two, keep track of all the paths that have gotten here
+                # Otherwise, just return the first path we get
+                if check_all_paths:
+                    # Force it to ignore all paths that have cost more (e.g., rotating on the spot)
+                    if not end_paths or any(current.total_score <= x.total_score for x in end_paths):
+                        end_paths.append(current)
+                        continue
+                else:
+                    return current
 
             for neighbour in self.get_neighbours(current):
-                if neighbour in seen:
+                if neighbour.total_score > seen.get(neighbour, 9e99):
                     continue
 
+                # Record the best score to get to the neighbour so far
                 existing_score: int = self.grid[neighbour.y][neighbour.x][neighbour.dir].total_score
                 best_total_score: int = min(existing_score, neighbour.total_score)
-
-                # Update the score on the map with the lowest score so far
                 self.grid[neighbour.y][neighbour.x][neighbour.dir].total_score = best_total_score
+
                 fringe.put(neighbour)
 
-            seen.add(current)
-            counter += 1
+            # Allow multiple ways to get to the end from here
+            seen[current] = min(seen.get(current, 9e99), current.total_score)
 
-        # Shouldn't happen
-        return -1
+        return end_paths
 
     def part_one(self) -> int:
         """
-        Return the ...
+        Return the score of the best path from S to E
         """
-        for row in self.grid:
-            for col in row:
-                print(col[0].char, end='')
-            print()
-        print()
-
-        start_x, start_y = self.find_xy_position('S')
-        score: int = self.pathfind(start_x, start_y)
-        return score
+        end_path: Node = self.path_find(self.start_x, self.start_y)
+        return end_path.total_score
 
     def part_two(self) -> int:
         """
-        Return the ...
+        Return the number of (x, y) locations that are along any of the best
+        paths from S to E
         """
-        count: int = 0
+        end_paths: list = self.path_find(self.start_x, self.start_y, True)
 
-        return count
+        unique_points_on_any_best_path: set = set()
+
+        # Follow all of the best paths back to the start, keeping track of all
+        # locations that have been visited
+        for end_path in end_paths:
+            current = end_path
+            while current is not None:
+                unique_points_on_any_best_path.add(helpers.Point(current.x, current.y))
+                current = current.parent
+
+        return len(unique_points_on_any_best_path)
 
 def main() -> None:
     """
