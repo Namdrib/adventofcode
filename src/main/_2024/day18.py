@@ -8,10 +8,12 @@ from util import helpers
 
 class Node:
     def __init__(self, bytes_: int, x: int, y: int) -> None:
-        self.bytes = bytes_
-        self.x = x
-        self.y = y
-        self.running_cost = 9e9
+        self.bytes: int = bytes_
+        self.x: int = x
+        self.y: int = y
+        self.running_cost: int = 9e9
+
+        self.parent: Node = None
 
     # For use with set/dict
     def __eq__(self, o) -> int:
@@ -61,17 +63,7 @@ class Day18:
             for y in range(self.grid_size+1)
         ]
 
-    def populate_grid(self, bytes_: list) -> None:
-        """
-        Have bytes fall onto the grid
-
-        :param bytes_: The list of bytes to add to the grid
-        :type bytes_: list
-        """
-        for byte in bytes_:
-            self.grid[byte.y][byte.x].bytes += 1
-
-    def path_find(self, start_x: int, start_y: int) -> int:
+    def path_find(self, start_x: int, start_y: int) -> Node:
         """
         Standard BFS to find a path from start_x, start_y to the bottom-right
         corner of the grid
@@ -80,8 +72,8 @@ class Day18:
         :type start_x: int
         :param start_y: The y co-ordinate to start at
         :type start_y: int
-        :return: The cost required to get to the end, or -1 if no path can be reached
-        :rtype: int
+        :return: The Node at the end, or None, if no path can be reached
+        :rtype: Node
         """
         fringe: PriorityQueue = PriorityQueue()
 
@@ -102,7 +94,7 @@ class Day18:
 
             # Reached the end
             if current.x == len(self.grid)-1 and current.y == len(self.grid[0])-1:
-                return self.grid[current.y][current.x].running_cost
+                return current
 
             # Explore each valid neighbour
             for neighbour_point in helpers.get_neighbours(current.x, current.y, self.grid):
@@ -112,36 +104,57 @@ class Day18:
                     continue
 
                 # Into a wall
-                if self.grid[neighbour.y][neighbour.x].bytes != 0:
+                if neighbour.bytes != 0:
                     continue
 
                 # Is the current way to get to the neighbour the best way to get
                 # to the neighbour so far?
-                current_cost: int = self.grid[neighbour.y][neighbour.x].running_cost
-                new_cost: int = self.grid[current.y][current.x].running_cost + 1
+                current_cost: int = neighbour.running_cost
+                new_cost: int = current.running_cost + 1
 
                 if new_cost < current_cost:
-                    self.grid[neighbour.y][neighbour.x].running_cost = min(new_cost, current_cost)
+                    neighbour.running_cost = new_cost
+                    neighbour.parent = current
                     fringe.put(neighbour)
 
             closed.add(current)
 
         # We couldn't get to the end. The path is blocked
-        return -1
+        return None
+
+    def get_path_points(self, node: Node) -> set:
+        """
+        Get all of the points on the path traversed by a given Node
+
+        :param node: The node whose path to inspect
+        :type node: Node
+        :return: The set of points on the Node's path
+        :rtype: set
+        """
+        # Use a set because the main operation on it will be a search
+        out: set = set()
+
+        x = node
+        while x is not None:
+            out.add(helpers.Point(x.x, x.y))
+            x = x.parent
+
+        return out
 
     def part_one(self) -> int:
         """
         Return how many steps are required to get to the end after a number of
         bytes have fallen
         """
-        self.populate_grid(self.bytes[0:self.num_starting_bytes])
+        for byte in self.bytes[0:self.num_starting_bytes]:
+            self.grid[byte.y][byte.x].bytes += 1
 
         for row in self.grid:
             for item in row:
                 print(item.bytes, end='')
             print()
 
-        num_steps = self.path_find(0, 0)
+        num_steps = self.path_find(0, 0).running_cost
         return num_steps
 
     def part_two(self) -> int:
@@ -149,13 +162,27 @@ class Day18:
         Return the co-ordinates of the first byte that completely blocks the
         path from the start to the end
         """
-        # Keep dropping bytes, one-by-one, until the path find returns -1
-        # This takes a while to run.
-        for x in range(self.num_starting_bytes, len(self.bytes)):
-            self.populate_grid(self.bytes[x:x+1])
+        # Get an initial path
+        current = self.path_find(0, 0)
+        path: set = self.get_path_points(current)
 
-            if self.path_find(0, 0) == -1:
-                return ','.join([str(self.bytes[x].x), str(self.bytes[x].y)])
+        # Keep dropping bytes, one-by-one, until there is no path.
+        # Only update the path if the byte would have affected it
+        for x in range(self.num_starting_bytes, len(self.bytes)):
+            # Add a byte to the grid
+            byte: helpers.Point = self.bytes[x]
+            self.grid[byte.y][byte.x].bytes += 1
+
+            # This byte disrupted the path. Re-calculate the path
+            if byte in path:
+                current = self.path_find(0, 0)
+                path = self.get_path_points(current)
+
+            # There's no path. This byte was the one that blocked the path
+            if current is None:
+                return f'{byte.x},{byte.y}'
+
+        return '-1,-1'
 
 def main() -> None:
     """
