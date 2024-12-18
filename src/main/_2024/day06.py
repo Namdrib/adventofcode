@@ -38,41 +38,36 @@ class Day06:
         # Don't get trapped
         self.grid[self.start_point.y][self.start_point.x] = '.'
 
-    def traverse_grid(self, grid: list) -> int:
+    def traverse_grid(self, grid: list) -> set:
         # Start at the start, facing up
         next_dir = helpers.Point(0, -1)
         p = helpers.Point(self.start_point.x, self.start_point.y)
 
-        # We've been to the start
-        points_traversed: int = 0
-
         # Used to determine whether we've already been here so we don't
         # double-count the same location
         seen = set()
-        seen.add(p)
         # Used to determine whether we're stuck in a loop
         seen_with_direction = set()
 
-        # Walk forwards until we hit an obstacle (#)
+        # Walk forwards until we loop or exit the grid
         while True:
-            if p not in seen:
-                points_traversed += 1
-                seen.add(p)
+            if p in seen:
+                p_with_direction = (p.x, p.y, next_dir.x, next_dir.y)
+                # Been here in the same direction, it's a loop
+                if p_with_direction in seen_with_direction:
+                    return set()
 
-            else:
-                if (p.x, p.y, next_dir.x, next_dir.y) not in seen_with_direction:
-                    seen_with_direction.add((p.x, p.y, next_dir.x, next_dir.y))
-                else:
-                    # In a loop!
-                    return -1
+                # But allow for crossing over a point we've been to before
+                seen_with_direction.add(p_with_direction)
+
+            seen.add(p.clone())
 
             next_point = helpers.Point(p.x + next_dir.x, p.y + next_dir.y)
 
             # Out of bounds, the guard made it out of the grid.
-            # Return how many points they've been to
-            if not helpers.in_range(grid, next_point.y) or \
-                    not helpers.in_range(grid[0], next_point.x):
-                return points_traversed + 1
+            # Return the set of points they've been to
+            if not helpers.in_range_2d(grid, next_point.x, next_point.y):
+                return seen
 
             # Space in front, walk forwards
             if grid[next_point.y][next_point.x] == '.':
@@ -89,27 +84,28 @@ class Day06:
         """
         Return the number of points the guard visits before they leave the map
         """
-        return self.traverse_grid(self.grid)
+        return len(self.traverse_grid(self.grid))
 
     def part_two(self) -> int:
         """
         Return the number of new obstacle placements that would loop the guard
-        This takes a while to complete...
+        This takes about 15-20 seconds to complete
         """
         count: int = 0
 
-        # All the possible places we can put an obstacle
-        for y, row in enumerate(self.grid):
-            for x, char in enumerate(row):
-                if char == '.':
-                    self.grid[y][x] = '#'
+        points_visited: set = self.traverse_grid(self.grid)
 
-                    # If the return value is -1, there's a loop
-                    if self.traverse_grid(self.grid) == -1:
-                        count += 1
+        # All the possible places we can put an obstacle that may affect the
+        # guard's path
+        for p in points_visited:
+            self.grid[p.y][p.x] = '#'
 
-                    # Put it back the way it was, ready for the next iteration
-                    self.grid[y][x] = '.'
+            # Did this cause a loop?
+            if len(self.traverse_grid(self.grid)) == 0:
+                count += 1
+
+            # Put it back the way it was, ready for the next iteration
+            self.grid[p.y][p.x] = '.'
 
         return count
 
