@@ -1,9 +1,5 @@
 #!/usr/bin/python3
-import os
 import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-
-from util import helpers
 
 class Day19:
     """
@@ -19,86 +15,67 @@ class Day19:
         self.towels: list = None
         self.displays: list = None
 
-        self.available_displays: set = set()
-        self.unavailable_displays: set = set()
+        # Memoisation for how many ways there are to make a given display
+        # num_ways[pattern] is the number of ways pattern can be formed with the
+        # available towels
+        self.num_ways: dict = {}
 
     def read_input(self) -> None:
         """
         Read input from stdin and parse it into a useful data structure
-        In this case, each line ...
+        In this case, the first line is a comma-space separated line of towels
+        The second line is empty
+        All subsequent lines are a display
+
+        Towels and displays are letters in [w,u,r,b,g]
         """
         raw_input = sys.stdin.read()
         self.input = raw_input.splitlines()
 
-        self.towels = []
-        self.displays = []
-        
-        reading_towels: bool = True
-        for item in self.input:
-            if reading_towels:
-                self.towels = item.split(', ')
-                reading_towels = False
-            else:
-                if item:
-                    self.displays.append(item)
+        # The first line is the towels
+        # The second line is a blank
+        # All other lines are displays
+        towels, _, *self.displays = self.input
+        self.towels: list = towels.split(', ')
 
-    def can_make_display(self, display: str, towels: list) -> bool:
-        # print(f'Seeing if we can make {display}')
-        # if not display:
-        #     return False
+    def num_ways_to_make_display(self, display: str, towels: list) -> int:
+        # Cached case: We already know how many ways there are to make display
+        if display in self.num_ways:
+            return self.num_ways[display]
 
-        if display in self.available_displays:
-            return True
+        # Base case: This was an exact match / new way
+        if len(display) == 0:
+            return 1
 
-        if display in self.unavailable_displays:
-            return False
-
-        can_make: bool = False
+        num_ways: int = 0
         for towel in towels:
-
-            if len(display) < len(towel):
-                continue
-
-            if display == towel:
-                self.available_displays.add(display)
-                return True
-
             if display.startswith(towel):
+                # The remaining part of this display after using this towel
                 sub_display: str = display[len(towel):]
-                print(f'\tTrying with {towel}|{sub_display}')
-                if self.can_make_display(sub_display, towels):
-                    can_make = True
-                    self.available_displays.add(display)
-                    break
-                # if self.can_make_display(sub_display, towels):
-                #     return can_make
+                # How many ways can we make the remaining part?
+                num_ways += self.num_ways_to_make_display(sub_display, towels)
 
-        if not can_make:
-            self.unavailable_displays.add(display)
-
-        return can_make
+        # Update the cache
+        self.num_ways[display] = num_ways
+        return num_ways
 
     def part_one(self) -> int:
         """
-        Return the ...
+        Return the number of display patterns that can be made with the
+        available towels
         """
-        count: int = 0
-
-        # self.can_make_display(self.displays[0], self.towels)
-        for display in self.displays:
-            if self.can_make_display(display, self.towels):
-                count += 1
-
-        print(f'We can make {self.available_displays}')
-        return count
+        # A display can be made if there is a non-zero number of ways to make it
+        return sum(bool(self.num_ways_to_make_display(display, self.towels)) for display in self.displays)
 
     def part_two(self) -> int:
         """
-        Return the ...
+        Return the sum of the number of ways each display pattern can be made
+        with the available towels
+        Part one will have already populated the memoisation structure, so this
+        should be really quick
         """
-        count: int = 0
-
-        return count
+        # Count 'em up
+        return sum(self.num_ways_to_make_display(display, self.towels) for display in self.displays)
 
 def main() -> None:
     """
