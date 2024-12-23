@@ -8,7 +8,7 @@ class TestThreeBitComputer(unittest.TestCase):
     def setUpClass(cls):
         # Do this as a class attribute so we can verify that the registers and
         # program can be reset multiple times
-        cls.tbc = day17.ThreeBitComputer([0, 0, 0], [0, 0])
+        cls.tbc = day17.ThreeBitComputer([0, 0, 0])
 
     def test_A729(self):
         registers: list = [729, 0, 0]
