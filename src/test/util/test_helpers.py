@@ -138,3 +138,51 @@ class TestHelpers(unittest.TestCase):
         for point in points_in:
             with self.subTest(point=point):
                 self.assertIn(helpers.Point(point[0], point[1]), neighbours)
+
+    def test_get_grid_diamond(self):
+
+        # Points, from top to bottom, left to right
+        perimeter_of_1: set = {
+            ( 0, -1),
+            (-1,  0),
+            ( 1,  0),
+            ( 0,  1),
+        }
+
+        perimeter_of_2: set = {
+            ( 0, -2),
+            (-1, -1),
+            ( 1, -1),
+            (-2,  0),
+            ( 2,  0),
+            (-1,  1),
+            ( 1,  1),
+            ( 0,  2),
+        }
+
+        with self.subTest(size=0):
+            diamond = helpers.get_grid_diamond(0, 0, 0)
+            self.assertSetEqual(set(), diamond)
+
+        with self.subTest(size=1):
+            diamond = helpers.get_grid_diamond(0, 0, 1)
+            self.assertEqual(len(perimeter_of_1), len(diamond))
+            for point in perimeter_of_1:
+                self.assertIn(point, diamond)
+
+        with self.subTest(size=2):
+            diamond = helpers.get_grid_diamond(0, 0, 2)
+            self.assertEqual(len(perimeter_of_1) + len(perimeter_of_2), len(diamond))
+
+            for point in perimeter_of_1.union(perimeter_of_2):
+                self.assertIn(point, diamond)
+
+        with self.subTest(size=2, msg="Perimeter only"):
+            # Ignore all of the "inner" positions of the diamond
+            # We should be left with only the outer edge
+            perimeter_only = diamond.difference(perimeter_of_1)
+
+            self.assertEqual(len(perimeter_only), len(perimeter_of_2))
+
+            for point in diamond.difference(perimeter_of_1):
+                self.assertIn(point, perimeter_of_2)

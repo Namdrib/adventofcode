@@ -43,6 +43,8 @@ class Day20:
         self.start = None
         self.end = None
 
+        self.cost_from_points: dict = {}
+
     def read_input(self) -> None:
         """
         Read input from stdin and parse it into a useful data structure
@@ -56,7 +58,6 @@ class Day20:
         self.grid = []
         for y, item in enumerate(self.input):
             row: list = []
-            print(item)
             for x, char in enumerate(item):
                 if char == 'S':
                     self.start = helpers.Point(x, y)
@@ -65,7 +66,7 @@ class Day20:
                 row.append(Node(char, x, y))
             self.grid.append(row)
 
-    def path_find(self) -> Node:
+    def path_find(self, start_x: int, start_y: int) -> Node:
         """
         Standard BFS to find a path from the self.start to self.end
 
@@ -80,8 +81,8 @@ class Day20:
                 node.running_cost = 9e9
 
         # The starting point costs 0
-        self.grid[self.start.y][self.start.x].running_cost = 0
-        start_node: Node = self.grid[self.start.y][self.start.x]
+        self.grid[start_y][start_x].running_cost = 0
+        start_node: Node = self.grid[start_y][start_x]
         fringe.put(start_node)
 
         closed: set = set()
@@ -119,76 +120,83 @@ class Day20:
         # We couldn't get to the end. The path is blocked
         return None
 
-    def part_one(self) -> int:
-        """
-        Return the number of cheats that would allow saving at least 100 picoseconds
-        """
-        count: int = 0
-
+    def calculate_cheat_benefits(self, cheat_time: int) -> dict:
         # How much would it cost to finish the race without cheating?
-        normal_cost: int = self.path_find().running_cost
+        normal_run_from_start: Node = self.path_find(self.start.x, self.start.y)
+        normal_cost_from_start = normal_run_from_start.running_cost
 
-        # How many picoseconds does cheating on a certain point save us?
-        # {helpers.Point, int}
+        # Work back through the path: how much longer to go until the end?
+        node = normal_run_from_start
+        while node:
+            self.cost_from_points[(node.x, node.y)] = normal_cost_from_start - node.running_cost
+            node = node.parent
+
+        # How much does each possible cheat (defined by start and end) give?
+        # {(start_x, start_y, end_x, end_y): benefit}
         cheat_benefits: dict = {}
 
-        # For each position
-        for y, row in enumerate(self.grid):
-            for x, node in enumerate(row):
-                # We can only cheat through walls
-                if node.tile != '#':
-                    continue
+        # Working back through the path, how much benefit can we get from
+        # cheating at each point?
+        node = normal_run_from_start
+        while node:
+            # All of the possible places that cheating could take us to
+            # Filter down to places we can actually end up when the cheat ends
+            # i.e., be in bounds, don't re-appear in a wall
+            reachable: set = {
+                p for p in helpers.get_grid_diamond(node.x, node.y, cheat_time)
+                if helpers.in_range_2d(self.grid, p[0], p[1]) and
+                # This can't be == '.', as that doesn't take into account S/E
+                self.grid[p[1]][p[0]].tile != '#'
+            }
 
-                # See what the benefit would be for cheating here
-                cheat_start = helpers.Point(x, y)
+            for point in reachable:
+                dx: int = abs(point[0] - node.x)
+                dy: int = abs(point[1] - node.y)
+                distance_travelled_in_cheat: int = dx + dy
 
-                # See whether it's worth checking if this cheat would save any time
-                # i.e., can we actually make use of it?
-                can_cheat: bool = False
-                for d in helpers.get_directions():
-                    cheat_end = helpers.Point(cheat_start.x + d['x'], cheat_start.y + d['y'])
-                    if helpers.in_range_2d(self.grid, cheat_end.x, cheat_end.y) \
-                            and self.grid[cheat_end.y][cheat_end.x].tile != '#':
-                        can_cheat = True
-                        break
+                time_from_cheat_end_to_dest = self.cost_from_points[(point[0], point[1])]
 
-                if can_cheat:
-                    # Apply the cheat and see if it helps
-                    original_start: str = self.grid[cheat_start.y][cheat_start.x].tile
-                    self.grid[cheat_start.y][cheat_start.x].tile = '.'
+                # 1. How far we travelled until we used the cheat
+                # 2. How far we travelled while cheating
+                # 3. How far left to go after we stop cheating
+                cost_with_cheat: int = node.running_cost + distance_travelled_in_cheat + time_from_cheat_end_to_dest
+                cheat_benefit: int = normal_cost_from_start - cost_with_cheat
 
-                    new_cost: int = self.path_find().running_cost
+                # Only record states where the cheat actually helps
+                if cheat_benefit > 0:
+                    cheat_benefits[(node.x, node.y, point[0], point[1])] = cheat_benefit
 
-                    # How much better is it now?
-                    benefit: int = normal_cost - new_cost
-                    cheat_benefits[cheat_start] = benefit
+            node = node.parent
 
-                    print(f'Cheat {cheat_start} saves {benefit} picoseconds')
+        return cheat_benefits
 
-                    # Put the board back the way it was for next round
-                    # self.grid[cheat_end.y][cheat_end.x].tile = original_end
-                    self.grid[cheat_start.y][cheat_start.x].tile = original_start
-
-        # print(cheat_benefits)
-
-        # Count how frequently each time saving happens
-        savings_frequencies: dict = {}
-        for savings in cheat_benefits.values():
-            savings_frequencies[savings] = savings_frequencies.get(savings, 0) + 1
-
+    def part_one(self) -> int:
+        """
+        Return the number of cheats that would save at least 100 picoseconds, if
+        they could run for up to 2 picoseconds
+        """
         count: int = 0
-        for savings, frequency in savings_frequencies.items():
-            if savings >= 100:
-                count += frequency
-        print(savings_frequencies)
+
+        cheat_benefits: dict = self.calculate_cheat_benefits(2)
+
+        for benefit in cheat_benefits.values():
+            if benefit >= 100:
+                count += 1
 
         return count
 
     def part_two(self) -> int:
         """
-        Return the ...
+        Return the number of cheats that would save at least 100 picoseconds, if
+        they could run for up to 20 picoseconds
         """
         count: int = 0
+
+        cheat_benefits: dict = self.calculate_cheat_benefits(20)
+
+        for benefit in cheat_benefits.values():
+            if benefit >= 100:
+                count += 1
 
         return count
 

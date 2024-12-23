@@ -139,3 +139,39 @@ def in_range(thing, index: int) -> bool:
 
 def in_range_2d(grid, x, y) -> bool:
     return in_range(grid, y) and in_range(grid[y], x)
+
+def get_grid_diamond(x: int, y: int, n: int) -> set:
+    """
+    Return a set of points in a diamonds' range from the given x, y point
+    In this example, all positions numbered n or below are the points included
+    for a given n. X is the position described by (x, y).
+    X is not included in the diamond. So by definition, n=0 is an empty set
+    ...3...
+    ..323..
+    .32123.
+    321X123
+    .32123.
+    ..323..
+    ...3...
+
+    Subsets of the diamond (e.g. only getting the perimeter) can be obtained by
+    doing set operations on n and n-1
+    e.g. to get only the 3s: get_grid_diamond(n=3) - get_grid_diamond(n=2)
+
+    :param x: X point to radiate the diamond from
+    :type x: int
+    :param y: y point to radiate the diamond from
+    :type y: int
+    :param n: The size of the diamond from the starting point
+    :type n: int
+    :return: The set of points contained in the diamond of size n
+    :rtype: set
+    """
+    diamond: set = set()
+    for dy in range(-n, n + 1):
+        x_size: int = n - abs(dy)
+        for dx in range(-x_size, x_size + 1):
+            element = (x + dx, y + dy)
+            if element != (x, y):
+                diamond.add(element)
+    return diamond
