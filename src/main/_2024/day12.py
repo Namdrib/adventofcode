@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import itertools
 import os
 from queue import Queue
 import sys
@@ -15,6 +16,13 @@ class Region:
         self.num_sides: int = 0 # Used for part 2
 
     def calculate_perimeter(self, grid: list) -> None:
+        """
+        A point contributes to the perimeter if it is adjacent to a point not in
+        the region (or OOB)
+
+        :param grid: The grid
+        :type grid: list
+        """
         perimeter = 0
         for point in self.points:
             # For each neighbour,
@@ -29,9 +37,55 @@ class Region:
 
         self.perimeter = perimeter
 
-    def is_corner(self, p: helpers.Point, grid: list) -> bool:
-        # TODO: Not sure how to do this
-        return True
+    def num_corners(self, p: helpers.Point, grid: list) -> int:
+        """
+        Return how many corners there are at the given point
+
+        :param p: The point in this Region to check for corners
+        :type p: helpers.Point
+        :param grid: The grid
+        :type grid: list
+        :return: How many corners there are at this point
+        :rtype: int
+        """
+        num_corners: int = 0
+
+        # Examine each L-shape section from the point p.
+        # The x are where we're looking on each iteration
+        # xx. ... .xx ...
+        # xp. xp. .px .px
+        # ... xx. ... .xx
+        for row_offset, col_offset in itertools.product([-1, 1], repeat=2):
+            # Look at the tiles horizontally, vertically, and diagonally adjacent
+            adj_h: helpers.Point = helpers.Point(p.x + row_offset, p.y)
+            adj_v: helpers.Point = helpers.Point(p.x, p.y + col_offset)
+            adj_d: helpers.Point = helpers.Point(p.x + row_offset, p.y + col_offset)
+
+            # Are they the same as us?
+            h_in_region: bool = helpers.in_range_2d(grid, adj_h.x, adj_h.y) \
+                            and grid[adj_h.y][adj_h.x] == self.plot_id
+            v_in_region: bool = helpers.in_range_2d(grid, adj_v.x, adj_v.y) \
+                            and grid[adj_v.y][adj_v.x] == self.plot_id
+            d_in_region: bool = helpers.in_range_2d(grid, adj_d.x, adj_d.y) \
+                            and grid[adj_d.y][adj_d.x] == self.plot_id
+
+            # Exterior corner, e.g.:
+            # xxx
+            # pPx <-- The P on the corner is an exterior corner
+            # ppx
+            if not h_in_region and not v_in_region:
+                num_corners += 1
+            # Interior corner, e.g.:
+            # ppx
+            # pPp <-- The P in the centre is an interior corner
+            # ppp     This isn't covered by exterior corners of the other ps
+            #
+            # Note that the X will also count itself as a corner when looking
+            # through the Xs (depending on what it has around it)
+            elif h_in_region and v_in_region and not d_in_region:
+                num_corners += 1
+
+        return num_corners
 
     def calculate_num_sides(self, grid: list) -> None:
         """
@@ -43,8 +97,7 @@ class Region:
         num_sides = 0
 
         for point in self.points:
-            if self.is_corner(point, grid):
-                num_sides += 1
+            num_sides += self.num_corners(point, grid)
 
         self.num_sides = num_sides
 
