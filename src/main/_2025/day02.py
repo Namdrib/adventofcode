@@ -92,7 +92,6 @@ class Day02:
         for id_range in self.id_ranges:
             for x in range(id_range.start, id_range.end+1):
                 if not self.is_valid_part_one(x):
-                    print(f'{x} is invalid')
                     count += x
 
         return count
@@ -106,7 +105,6 @@ class Day02:
         for id_range in self.id_ranges:
             for x in range(id_range.start, id_range.end+1):
                 if not self.is_valid_part_two(x):
-                    print(f'{x} is invalid')
                     count += x
 
         return count
