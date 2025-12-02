@@ -37,28 +37,61 @@ class Day02:
             start, end = [int(n) for n in x.split('-')]
             self.id_ranges.append(IdRange(start, end))
 
-    def is_valid(self, id_: int) -> bool:
+    def is_valid_part_one(self, id_: int) -> bool:
+        """
+        Return whether a number is considered valid for part one
+
+        A number is *invalid* if the first and second halves are the same
+
+        :param id_: The input number to check
+        :type id_: int
+        :return: True if the number is valid, false otherwise
+        :rtype: bool
+        """
         a = str(id_)
         half_length: int = int(len(a)/2)
-
-        # Only consider invalidness for even-length numbers
-        # if half_length % 2 == 0:
-        #     return True
 
         h1 = a[0:half_length]
         h2 = a[half_length:]
 
         return h1 != h2
 
+    def is_valid_part_two(self, id_: int) -> bool:
+        """
+        Return whether a number is considered valid for part one
+
+        A number is *invalid* if it is made up of the same string, repeated
+
+        :param id_: The input number to check
+        :type id_: int
+        :return: True if the number is valid, false otherwise
+        :rtype: bool
+        """
+        a = str(id_)
+
+        # For each factor of a, except for len(a) itself
+        # e.g., if the length of a is 6, check [1, 2, 3]
+        l: int = len(a)
+        for n in range(1, l):
+            if l % n == 0:
+                # See if a is made up of a multiple of each of these:
+                # a, aa, aaa -> [a a a a a a], [aa aa aa], [aaa aaa]
+                mult = int(l / n)
+                substr: str = a[0:n]
+                if a == substr * mult:
+                    return False
+
+        return True
+
     def part_one(self) -> int:
         """
-        Return the ...
+        Return the sum of invalid numbers
         """
         count: int = 0
 
         for id_range in self.id_ranges:
             for x in range(id_range.start, id_range.end+1):
-                if not self.is_valid(x):
+                if not self.is_valid_part_one(x):
                     print(f'{x} is invalid')
                     count += x
 
@@ -66,9 +99,15 @@ class Day02:
 
     def part_two(self) -> int:
         """
-        Return the ...
+        Return the sum of invalid numbers
         """
         count: int = 0
+
+        for id_range in self.id_ranges:
+            for x in range(id_range.start, id_range.end+1):
+                if not self.is_valid_part_two(x):
+                    print(f'{x} is invalid')
+                    count += x
 
         return count
 
