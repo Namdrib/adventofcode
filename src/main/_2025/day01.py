@@ -33,16 +33,46 @@ class Day01:
             polarity = -1 if (item[0] == 'L') else 1
             self.rotations.append(number * polarity)
 
-    def apply_roration(self, dial: int, rotation: int) -> int:
-        dial += rotation
-        # Handle underflow
-        while dial < 0:
-            dial += 100
-        # Handle overflow
-        if dial >= 100:
-            dial = dial % 100
-        
-        return dial
+    def apply_rotation(self, dial: int, rotation: int) -> tuple:
+        """
+        Apply a rotation of some magnitude and polarity to the dial
+
+        A postiive rotation rotates to the right (increases dial)
+        A negative rotation rotates to the left (decreases dial)
+
+        :param dial: The starting position of the dial when the rotation is applied
+        :type dial: int
+        :param rotation: The magnitude and direction of the rotation
+        :type rotation: int
+        :return: (The new dial position, how many times it pointed at zero during the rotation)
+        :rtype: tuple
+        """
+        # How many times rotation causes the dial to point at 0
+        num_zeroes: int = 0
+
+        # The numbers for each rotation are small enough that we can simulate
+        # each click
+        # If they were larger, we'd have to be smarter about treating each "lot"
+        # of 100 as a full rotation
+        for _ in range(abs(rotation)):
+            # Simulate a single click
+            if rotation > 0:
+                dial += 1
+            else:
+                dial -= 1
+
+            # Handle underflows
+            if dial < 0:
+                dial += 100
+            # Handle overflows
+            if dial >= 100:
+                dial -= 100
+
+            # Track each zero
+            if dial == 0:
+                num_zeroes += 1
+
+        return dial, num_zeroes
 
     def part_one(self) -> int:
         """
@@ -53,8 +83,8 @@ class Day01:
 
         dial: int = 50
         for rotation in self.rotations:
-            dial = self.apply_roration(dial, rotation)
-            print(f'Dial is rotated {rotation} to point at {dial}{" <---" if dial == 0 else ""}')
+            dial, _ = self.apply_rotation(dial, rotation)
+            # Count each time the dial ends up at zero
             if dial == 0:
                 count += 1
 
@@ -62,9 +92,17 @@ class Day01:
 
     def part_two(self) -> int:
         """
-        Return the ...
+        Return the number of times the dial is pointed at 0 after applying each
+        click
         """
         count: int = 0
+
+        dial: int = 50
+        for rotation in self.rotations:
+            dial, num_zeroes = self.apply_rotation(dial, rotation)
+            # Count how many times the dial ended up pointing at zero
+            if num_zeroes > 0:
+                count += num_zeroes
 
         return count
 
