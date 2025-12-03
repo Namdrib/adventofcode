@@ -25,47 +25,73 @@ class Day03:
         raw_input = sys.stdin.read()
         self.input = raw_input.splitlines()
 
-        self.banks = [x for x in self.input]
+        # Nested list, where the outer layer is the banks, and inner layer is
+        # the batteries (individual single-digit integers)
+        self.banks = [[int(battery) for battery in bank] for bank in self.input]
 
-    def get_max_joltage(self, bank: str):
-        earliest_max_idx: int = 0
-        earliest_max: int = int(bank[earliest_max_idx])
-        latest_max_idx: int = len(bank)-1
-        latest_max: int = int(bank[latest_max_idx])
+    def get_max_joltage(self, bank: list, num_batteries: int) -> int:
+        """
+        Get the maximum joltage of having num_batteries turned on
+        Where the joltage is the concatenation of the string values of each battery
 
-        for i in range(len(bank)-1):
-            battery = int(bank[i])
-            if battery > earliest_max:
-                earliest_max = battery
-                earliest_max_idx = i
+        :param bank: The collection of batteries we have available, each is a one-digit integer
+        :type bank: list
+        :param num_batteries: The number of batteries that must be turned on
+        :type num_batteries: int
+        :return: The maximum joltage we can achieve with num_batteries batteries
+        :rtype: int
+        """
+        # maxes[i] is the highest battery we can use for battery i
+        indices: list = [0 for x in range(num_batteries)]
+        maxes: list = [0 for x in range(num_batteries)]
 
-        for i in range(earliest_max_idx+1, len(bank)):
-            battery = int(bank[i])
-            if battery >= latest_max:
-                latest_max = battery
-                latest_max_idx = i
+        # Repeat for each battery that contributes to the total joltage
+        for battery_num in range(num_batteries):
+            # Start looking from the location of the previous max
+            # Special case 0 for the first battery
+            start = 0 if battery_num == 0 else indices[battery_num-1]+1
 
-        return (earliest_max_idx, latest_max_idx)
+            # Leave enough room for the remaining batteries
+            end: int = len(bank)-(num_batteries-battery_num)+1
+
+            # This is the search space for battery[battery_num]
+            for i in range(start, end):
+                battery = bank[i]
+                # Store the first highest battery we can use, and its index
+                # This is so we can re-use the same highest value for another
+                # battery to get the highest possible joltage, if there are
+                # multiple of the highest value
+                # Subsequent batteries will be to the right of this position
+                if battery > maxes[battery_num]:
+                    maxes[battery_num] = battery
+                    indices[battery_num] = i
+
+        # Convert the max batteries into their final joltage value by
+        # concatenating their individual values
+        joltage: int = int(''.join(str(x) for x in maxes))
+        return joltage
 
     def part_one(self) -> int:
         """
-        Return the ...
+        Return the sum of the joltage with 2 batteries turned on
         """
         count: int = 0
 
         for bank in self.banks:
-            pos_1, pos_2 = self.get_max_joltage(bank)
-            joltage: int = int(bank[pos_1] + bank[pos_2])
-            print(f'Max joltage {joltage} at {pos_1}, {pos_2}')
+            joltage: int = self.get_max_joltage(bank, num_batteries=2)
             count += joltage
 
         return count
 
     def part_two(self) -> int:
         """
-        Return the ...
+        Return the sum of the joltage with 12 batteries turned on
         """
         count: int = 0
+
+        for bank in self.banks:
+            joltage: int = self.get_max_joltage(bank, num_batteries=12)
+            count += joltage
 
         return count
 
