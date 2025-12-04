@@ -87,9 +87,33 @@ class Day04:
 
     def part_two(self) -> int:
         """
-        Return the ...
+        If a roll can be accessed by forklift, it can be removed
+        After removing it, it may cause other rolls to be accessible
+        Return how many rolls can be removed
         """
         count: int = 0
+
+        while True:
+            to_remove: list = [[False for cell in row] for row in self.grid]
+            going_to_remove: bool = False
+            # See which rolls can be accessed
+            for y, row in enumerate(self.grid):
+                for x, celll in enumerate(row):
+                    if self.grid[y][x] == '@':
+                        if self.is_accessible(x, y):
+                            to_remove[y][x] = True
+                            going_to_remove = True
+
+            # There is nothing to remove, so we can stop here
+            if not going_to_remove:
+                break
+
+            # Remove the accessible rolls, updating self.grid
+            for y in range(len(self.grid)):
+                for x in range(len(self.grid[x])):
+                    if to_remove[y][x]:
+                        self.grid[y][x] = '.'
+                        count += 1
 
         return count
 
