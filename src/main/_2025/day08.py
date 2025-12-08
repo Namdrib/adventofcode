@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+from functools import reduce
+from operator import mul
 import os
 from queue import PriorityQueue
 import sys
@@ -22,6 +24,7 @@ class Day08:
         self.input: list = None
         self.points: list = None
         self.circuits: DisjointSet = None
+        self.shortest_distances: PriorityQueue = None
 
     def read_input(self) -> None:
         """
@@ -42,6 +45,8 @@ class Day08:
         # Refer to the index of the box, rather than the box itself
         self.circuits = DisjointSet.from_iterable([i for i in range(len(self.points))])
 
+        self.shortest_distances = self.calculate_shortest_distances()
+
     def calculate_shortest_distances(self) -> PriorityQueue:
         distances = PriorityQueue()
 
@@ -61,33 +66,41 @@ class Day08:
         making a number of connections.
         The sample input has 10 connections. The real one has 1000.
         """
-        count: int = 0
-
-        shortest_distances = self.calculate_shortest_distances()
-
         for _ in range(1000):
             # The next pair of boxes with the shortest distance
-            distance, boxes = shortest_distances.get()
+            distance, boxes = self.shortest_distances.get()
 
             # Connect these two boxes together
             self.circuits.union(boxes[0], boxes[1])
 
-        # for circuit in self.circuits.itersets():
-        #     for box in circuit:
-        #         print(self.points[box])
-        #     print()
-
         # Find the size of the three largest circuits
         # Multiply their lengths together
         longest_circuits: list = sorted(self.circuits.itersets(), reverse=True, key=lambda x: len(x))
-        return len(longest_circuits[0]) * len(longest_circuits[1]) * len(longest_circuits[2])
+        count: int = reduce(mul, [len(x) for x in longest_circuits[0:3]], 1)
         return count
 
     def part_two(self) -> int:
         """
-        Return the ...
+        Keep connecting junction boxes until they all form one circuit
+        Return the product of the two X co-ordinates of the last two junction
+        boxes that are joined together
         """
         count: int = 0
+
+        # Note: This is NOT independent from part 1 - it continues building the
+        # same circuit, from the same shortest_distances
+        # Continue adding junction boxes to the circuits until there is only one
+        # left that isn't part of the circuit
+        while not self.shortest_distances.empty():
+            distance, boxes = self.shortest_distances.get()
+            self.circuits.union(boxes[0], boxes[1])
+
+            # We have just merged into one big circuit!
+            # Multiply the two X co-ordinates of the connection that joined the
+            # last box to the circuit - this is the final result
+            if len(list(self.circuits.itersets())) == 1:
+                count = self.points[boxes[0]][0] * self.points[boxes[1]][0]
+                break
 
         return count
 
