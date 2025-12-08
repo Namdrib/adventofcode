@@ -1,3 +1,5 @@
+import math
+
 direction_to_coords_map: dict = {
     'N' : {'x':  0, 'y': -1 },
     'NE': {'x':  1, 'y': -1 },
@@ -175,3 +177,19 @@ def get_grid_diamond(x: int, y: int, n: int) -> set:
             if element != (x, y):
                 diamond.add(element)
     return diamond
+
+def calculate_euclidean_distance(container1, container2) -> float:
+    distance: float = 0.0
+    for point1, point2 in zip(container1, container2):
+        distance += pow(abs(point1 - point2), 2)
+
+    distance = math.sqrt(distance)
+    return distance
+
+def calculate_manhattan_distance(container1, container2) -> float:
+    distance: float = 0.0
+
+    for point1, point2 in zip(container1, container2):
+        distance += abs(point1 - point2)
+    
+    return distance
