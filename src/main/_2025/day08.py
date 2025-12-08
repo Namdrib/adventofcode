@@ -2,6 +2,10 @@
 import os
 from queue import PriorityQueue
 import sys
+
+# See requirements.txt to get from PyPI
+from disjoint_set import DisjointSet
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
@@ -17,7 +21,7 @@ class Day08:
         """
         self.input: list = None
         self.points: list = None
-        self.circuits: set = None
+        self.circuits: DisjointSet = None
 
     def read_input(self) -> None:
         """
@@ -33,10 +37,10 @@ class Day08:
             self.points.append(coords)
 
         # Each junction box starts off on its own circuit
+        # As junction boxes are joined together, they merge to become the same
+        # circuit - something that disjoint sets handle very well
         # Refer to the index of the box, rather than the box itself
-        self.circuits = []
-        for i in range(len(self.points)):
-            self.circuits.append(set([i]))
+        self.circuits = DisjointSet.from_iterable([i for i in range(len(self.points))])
 
     def calculate_shortest_distances(self) -> PriorityQueue:
         distances = PriorityQueue()
@@ -50,59 +54,32 @@ class Day08:
 
         return distances
 
-    def prune(self) -> None:
-        for c1 in self.circuits:
-            for c2 in self.circuits:
-                if not c1.isdisjoint(c2):
-                    c1.update(c2)
-
-        new: list = []
-        for c in self.circuits:
-            if c not in new:
-                new.append(c)
-        self.circuits = new
-
     def part_one(self) -> int:
         """
         Connecting junction boxes together puts them onto a circuit
         Return the product of the length of the three largest circuits after
-        making the connections
-        Note: The sample input has 10 connections. The real one has 1000
+        making a number of connections.
+        The sample input has 10 connections. The real one has 1000.
         """
         count: int = 0
 
         shortest_distances = self.calculate_shortest_distances()
 
-        # A list of circuits
-        # Each circuit is a set of junction boxes that are connected
-        # self.circuits = []
-
-        for _ in range(10):
+        for _ in range(1000):
             # The next pair of boxes with the shortest distance
             distance, boxes = shortest_distances.get()
-            # print(f"Next closest: {self.points[boxes[0]]} and {self.points[boxes[1]]}, {distance=}")
 
-            # See if it would intersect any existing circuits
-            for circuit in self.circuits:
-                if circuit.intersection(boxes):
-                    # print(f"Intersection between {circuit} and {boxes}")
-                    circuit.add(boxes[0])
-                    circuit.add(boxes[1])
-            # else:
-            #     new_circuit: set = set(boxes)
-            #     self.circuits.append(new_circuit)
+            # Connect these two boxes together
+            self.circuits.union(boxes[0], boxes[1])
 
-            # Prune duplicate circuits
-            self.prune()
-
-            # for circuit in self.circuits:
-            #     for box in circuit:
-            #         print(self.points[box])
-            #     print()
+        # for circuit in self.circuits.itersets():
+        #     for box in circuit:
+        #         print(self.points[box])
+        #     print()
 
         # Find the size of the three largest circuits
         # Multiply their lengths together
-        longest_circuits: list = sorted(self.circuits, reverse=True, key=lambda x: len(x))
+        longest_circuits: list = sorted(self.circuits.itersets(), reverse=True, key=lambda x: len(x))
         return len(longest_circuits[0]) * len(longest_circuits[1]) * len(longest_circuits[2])
         return count
 
