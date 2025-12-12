@@ -35,27 +35,32 @@ class Day11:
         for item in self.input:
             device, outputs = item.split(': ')
             outputs = outputs.split()
-            self.device_outputs.setdefault(device, outputs)
+            self.device_outputs[device] = outputs
 
         pprint(self.device_outputs)
 
-    def count_paths_from(self, start: str, end: str) -> int:
+    def count_paths_from(self, start: str, end: str, problematic_devices: list = []) -> int:
         paths: list = []
-        self._count_paths_from(start, end, [], paths)
-        pprint(paths)
+        self._count_paths_from(start, end, [], paths, problematic_devices)
         return len(paths)
 
-    def _count_paths_from(self, current: str, end: str, path: list, paths: list):
+    def _count_paths_from(self, current: str, end: str, path: list, paths: list, problematic_devices: list = []):
         # Add the current path
         path.append(current)
 
         if current == end:
             copy = [x for x in path]
-            paths.append(copy)
+            if problematic_devices:
+                if all(pd in copy for pd in problematic_devices):
+                    pprint(copy)
+                    paths.append(copy)
+            else:
+                paths.append(copy)
+            path.pop(-1)
             return
 
         for neighbour in self.device_outputs[current]:
-            if self._count_paths_from(neighbour, end, path, paths):
+            if self._count_paths_from(neighbour, end, path, paths, problematic_devices):
                 acc += 1
         
         # Backtrack
@@ -76,7 +81,7 @@ class Day11:
         `out` that also pass through `dac` and `fft`
         """
         count: int = 0
-        # count = self.count_paths_from('svr', 'out', ['dac', 'fft'])
+        count = self.count_paths_from('svr', 'out', ['dac', 'fft'])
         return count
 
 def main() -> None:
