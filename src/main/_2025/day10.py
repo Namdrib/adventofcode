@@ -66,20 +66,6 @@ class MachineState:
     def __lt__(self, other: any) -> bool:
         return self.cumulative_cost < other.cumulative_cost
 
-    def get_neighbours(self, machine: Machine, use_joltage: bool = False) -> list:
-        # Each element is a tuple of (potential light state, cost)
-        neighbours: list = []
-
-        for lights in machine.buttons:
-            # Toggle each light that is activated by the button
-            new_state = [x for x in self.lights]
-            for light_index in lights:
-                new_state[light_index] = not new_state[light_index]
-            cost: int = 1
-            neighbours.append((new_state, cost))
-
-        return neighbours
-
 class Day10:
     """
     Solution for https://adventofcode.com/2025/day/10
@@ -141,11 +127,21 @@ class Day10:
             if current.lights == machine.target:
                 return current.path
 
-            # Try each button press
-            for i, neighbour in enumerate(current.get_neighbours(machine)):
+            # Try each potential button press
+            for i, button in enumerate(machine.buttons):
+                # There's no point in pressing the same button twice, as it will
+                # cancel itself out. This cuts the runtime from ~10 mins to ~1 min
+                if i in current.path:
+                    continue
+
+                # Toggle each light that is activated by the button
+                new_state = [x for x in current.lights]
+                for light_index in button:
+                    new_state[light_index] = not new_state[light_index]
+
                 new_path = [x for x in current.path]
                 new_path.append(i)
-                new_state = MachineState(neighbour[0], current.cumulative_cost + neighbour[1], new_path)
+                new_state = MachineState(new_state, current.cumulative_cost + 1, new_path)
                 pq.put(new_state)
 
             seen.add(current)
