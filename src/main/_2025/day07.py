@@ -65,6 +65,16 @@ class Day07:
         self.create_tree(self.start_x, self.start_y)
 
     def create_tree(self, x: int, y: int) -> None:
+        """
+        Create a tree from the input graph
+
+        Stores the root in self
+
+        :param x: Starting x position to create the tree from
+        :type x: int
+        :param y: Starting y position to create the tree from
+        :type y: int
+        """
         # Find the first node by moving down from the start to the first
         # splitter
         new_y: int = y
@@ -75,14 +85,31 @@ class Day07:
         self.root = Node(x, new_y)
         self._create_tree(x, new_y, self.root, None)
 
-    def _create_tree(self, x: int, y: int, parent: Node, left: bool) -> Node:
+    def _create_tree(self, x: int, y: int, parent: Node, left: bool) -> None:
+        """
+        Recursive helper method to create the tree
+
+        Essentially simulates the path of the beam as it goes down the input grid
+
+        :param x: The x position of the space in the input grid
+        :type x: int
+        :param y: The y position of the space in the input grid
+        :type y: int
+        :param parent: The parent node we descended from, to set its child
+        :type parent: Node
+        :param left: True if this call was descended to the left, False otherwise
+        :type left: bool
+        :return: Nothing
+        :rtype: None
+        """
         # There are no more nodes beyond the end of the grid
         if y >= len(self.grid):
-            return None
+            return
 
         # If the current cell is empty, move down
         if self.grid[y][x] in 'S.|':
-            return self._create_tree(x, y+1, parent, left)
+            self._create_tree(x, y+1, parent, left)
+            return
 
         # If the current cell is a splitter, create a new node, and set the
         # parent's child to the new node
@@ -117,11 +144,16 @@ class Day07:
             # Walk to the left and right
             self._create_tree(x-1, y, current, True)
             self._create_tree(x+1, y, current, False)
-            return
 
     def count_nodes(self) -> int:
+        """
+        Return the number of nodes in the tree
+
+        :return: The number of nodes in the tree
+        :rtype: int
+        """
         # Who needs to recursively walk the tree when we already have all the
-        # nodes :)
+        # nodes ;)
         return len(self.nodes)
 
     def part_one(self) -> int:
