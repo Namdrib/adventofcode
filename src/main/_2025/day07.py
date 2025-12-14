@@ -156,6 +156,49 @@ class Day07:
         # nodes ;)
         return len(self.nodes)
 
+    def count_paths(self, current: Node) -> int:
+        """
+        Count the number of ways the current node can reach its leaves
+
+        :param current: The node to search from
+        :type current: Node
+        :return: The number of paths from the current node to the leaves
+        :rtype: int
+        """
+        memo: dict = {}
+        num_timelines: int = self._count_paths(current, memo)
+        return num_timelines
+
+    def _count_paths(self, current: Node, memo: dict) -> int:
+        """
+        Recursive helper method to traverse the tree
+
+        Uses memoisation to store the number of paths from any given node to its
+        leaves
+
+        :param current: The current node to traverse from
+        :type current: Node
+        :param memo: A dictionary of {(x, y): num_paths}
+        :type memo: dict
+        :return: the number of paths from the current node to the leaves
+        :rtype: int
+        """
+        pos: tuple = (current.x, current.y)
+
+        # Memoise the number of pathways from any given node to the end
+        if pos in memo:
+            return memo[pos]
+
+        # The else covers the recursive base case - there is no child on that side
+        left_timelines: int = self._count_paths(current.left, memo) if current.left else 1
+        right_timelines: int = self._count_paths(current.right, memo) if current.right else 1
+
+        num_timelines: int = left_timelines + right_timelines
+
+        # Store the number of timelines for the current node
+        memo[pos] = num_timelines
+        return memo[pos]
+
     def part_one(self) -> int:
         """
         Return the number of times the beam is split
@@ -168,9 +211,11 @@ class Day07:
 
     def part_two(self) -> int:
         """
-        Return the ...
+        Return the number of paths from the root node to the leaves
         """
         count: int = 0
+
+        count = self.count_paths(self.root)
 
         return count
 
