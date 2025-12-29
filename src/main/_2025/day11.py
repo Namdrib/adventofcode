@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 import os
-from pprint import pprint
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
@@ -37,32 +36,38 @@ class Day11:
             outputs = outputs.split()
             self.device_outputs[device] = outputs
 
-        pprint(self.device_outputs)
+    def count_paths_from(self, start: str, end: str) -> int:
+        # Memoise how many times each node can reach the end
+        paths_to_end: dict = dict()
 
-    def count_paths_from(self, start: str, end: str, problematic_devices: list = []) -> int:
-        paths: list = []
-        self._count_paths_from(start, end, [], paths, problematic_devices)
-        return len(paths)
+        self._count_paths_from(start, end, [], paths_to_end)
+        return paths_to_end[start]
 
-    def _count_paths_from(self, current: str, end: str, path: list, paths: list, problematic_devices: list = []):
+    def _count_paths_from(self, current: str, end: str, path: list, memo: dict) -> int:
+        if current in memo:
+            return memo[current]
+
         # Add the current path
         path.append(current)
 
+        # We've reached the end
         if current == end:
             copy = [x for x in path]
-            if problematic_devices:
-                if all(pd in copy for pd in problematic_devices):
-                    pprint(copy)
-                    paths.append(copy)
-            else:
-                paths.append(copy)
-            path.pop(-1)
-            return
 
-        for neighbour in self.device_outputs[current]:
-            if self._count_paths_from(neighbour, end, path, paths, problematic_devices):
-                acc += 1
-        
+            memo[current] = 1
+            path.pop(-1)
+            return memo[current]
+
+        total_paths_to_end: int = 0
+        for neighbour in self.device_outputs.setdefault(current, []):
+            if neighbour not in memo:
+                num_paths = self._count_paths_from(neighbour, end, path, memo)
+                memo[neighbour] = num_paths
+
+            total_paths_to_end += memo[neighbour]
+        memo[current] = total_paths_to_end
+        return memo[current]
+
         # Backtrack
         path.pop(-1)
 
@@ -81,7 +86,20 @@ class Day11:
         `out` that also pass through `dac` and `fft`
         """
         count: int = 0
-        count = self.count_paths_from('svr', 'out', ['dac', 'fft'])
+
+        # How many paths from svr -> fft -> dac -> out
+        p1_1: int = self.count_paths_from('svr', 'fft')
+        p1_2: int = self.count_paths_from('fft', 'dac')
+        p1_3: int = self.count_paths_from('dac', 'out')
+        p1: int = p1_1 * p1_2 * p1_3
+
+        # How many paths from svr -> dac -> fft -> out
+        p2_1: int = self.count_paths_from('svr', 'dac')
+        p2_2: int = self.count_paths_from('dac', 'fft')
+        p2_3: int = self.count_paths_from('fft', 'out')
+        p2: int = p2_1 * p2_2 * p2_3
+
+        count = p1 + p2
         return count
 
 def main() -> None:
