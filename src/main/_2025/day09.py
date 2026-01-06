@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import itertools
 import os
+from queue import PriorityQueue
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
@@ -183,12 +184,21 @@ class Day09:
         """
         largest_area: int = 0
 
-        for t1, t2 in itertools.combinations(self.tiles, 2):
-            if self.region_is_red_or_green_only(t1, t2):
-                area: int = self.calculate_area_within_tiles(t1, t2)
-                largest_area = max(largest_area, area)
+        # Store the rectangles, sorted by area (largest first)
+        # This means the first valid rectangle we come across is the largest
+        rectangle_area: PriorityQueue = PriorityQueue()
 
-        return largest_area
+        for t1, t2 in itertools.combinations(self.tiles, 2):
+            area: int = self.calculate_area_within_tiles(t1, t2)
+            # Because priority queues are always min-first, put the negative of
+            # the area so we take the largest rectangles first
+            rectangle_area.put((-area, (t1, t2)))
+
+        while not rectangle_area.empty():
+            area, rectangle = rectangle_area.get()
+            if self.region_is_red_or_green_only(rectangle[0], rectangle[1]):
+                # Two negatives make a positive
+                return -area
 
 def main() -> None:
     """
