@@ -182,8 +182,6 @@ class Day09:
         a pair of corner tiles given the entire rectangle must be made of red or
         green tiles only
         """
-        largest_area: int = 0
-
         # Store the rectangles, sorted by area (largest first)
         # This means the first valid rectangle we come across is the largest
         rectangle_area: PriorityQueue = PriorityQueue()
