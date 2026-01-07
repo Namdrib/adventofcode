@@ -1,11 +1,10 @@
 #!/usr/bin/python
 
-from jinja2 import Environment, FileSystemLoader
-
 import argparse
-
 from datetime import datetime
 import os
+
+from jinja2 import Environment, FileSystemLoader
 
 def argparse_setup():
     parser = argparse.ArgumentParser(
