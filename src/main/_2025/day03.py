@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 import os
 import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
+
 
 class Day03:
     """
@@ -49,10 +51,10 @@ class Day03:
         for battery_num in range(num_batteries):
             # Start looking from the location of the previous max
             # Special case 0 for the first battery
-            start = 0 if battery_num == 0 else indices[battery_num-1]+1
+            start = 0 if battery_num == 0 else indices[battery_num - 1] + 1
 
             # Leave enough room for the remaining batteries
-            end: int = len(bank)-(num_batteries-battery_num)+1
+            end: int = len(bank) - (num_batteries - battery_num) + 1
 
             # This is the search space for battery[battery_num]
             for i in range(start, end):
@@ -68,7 +70,7 @@ class Day03:
 
         # Convert the max batteries into their final joltage value by
         # concatenating their individual values
-        joltage: int = int(''.join(str(x) for x in maxes))
+        joltage: int = int("".join(str(x) for x in maxes))
         return joltage
 
     def part_one(self) -> int:
@@ -95,6 +97,7 @@ class Day03:
 
         return count
 
+
 def main() -> None:
     """
     Main
@@ -102,8 +105,9 @@ def main() -> None:
     solver = Day03()
     solver.read_input()
 
-    print(f'Part 1: {solver.part_one()}')
-    print(f'Part 2: {solver.part_two()}')
+    print(f"Part 1: {solver.part_one()}")
+    print(f"Part 2: {solver.part_two()}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

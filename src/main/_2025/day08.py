@@ -1,9 +1,9 @@
 #!/usr/bin/python3
+import os
+import sys
 from functools import reduce
 from operator import mul
-import os
 from queue import PriorityQueue
-import sys
 
 # See requirements.txt to get from PyPI
 from disjoint_set import DisjointSet
@@ -11,6 +11,7 @@ from disjoint_set import DisjointSet
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
+
 
 class Day08:
     """
@@ -36,7 +37,7 @@ class Day08:
 
         self.points = []
         for item in self.input:
-            coords: tuple = tuple(int(x) for x in item.split(','))
+            coords: tuple = tuple(int(x) for x in item.split(","))
             self.points.append(coords)
 
         # Each junction box starts off on its own circuit
@@ -53,8 +54,10 @@ class Day08:
         # Calculate the straight-line distance for each pair of junction boxes
         # Store the distance and the pair, sorted by distance (shortest first)
         for i in range(len(self.points)):
-            for j in range(i+2, len(self.points)):
-                dist = helpers.calculate_euclidean_distance(self.points[i], self.points[j])
+            for j in range(i + 2, len(self.points)):
+                dist = helpers.calculate_euclidean_distance(
+                    self.points[i], self.points[j]
+                )
                 distances.put([dist, (i, j)])
 
         return distances
@@ -75,7 +78,9 @@ class Day08:
 
         # Find the size of the three largest circuits
         # Multiply their lengths together
-        longest_circuits: list = sorted(self.circuits.itersets(), reverse=True, key=lambda x: len(x))
+        longest_circuits: list = sorted(
+            self.circuits.itersets(), reverse=True, key=lambda x: len(x)
+        )
         count: int = reduce(mul, [len(x) for x in longest_circuits[0:3]], 1)
         return count
 
@@ -104,6 +109,7 @@ class Day08:
 
         return count
 
+
 def main() -> None:
     """
     Main
@@ -111,8 +117,9 @@ def main() -> None:
     solver = Day08()
     solver.read_input()
 
-    print(f'Part 1: {solver.part_one()}')
-    print(f'Part 2: {solver.part_two()}')
+    print(f"Part 1: {solver.part_one()}")
+    print(f"Part 2: {solver.part_two()}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -1,11 +1,13 @@
 #!/usr/bin/python3
-from functools import reduce
-from operator import mul
 import os
 import sys
+from functools import reduce
+from operator import mul
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
+
 
 class Day06:
     """
@@ -53,7 +55,7 @@ class Day06:
         :return: The result of solving the problrm
         :rtype: int
         """
-        if operator == '+':
+        if operator == "+":
             out = sum(operands)
         else:
             out = reduce(mul, operands, 1)
@@ -89,7 +91,7 @@ class Day06:
         count: int = 0
 
         operands: list = []
-        operator: str = ''
+        operator: str = ""
 
         # Used to keep track of whether the column is empty
         # Used to determine when we move on to the next problem, which invovles
@@ -97,7 +99,7 @@ class Day06:
         end_of_problem: bool = False
 
         # From right to left
-        for x in range(len(self.operands2[0])-1, -1, -1):
+        for x in range(len(self.operands2[0]) - 1, -1, -1):
             # Skip the empty column, get ready for the next problem
             if end_of_problem:
                 end_of_problem = False
@@ -117,7 +119,7 @@ class Day06:
                     operand += int(current)
 
                 # Store the operator for this problem
-                if current in '+*':
+                if current in "+*":
                     operator = current
                     end_of_problem = True
 
@@ -132,6 +134,7 @@ class Day06:
 
         return count
 
+
 def main() -> None:
     """
     Main
@@ -139,8 +142,9 @@ def main() -> None:
     solver = Day06()
     solver.read_input()
 
-    print(f'Part 1: {solver.part_one()}')
-    print(f'Part 2: {solver.part_two()}')
+    print(f"Part 1: {solver.part_one()}")
+    print(f"Part 2: {solver.part_two()}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

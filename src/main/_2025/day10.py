@@ -1,10 +1,12 @@
 #!/usr/bin/python3
 import os
-from queue import PriorityQueue
 import sys
+from queue import PriorityQueue
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
+
 
 class Machine:
     def __init__(self, target: str, buttons: list, joltage_reqs: list) -> None:
@@ -30,7 +32,7 @@ class Machine:
         """
         # Strip the brackets
         # A '#' represents a light that is on
-        self.target = [x == '#' for x in target[1:-1]]
+        self.target = [x == "#" for x in target[1:-1]]
         self.lights: bool = [False for _ in self.target]
 
         # Each button toggles some set of lights
@@ -38,16 +40,19 @@ class Machine:
         for button in buttons:
             # Strip the parens
             nums: list = button[1:-1]
-            self.buttons.append([int(light) for light in nums.split(',')])
+            self.buttons.append([int(light) for light in nums.split(",")])
 
-        self.joltage_reqs: list = [int(j) for j in joltage_reqs[1:-1].split(',')]
+        self.joltage_reqs: list = [int(j) for j in joltage_reqs[1:-1].split(",")]
 
     def __repr__(self) -> str:
-        return f"{__class__.__name__}({self.target}, {self.buttons}, {self.joltage_reqs})"
+        return (
+            f"{__class__.__name__}({self.target}, {self.buttons}, {self.joltage_reqs})"
+        )
 
     def __str__(self) -> str:
-        lights_str: str = "".join('#' if x else '.' for x in self.lights)
+        lights_str: str = "".join("#" if x else "." for x in self.lights)
         return lights_str
+
 
 class MachineState:
     def __init__(self, lights: str, cost: int = 0, path: list = []) -> None:
@@ -57,14 +62,17 @@ class MachineState:
 
     # For use with set/dict and queue.PriorityQueue
     def __hash__(self) -> int:
-        return hash((
-            ''.join('#' if x else '.' for x in self.lights),
-            self.cumulative_cost,
-            ','.join(str(x) for x in self.path)
-        ))
+        return hash(
+            (
+                "".join("#" if x else "." for x in self.lights),
+                self.cumulative_cost,
+                ",".join(str(x) for x in self.path),
+            )
+        )
 
     def __lt__(self, other: any) -> bool:
         return self.cumulative_cost < other.cumulative_cost
+
 
 class Day10:
     """
@@ -141,7 +149,9 @@ class Day10:
 
                 new_path = [x for x in current.path]
                 new_path.append(i)
-                new_state = MachineState(new_state, current.cumulative_cost + 1, new_path)
+                new_state = MachineState(
+                    new_state, current.cumulative_cost + 1, new_path
+                )
                 pq.put(new_state)
 
             seen.add(current)
@@ -169,6 +179,7 @@ class Day10:
 
         return count
 
+
 def main() -> None:
     """
     Main
@@ -176,8 +187,9 @@ def main() -> None:
     solver = Day10()
     solver.read_input()
 
-    print(f'Part 1: {solver.part_one()}')
-    print(f'Part 2: {solver.part_two()}')
+    print(f"Part 1: {solver.part_one()}")
+    print(f"Part 2: {solver.part_two()}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

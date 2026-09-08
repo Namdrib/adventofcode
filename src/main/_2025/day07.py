@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 import os
 import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
+
 
 class Node:
     def __init__(self, x: int, y: int):
@@ -14,9 +16,10 @@ class Node:
 
     def __str__(self) -> str:
         self_str: str = f"({self.x}, {self.y})"
-        left_str: str = f"({self.left.x}, {self.left.y})" if self.left else 'None'
-        right_str: str = f"({self.right.x}, {self.right.y})" if self.right else 'None'
+        left_str: str = f"({self.left.x}, {self.left.y})" if self.left else "None"
+        right_str: str = f"({self.right.x}, {self.right.y})" if self.right else "None"
         return f"{self_str} -> {left_str} and {right_str}"
+
 
 class Day07:
     """
@@ -55,7 +58,7 @@ class Day07:
             if found_start:
                 break
             for x, cell in enumerate(row):
-                if cell == 'S':
+                if cell == "S":
                     self.start_x = x
                     self.start_y = y
                     found_start = True
@@ -78,7 +81,7 @@ class Day07:
         # Find the first node by moving down from the start to the first
         # splitter
         new_y: int = y
-        while self.input[new_y][x] != '^':
+        while self.input[new_y][x] != "^":
             new_y += 1
 
         # This is where the root of the tree is
@@ -107,14 +110,14 @@ class Day07:
             return
 
         # If the current cell is empty, move down
-        if self.grid[y][x] in 'S.|':
-            self._create_tree(x, y+1, parent, left)
+        if self.grid[y][x] in "S.|":
+            self._create_tree(x, y + 1, parent, left)
             return
 
         # If the current cell is a splitter, create a new node, and set the
         # parent's child to the new node
         # We need to know whether we are the left or right child
-        if self.grid[y][x] == '^':
+        if self.grid[y][x] == "^":
 
             # Check whether this node has been seen before
             seen: bool = False
@@ -142,8 +145,8 @@ class Day07:
                 return
 
             # Walk to the left and right
-            self._create_tree(x-1, y, current, True)
-            self._create_tree(x+1, y, current, False)
+            self._create_tree(x - 1, y, current, True)
+            self._create_tree(x + 1, y, current, False)
 
     def count_nodes(self) -> int:
         """
@@ -190,8 +193,12 @@ class Day07:
             return memo[pos]
 
         # The else covers the recursive base case - there is no child on that side
-        left_timelines: int = self._count_paths(current.left, memo) if current.left else 1
-        right_timelines: int = self._count_paths(current.right, memo) if current.right else 1
+        left_timelines: int = (
+            self._count_paths(current.left, memo) if current.left else 1
+        )
+        right_timelines: int = (
+            self._count_paths(current.right, memo) if current.right else 1
+        )
 
         num_timelines: int = left_timelines + right_timelines
 
@@ -219,6 +226,7 @@ class Day07:
 
         return count
 
+
 def main() -> None:
     """
     Main
@@ -226,8 +234,9 @@ def main() -> None:
     solver = Day07()
     solver.read_input()
 
-    print(f'Part 1: {solver.part_one()}')
-    print(f'Part 2: {solver.part_two()}')
+    print(f"Part 1: {solver.part_one()}")
+    print(f"Part 2: {solver.part_two()}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

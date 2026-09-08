@@ -1,13 +1,15 @@
 #!/usr/bin/python3
-from collections import namedtuple
 import os
 import sys
+from collections import namedtuple
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
 
 # Nicer naming for a range
-IdRange = namedtuple('IdRange', ['start', 'end'])
+IdRange = namedtuple("IdRange", ["start", "end"])
+
 
 class Day02:
     """
@@ -32,9 +34,9 @@ class Day02:
 
         self.id_ranges = []
         # Separate each range
-        for x in self.input[0].split(','):
+        for x in self.input[0].split(","):
             # Isolate the start and end ID of the range
-            start, end = [int(n) for n in x.split('-')]
+            start, end = [int(n) for n in x.split("-")]
             self.id_ranges.append(IdRange(start, end))
 
     def is_valid_part_one(self, id_: int) -> bool:
@@ -49,7 +51,7 @@ class Day02:
         :rtype: bool
         """
         a = str(id_)
-        half_length: int = int(len(a)/2)
+        half_length: int = int(len(a) / 2)
 
         h1 = a[0:half_length]
         h2 = a[half_length:]
@@ -90,7 +92,7 @@ class Day02:
         count: int = 0
 
         for id_range in self.id_ranges:
-            for x in range(id_range.start, id_range.end+1):
+            for x in range(id_range.start, id_range.end + 1):
                 if not self.is_valid_part_one(x):
                     count += x
 
@@ -103,11 +105,12 @@ class Day02:
         count: int = 0
 
         for id_range in self.id_ranges:
-            for x in range(id_range.start, id_range.end+1):
+            for x in range(id_range.start, id_range.end + 1):
                 if not self.is_valid_part_two(x):
                     count += x
 
         return count
+
 
 def main() -> None:
     """
@@ -116,8 +119,9 @@ def main() -> None:
     solver = Day02()
     solver.read_input()
 
-    print(f'Part 1: {solver.part_one()}')
-    print(f'Part 2: {solver.part_two()}')
+    print(f"Part 1: {solver.part_one()}")
+    print(f"Part 2: {solver.part_two()}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

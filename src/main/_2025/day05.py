@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 import os
 import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
+
 
 class Day05:
     """
@@ -32,11 +34,11 @@ class Day05:
         is_range: bool = True
         for item in self.input:
 
-            if item == '':
+            if item == "":
                 is_range = False
                 continue
             if is_range:
-                self.ranges.append([int(x) for x in item.split('-')])
+                self.ranges.append([int(x) for x in item.split("-")])
             else:
                 self.ingredients.append(int(item))
 
@@ -52,7 +54,7 @@ class Day05:
         :rtype: bool
         """
         for r in self.ranges:
-            if ingredient in range(r[0], r[1]+1):
+            if ingredient in range(r[0], r[1] + 1):
                 return True
         return False
 
@@ -127,7 +129,7 @@ class Day05:
         """
         to_delete: list = []
         for i in range(len(unique_ranges)):
-            for j in range(i+1, len(unique_ranges)):
+            for j in range(i + 1, len(unique_ranges)):
 
                 if self.merge_ranges(unique_ranges[i], unique_ranges[j]):
                     to_delete.append(j)
@@ -166,6 +168,7 @@ class Day05:
 
         return count
 
+
 def main() -> None:
     """
     Main
@@ -173,8 +176,9 @@ def main() -> None:
     solver = Day05()
     solver.read_input()
 
-    print(f'Part 1: {solver.part_one()}')
-    print(f'Part 2: {solver.part_two()}')
+    print(f"Part 1: {solver.part_one()}")
+    print(f"Part 2: {solver.part_two()}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 import itertools
 import os
-from queue import PriorityQueue
 import sys
+from queue import PriorityQueue
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
+
 
 class Day09:
     """
@@ -35,7 +37,7 @@ class Day09:
         self.y_lines = set()
 
         for item in self.input:
-            x, y = [int(x) for x in item.split(',')]
+            x, y = [int(x) for x in item.split(",")]
             self.tiles.append((x, y))
 
         # Build the set of x- and y- lines
@@ -61,7 +63,9 @@ class Day09:
 
         return dx * dy
 
-    def line_intersects_rectangle(self, tile_1: tuple, tile_2: tuple, line: tuple) -> bool:
+    def line_intersects_rectangle(
+        self, tile_1: tuple, tile_2: tuple, line: tuple
+    ) -> bool:
         """
         A point is described as a tuple of (x, y)
         A line is described as a tuple of (point 1, point 2)
@@ -85,8 +89,14 @@ class Day09:
         # This makes it easier to refer to the extreme bounds of the rectangle
         # Also, "shrink" the rectangle in by 1 in each dimension to account for
         # lines that straddle the boudnary of the rectangle, since each line is also part of the rectangle
-        min_point: tuple = (min(tile_1[0], tile_2[0])+1, min(tile_1[1], tile_2[1])+1)
-        max_point: tuple = (max(tile_1[0], tile_2[0])-1, max(tile_1[1], tile_2[1])-1)
+        min_point: tuple = (
+            min(tile_1[0], tile_2[0]) + 1,
+            min(tile_1[1], tile_2[1]) + 1,
+        )
+        max_point: tuple = (
+            max(tile_1[0], tile_2[0]) - 1,
+            max(tile_1[1], tile_2[1]) - 1,
+        )
 
         # Deal with Y lines (vertical)
         # All the logic here refers to X and Y relationships between a line
@@ -101,15 +111,18 @@ class Day09:
             if line[0][0] < min_point[0] or line[0][0] > max_point[0]:
                 return False
 
-
             # If the line's X points are contained within the rectangle's min X and
             # max X, the line can only intersect the rectange if it intersects the
             # rectangle's min X line, OR it intersects the rectangle's max X line
             # That is:
             # The line's min Y <= the rectangle's min Y and the line's max Y >= the rectangle's min Y
             # The line's min Y <= the rectangle's max Y and the line's max Y >= the rectangle's max Y
-            intersects_min_x_line: bool = line[0][1] <= min_point[1] and line[1][1] >= min_point[1]
-            intersects_max_x_line: bool = line[0][1] <= max_point[1] and line[1][1] >= max_point[1]
+            intersects_min_x_line: bool = (
+                line[0][1] <= min_point[1] and line[1][1] >= min_point[1]
+            )
+            intersects_max_x_line: bool = (
+                line[0][1] <= max_point[1] and line[1][1] >= max_point[1]
+            )
             if intersects_min_x_line or intersects_max_x_line:
                 return True
             else:
@@ -120,8 +133,12 @@ class Day09:
             if line[0][1] < min_point[1] or line[0][1] > max_point[1]:
                 return False
 
-            intersects_min_y_line: bool = line[0][0] <= min_point[0] and line[1][0] >= min_point[0]
-            intersects_max_y_line: bool = line[0][0] <= max_point[0] and line[1][0] >= max_point[0]
+            intersects_min_y_line: bool = (
+                line[0][0] <= min_point[0] and line[1][0] >= min_point[0]
+            )
+            intersects_max_y_line: bool = (
+                line[0][0] <= max_point[0] and line[1][0] >= max_point[0]
+            )
             if intersects_min_y_line or intersects_max_y_line:
                 return True
             else:
@@ -198,6 +215,7 @@ class Day09:
                 # Two negatives make a positive
                 return -area
 
+
 def main() -> None:
     """
     Main
@@ -205,8 +223,9 @@ def main() -> None:
     solver = Day09()
     solver.read_input()
 
-    print(f'Part 1: {solver.part_one()}')
-    print(f'Part 2: {solver.part_two()}')
+    print(f"Part 1: {solver.part_one()}")
+    print(f"Part 2: {solver.part_two()}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

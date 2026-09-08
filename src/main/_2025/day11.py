@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 import os
 import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
+
 
 class Day11:
     """
@@ -32,7 +34,7 @@ class Day11:
         self.device_outputs: dict = dict()
 
         for item in self.input:
-            device, outputs = item.split(': ')
+            device, outputs = item.split(": ")
             outputs = outputs.split()
             self.device_outputs[device] = outputs
 
@@ -77,7 +79,7 @@ class Day11:
         `out`
         """
         count: int = 0
-        count = self.count_paths_from('you', 'out')
+        count = self.count_paths_from("you", "out")
         return count
 
     def part_two(self) -> int:
@@ -88,19 +90,20 @@ class Day11:
         count: int = 0
 
         # How many paths from svr -> fft -> dac -> out
-        p1_1: int = self.count_paths_from('svr', 'fft')
-        p1_2: int = self.count_paths_from('fft', 'dac')
-        p1_3: int = self.count_paths_from('dac', 'out')
+        p1_1: int = self.count_paths_from("svr", "fft")
+        p1_2: int = self.count_paths_from("fft", "dac")
+        p1_3: int = self.count_paths_from("dac", "out")
         p1: int = p1_1 * p1_2 * p1_3
 
         # How many paths from svr -> dac -> fft -> out
-        p2_1: int = self.count_paths_from('svr', 'dac')
-        p2_2: int = self.count_paths_from('dac', 'fft')
-        p2_3: int = self.count_paths_from('fft', 'out')
+        p2_1: int = self.count_paths_from("svr", "dac")
+        p2_2: int = self.count_paths_from("dac", "fft")
+        p2_3: int = self.count_paths_from("fft", "out")
         p2: int = p2_1 * p2_2 * p2_3
 
         count = p1 + p2
         return count
+
 
 def main() -> None:
     """
@@ -109,8 +112,9 @@ def main() -> None:
     solver = Day11()
     solver.read_input()
 
-    print(f'Part 1: {solver.part_one()}')
-    print(f'Part 2: {solver.part_two()}')
+    print(f"Part 1: {solver.part_one()}")
+    print(f"Part 2: {solver.part_two()}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

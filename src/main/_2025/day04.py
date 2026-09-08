@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 import os
 import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
+
 
 class Day04:
     """
@@ -50,7 +52,7 @@ class Day04:
                 new_x: int = x + dx
                 new_y: int = y + dy
                 if helpers.in_range_2d(self.grid, x=new_x, y=new_y):
-                    if self.grid[new_y][new_x] == '@':
+                    if self.grid[new_y][new_x] == "@":
                         occupied_neighbours += 1
 
         return occupied_neighbours
@@ -78,10 +80,9 @@ class Day04:
 
         for y, row in enumerate(self.grid):
             for x, cell in enumerate(row):
-                if self.grid[y][x] == '@':
+                if self.grid[y][x] == "@":
                     if self.is_accessible(x, y):
                         count += 1
-
 
         return count
 
@@ -99,7 +100,7 @@ class Day04:
             # See which rolls can be accessed
             for y, row in enumerate(self.grid):
                 for x, celll in enumerate(row):
-                    if self.grid[y][x] == '@':
+                    if self.grid[y][x] == "@":
                         if self.is_accessible(x, y):
                             to_remove[y][x] = True
                             going_to_remove = True
@@ -112,10 +113,11 @@ class Day04:
             for y in range(len(self.grid)):
                 for x in range(len(self.grid[x])):
                     if to_remove[y][x]:
-                        self.grid[y][x] = '.'
+                        self.grid[y][x] = "."
                         count += 1
 
         return count
+
 
 def main() -> None:
     """
@@ -124,8 +126,9 @@ def main() -> None:
     solver = Day04()
     solver.read_input()
 
-    print(f'Part 1: {solver.part_one()}')
-    print(f'Part 2: {solver.part_two()}')
+    print(f"Part 1: {solver.part_one()}")
+    print(f"Part 2: {solver.part_two()}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

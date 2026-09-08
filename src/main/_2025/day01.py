@@ -1,9 +1,11 @@
 #!/usr/bin/python3
 import os
 import sys
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
+
 
 class Day01:
     """
@@ -30,7 +32,7 @@ class Day01:
         self.rotations = []
         for item in self.input:
             number = int(item[1:])
-            polarity = -1 if (item[0] == 'L') else 1
+            polarity = -1 if (item[0] == "L") else 1
             self.rotations.append(number * polarity)
 
     def apply_rotation(self, dial: int, rotation: int) -> tuple:
@@ -106,6 +108,7 @@ class Day01:
 
         return count
 
+
 def main() -> None:
     """
     Main
@@ -113,8 +116,9 @@ def main() -> None:
     solver = Day01()
     solver.read_input()
 
-    print(f'Part 1: {solver.part_one()}')
-    print(f'Part 2: {solver.part_two()}')
+    print(f"Part 1: {solver.part_one()}")
+    print(f"Part 2: {solver.part_two()}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

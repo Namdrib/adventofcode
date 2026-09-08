@@ -1,32 +1,27 @@
 import math
 
 direction_to_coords_map: dict = {
-    'N' : {'x':  0, 'y': -1 },
-    'NE': {'x':  1, 'y': -1 },
-    'E' : {'x':  1, 'y':  0 },
-    'SE': {'x':  1, 'y':  1 },
-    'S' : {'x':  0, 'y':  1 },
-    'SW': {'x': -1, 'y':  1 },
-    'W' : {'x': -1, 'y':  0 },
-    'NW': {'x': -1, 'y': -1 },
+    "N": {"x": 0, "y": -1},
+    "NE": {"x": 1, "y": -1},
+    "E": {"x": 1, "y": 0},
+    "SE": {"x": 1, "y": 1},
+    "S": {"x": 0, "y": 1},
+    "SW": {"x": -1, "y": 1},
+    "W": {"x": -1, "y": 0},
+    "NW": {"x": -1, "y": -1},
     # Arrows :)
-    '^' : {'x':  0, 'y': -1 },
-    '>' : {'x':  1, 'y':  0 },
-    'v' : {'x':  0, 'y':  1 },
-    '<' : {'x': -1, 'y':  0 },
+    "^": {"x": 0, "y": -1},
+    ">": {"x": 1, "y": 0},
+    "v": {"x": 0, "y": 1},
+    "<": {"x": -1, "y": 0},
 }
 
-cardinal_directions: list = [
-    'N', 'E', 'S', 'W'
-]
+cardinal_directions: list = ["N", "E", "S", "W"]
 
-ordinal_directions: list = [
-    'N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'
-]
+ordinal_directions: list = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"]
 
-arrow_directions: list = [
-    '^', '>', 'v', '<'
-]
+arrow_directions: list = ["^", ">", "v", "<"]
+
 
 def get_directions(directions: list = None):
     """
@@ -45,7 +40,10 @@ def get_directions(directions: list = None):
     for d in directions:
         yield direction_to_coords_map[d]
 
-def get_neighbours(x: int, y: int, grid: list, directions: list = None, include_oob: bool = False):
+
+def get_neighbours(
+    x: int, y: int, grid: list, directions: list = None, include_oob: bool = False
+):
     """
     Get the neighbours of a given point and directions
 
@@ -69,15 +67,18 @@ def get_neighbours(x: int, y: int, grid: list, directions: list = None, include_
 
     # Look around the current point
     for direction in directions:
-        next_x: int = x + direction_to_coords_map[direction]['x']
-        next_y: int = y + direction_to_coords_map[direction]['y']
+        next_x: int = x + direction_to_coords_map[direction]["x"]
+        next_y: int = y + direction_to_coords_map[direction]["y"]
 
         # Skip OOB neighbours if include_oob isn't set
-        out_of_bounds: bool = not in_range(grid, next_y) or not in_range(grid[0], next_x)
+        out_of_bounds: bool = not in_range(grid, next_y) or not in_range(
+            grid[0], next_x
+        )
         if out_of_bounds and not include_oob:
             continue
 
         yield Point(next_x, next_y)
+
 
 class Point:
     def __init__(self, x, y) -> None:
@@ -102,7 +103,8 @@ class Point:
         return self.x + 2 * self.x * self.y + self.y
 
     def __repr__(self) -> str:
-        return f'Point({self.x}, {self.y})'
+        return f"Point({self.x}, {self.y})"
+
 
 def rotate_clockwise(p: Point) -> Point:
     """
@@ -115,6 +117,7 @@ def rotate_clockwise(p: Point) -> Point:
     """
     return Point(-p.y if p.y else p.y, p.x)
 
+
 def rotate_anticlockwise(p: Point) -> Point:
     """
     Rotate a Point anti-clockwise by 90 degrees
@@ -125,6 +128,7 @@ def rotate_anticlockwise(p: Point) -> Point:
     :rtype: Point
     """
     return Point(p.y, -p.x if p.x else p.x)
+
 
 def in_range(thing, index: int) -> bool:
     """
@@ -139,8 +143,10 @@ def in_range(thing, index: int) -> bool:
     """
     return 0 <= index < len(thing)
 
+
 def in_range_2d(grid, x, y) -> bool:
     return in_range(grid, y) and in_range(grid[y], x)
+
 
 def get_grid_diamond(x: int, y: int, n: int) -> set:
     """
@@ -178,6 +184,7 @@ def get_grid_diamond(x: int, y: int, n: int) -> set:
                 diamond.add(element)
     return diamond
 
+
 def calculate_euclidean_distance(container1, container2) -> float:
     distance: float = 0.0
     for point1, point2 in zip(container1, container2):
@@ -186,10 +193,11 @@ def calculate_euclidean_distance(container1, container2) -> float:
     distance = math.sqrt(distance)
     return distance
 
+
 def calculate_manhattan_distance(container1, container2) -> float:
     distance: float = 0.0
 
     for point1, point2 in zip(container1, container2):
         distance += abs(point1 - point2)
-    
+
     return distance
