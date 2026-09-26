@@ -95,8 +95,8 @@ class Day14:
         for path in self.input:
             path_coords = path.split(' -> ')
             for i in range(len(path_coords)-1):
-                start_x, start_y = path_coords[i].split(',')
-                end_x, end_y = path_coords[i+1].split(',')
+                start_x, start_y = map(int, path_coords[i].split(','))
+                end_x, end_y = map(int, path_coords[i+1].split(','))
                 start: Coord2D = Coord2D(start_x, start_y)
                 end: Coord2D = Coord2D(end_x, end_y)
                 self.draw_rock_line(start, end)

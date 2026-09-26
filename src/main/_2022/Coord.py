@@ -1,24 +1,11 @@
 #!/usr/bin/python3
+from dataclasses import dataclass
 
+# order and unsafe_hash allow this to be inserted into sets and dicts
+@dataclass(order=True, unsafe_hash=True)
 class Coord2D:
     """
     A class representing co-ordinates in a 2D plane
     """
-
-    def __init__(self, x=0, y=0):
-        self.x = int(x)
-        self.y = int(y)
-
-    def __str__(self) -> str:
-        return f'({self.x}, {self.y})'
-
-    def __lt__(self, obj) -> bool:
-        if self.x == obj.x:
-            return self.y < self.y
-        return self.x < obj.x
-
-    def __eq__(self, obj) -> bool:
-        return isinstance(obj, Coord2D) and self.x == obj.x and self.y == obj.y
-
-    def __hash__(self) -> int:
-        return int(0.5 * (self.x + self.y) * (self.x + self.y + 1) + self.y)
+    x: int
+    y: int
