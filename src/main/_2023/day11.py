@@ -1,11 +1,12 @@
 #!/usr/bin/python3
+from dataclasses import dataclass
 import sys
 
+@dataclass
 class Galaxy:
-    def __init__(self, id_: int, x: int, y: int):
-        self.id = id_
-        self.x = x
-        self.y = y
+    id_: int
+    x: int
+    y: int
 
 class Day11:
     """

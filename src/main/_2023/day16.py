@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from dataclasses import dataclass
 from enum import Enum
 from queue import Queue
 import sys
@@ -11,11 +12,11 @@ class Direction(Enum):
     LEFT = 2
     RIGHT = 3
 
+@dataclass
 class Beam:
-    def __init__(self, x: int, y: int, direction: Direction):
-        self.x: int = x
-        self.y: int = y
-        self.direction: Direction = direction
+    x: int
+    y: int
+    direction: Direction
 
 class Day16:
     """

@@ -3,12 +3,6 @@ import itertools
 import math
 import sys
 
-class Node:
-    def __init__(self, name, left, right):
-        self.name = name
-        self.left = left
-        self.right = right
-
 class Day08:
     """
     Solution for https://adventofcode.com/2023/day/8

@@ -1,25 +1,16 @@
 #!/usr/bin/python3
+from dataclasses import dataclass
 import sys
 
+@dataclass
 class MixData:
     """
     A data structure to assist with mixing
     Keep track of a value, its index, and its original index
     There may be multiple MixData objects that have the same value
     """
-
-    def __init__(self, value, original_index) -> None:
-        self.value = value
-        self.original_index = original_index
-
-    def __eq__(self, other) -> bool:
-        return self.value == other.value and self.original_index == other.original_index
-
-    def __repr__(self) -> str:
-        return f'MixData({self.value}, {self.original_index})'
-
-    def __str__(self) -> str:
-        return f'{self.value}'
+    value: int
+    original_index: int
 
 class Day20:
     """
