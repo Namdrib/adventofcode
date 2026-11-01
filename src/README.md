@@ -30,4 +30,21 @@ The input parser and solvers need to be tailored for each day's particular requi
 By structuring the solution code this way, tests can be run either:
 
 1. From the command line, redirecting the contents of each file as the input; or
-2. As a unit test, passing in the required data directly to the solver object's `__init__()` method.
+2. As a unit test, patching out the object's input reading with a file read
+
+The imports are structured so the unit tests can be run from the top level of the repository. The following snippet shows how to run the tests for 2026/day01 from the root of the repository
+
+```bash
+# Method 1
+ namdrib  …  adventofcode  python3 src/main/_2025/day01.py < src/test/_2025/day01_01.in
+Part 1: 3
+Part 2: 6
+
+# Method 2
+ namdrib  …  adventofcode  python3 -m unittest src/test/_2025/test_day01.py
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+OK
+```
