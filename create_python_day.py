@@ -4,7 +4,7 @@ import argparse
 from datetime import datetime
 import os
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, Template
 
 def argparse_setup():
     parser = argparse.ArgumentParser(
@@ -83,7 +83,7 @@ def generate_source_file(template, dir_: str, filename: str, year: int, day: int
     test (when called separately with different args)
 
     :param template: A Jinja2 template object
-    :type template: _type_
+    :type template: Template
     :param dir_: Where the file should be created, excluding the year
     :type dir_: str
     :param filename: The target file "base" name, excluding any year/day values
@@ -118,7 +118,7 @@ def main():
     args = parser.parse_args()
 
     env = Environment(loader=FileSystemLoader('src/main/template'))
-    template = env.get_template('day.py.j2')
+    template: Template = env.get_template('day.py.j2')
     generate_source_file(template, 'src/main', 'day', args.year, args.day)
 
     test_template = env.get_template('test_day.py.j2')
