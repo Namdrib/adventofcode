@@ -42,7 +42,7 @@ def argparse_setup():
 def pad_day(day: int) -> str:
     return str(day).rjust(2, '0')
 
-def generate_test_files(year: int, day: int) -> None:
+def generate_test_input_files(year: int, day: int) -> None:
     """
     Create empty test files that match the given year and date
 
@@ -129,7 +129,7 @@ def main():
     open(f"src/test/_{args.year}/__init__.py", 'w').close()
 
     if args.test_file:
-        generate_test_files(args.year, args.day)
+        generate_test_input_files(args.year, args.day)
 
 if __name__ == '__main__':
     main()
