@@ -52,9 +52,9 @@ def generate_test_input_files(year: int, day: int) -> None:
     :type day: int
     """
     test_dir: str = f'src/test/_{year}'
-    if not os.path.exists(test_dir):
-        print(f'Creating directory {test_dir}')
-        os.mkdir(test_dir)
+
+    print(f'Creating directory {test_dir}')
+    os.makedirs(test_dir, exist_ok=True)
 
     # Create test files if they don't exist
     # The actual input (e.g. day01_00.in)
@@ -97,10 +97,8 @@ def generate_source_file(template, dir_: str, filename: str, year: int, day: int
     # code and the unit test file
     src_dir: str = f'{dir_}/_{year}'
 
-    # Create the dir if it doesn't exist
-    if not os.path.exists(src_dir):
-        print(f'Creating directory {src_dir}')
-        os.mkdir(src_dir)
+    print(f'Creating directory {src_dir}')
+    os.makedirs(src_dir, exist_ok=True)
 
     src_file: str = f'{src_dir}/{filename}{pad_day(day)}.py'
     # Do nothing if the file exists
