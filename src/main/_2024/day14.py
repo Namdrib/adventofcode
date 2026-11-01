@@ -14,7 +14,7 @@ class Day14:
     Solution for https://adventofcode.com/2024/day/14
     """
 
-    def __init__(self) -> None:
+    def __init__(self, x: int = 101, y: int = 103) -> None:
         """
         Constructor
         """
@@ -22,8 +22,8 @@ class Day14:
         self.robots: list = None
 
         # Fixed size of the map
-        self.x = 101
-        self.y = 103
+        self.x = x
+        self.y = y
 
     def read_input(self) -> None:
         """
@@ -125,7 +125,7 @@ class Day14:
     def is_xmas_tree(self, plot: list) -> bool:
         """
         An approximate guess what what the Christmas tree would look like
-        
+
         Surely there's at least one straight line
 
         :param robots: The position of the robots

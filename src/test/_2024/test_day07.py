@@ -1,12 +1,27 @@
+from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 from src.main._2024 import day07
+from src.main._2024.day07 import Day07 as Day
 
 class TestDay07(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
         self.test_day = day07.Day07()
+
+    def setUp(self):
+        self.my_dir: Path = Path(__file__).parent.resolve()
+
+    def test_sample_input(self):
+        solver = Day()
+        with open(f"{self.my_dir}/day07_01.in") as f:
+            with patch('sys.stdin', f):
+                solver.read_input()
+
+        self.assertEqual(solver.part_one(), 3749)
+        self.assertEqual(solver.part_two(), 11387)
 
     def test_can_be_made_part_one(self):
         test_cases: list = [

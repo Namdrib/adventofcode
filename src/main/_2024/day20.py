@@ -32,7 +32,7 @@ class Day20:
     Solution for https://adventofcode.com/2024/day/20
     """
 
-    def __init__(self) -> None:
+    def __init__(self, savings_threshold_ps: int = 100) -> None:
         """
         Constructor
         """
@@ -44,6 +44,8 @@ class Day20:
         self.end = None
 
         self.cost_from_points: dict = {}
+
+        self.savings_threshold_ps: int = savings_threshold_ps
 
     def read_input(self) -> None:
         """
@@ -179,10 +181,7 @@ class Day20:
 
         cheat_benefits: dict = self.calculate_cheat_benefits(2)
 
-        for benefit in cheat_benefits.values():
-            if benefit >= 100:
-                count += 1
-
+        count = sum(1 for x in cheat_benefits.values() if x >= self.savings_threshold_ps)
         return count
 
     def part_two(self) -> int:
@@ -194,10 +193,7 @@ class Day20:
 
         cheat_benefits: dict = self.calculate_cheat_benefits(20)
 
-        for benefit in cheat_benefits.values():
-            if benefit >= 100:
-                count += 1
-
+        count = sum(1 for x in cheat_benefits.values() if x >= self.savings_threshold_ps)
         return count
 
 def main() -> None:

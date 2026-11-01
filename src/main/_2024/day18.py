@@ -32,7 +32,7 @@ class Day18:
     Solution for https://adventofcode.com/2024/day/18
     """
 
-    def __init__(self) -> None:
+    def __init__(self, grid_size: int = 70, num_starting_bytes: int = 1024) -> None:
         """
         Constructor
         """
@@ -40,8 +40,8 @@ class Day18:
         self.bytes: list = None
         self.grid: list = None
 
-        self.num_starting_bytes: int = 1024
-        self.grid_size: int = 70
+        self.num_starting_bytes: int = num_starting_bytes
+        self.grid_size: int = grid_size
 
     def read_input(self) -> None:
         """

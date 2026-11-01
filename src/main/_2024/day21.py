@@ -251,6 +251,7 @@ class Day21:
             print(f'{code}: {result}')
 
             complexity: int = len(result) * self.get_numeric_value(code)
+            print(f"{code=} {len(result)=} * {self.get_numeric_value(code)}")
             count += complexity
 
         return count

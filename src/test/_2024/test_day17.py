@@ -1,6 +1,9 @@
+from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 from src.main._2024 import day17
+from src.main._2024.day17 import Day17 as Day
 
 class TestThreeBitComputer(unittest.TestCase):
 
@@ -9,6 +12,19 @@ class TestThreeBitComputer(unittest.TestCase):
         # Do this as a class attribute so we can verify that the registers and
         # program can be reset multiple times
         cls.tbc = day17.ThreeBitComputer([0, 0, 0])
+
+    def setUp(self):
+        self.my_dir: Path = Path(__file__).parent.resolve()
+
+    def test_sample_input(self):
+        solver = Day()
+        with open(f"{self.my_dir}/day17_01.in") as f:
+            with patch('sys.stdin', f):
+                solver.read_input()
+
+        self.assertEqual(solver.part_one(), '4,6,3,5,6,3,5,2,1,0')
+        # My solution for part two was not generalised, so it does not solve the
+        # sample input
 
     def test_A729(self):
         registers: list = [729, 0, 0]
@@ -42,7 +58,7 @@ class TestThreeBitComputer(unittest.TestCase):
         output = self.tbc.execute(program)
 
         self.assertEqual(output, [0, 1, 2])
-        
+
     def test_A2024(self):
         # If register A contains 2024,
         # the program 0,1,5,4,3,0 would

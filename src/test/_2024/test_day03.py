@@ -1,12 +1,34 @@
+from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 from src.main._2024 import day03
+from src.main._2024.day03 import Day03 as Day
 
 class TestDay03(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
         self.test_day = day03.Day03()
+
+    def setUp(self):
+        self.my_dir: Path = Path(__file__).parent.resolve()
+
+    def test_sample_input(self):
+        solver = Day()
+        with open(f"{self.my_dir}/day03_01.in") as f:
+            with patch('sys.stdin', f):
+                solver.read_input()
+
+        self.assertEqual(solver.part_one(), 161)
+
+    def test_sample_input_part_2(self):
+        solver = Day()
+        with open(f"{self.my_dir}/day03_02.in") as f:
+            with patch('sys.stdin', f):
+                solver.read_input()
+
+        self.assertEqual(solver.part_two(), 48)
 
     def test_mul_pattern(self):
         item: str = 'mul(1,2)andmul[2,3]mul(1),sum(3,4)mul(mul(4,5),mul(6,7))mul(!,2)'
