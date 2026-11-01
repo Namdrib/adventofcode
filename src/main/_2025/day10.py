@@ -3,6 +3,9 @@ import os
 import sys
 from queue import PriorityQueue
 
+import numpy as np
+from scipy.optimize import milp, Bounds, LinearConstraint, OptimizeResult
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from util import helpers
@@ -158,6 +161,40 @@ class Day10:
 
         return None
 
+    def configure_p2_scipy(self, machine: Machine) -> OptimizeResult:
+        """
+        Calculate how many times each of the light buttons need to be pressed to
+        reach the joltage requirements. These are accessed via result.x.
+
+        This is a system of equations of the form A*x = b, solved with scipy
+
+        :return: The optimised result of minimal x required to solve for b. the
+        caller will need to sum the numbers up at the end and convert to the
+        required format. This is so the results can be more general
+        :rtype: OptimizeResult
+        """
+        # Build the constraints based on whether a button press affects a
+        # position's joltage
+        num_inputs: int = len(machine.buttons)
+        num_outputs: int = len(machine.joltage_reqs)
+        A: np.Array = np.zeros((num_outputs, num_inputs))
+
+        for i, button in enumerate(machine.buttons):
+            # Set to True if it affects a given joltage
+            for target_joltage in button:
+                A[target_joltage, i] = True
+
+        b: np.Array = np.array(machine.joltage_reqs)
+
+        # Minimize sum(x) subject to Ax = b
+        A = LinearConstraint(A, b, b)
+        c = np.ones(num_inputs)
+
+        # Bounds: solutions are non-negative by default (x >= 0)
+        # Integrality: x is integral
+        result = milp(c, constraints=A, integrality=c)
+        return result
+
     def part_one(self) -> int:
         """
         Return the fewest button presses required to configure each machine to
@@ -173,9 +210,15 @@ class Day10:
 
     def part_two(self) -> int:
         """
-        Return the ...
+        Return the fewest button presses required to configure each machine to
+        its target state, but this time the target state is the number in the
+        {braces}
         """
         count: int = 0
+
+        for m in self.machines:
+            presses = self.configure_p2_scipy(m)
+            count += sum(int(round(_)) for _ in presses.x)
 
         return count
 
