@@ -9,7 +9,7 @@ class TestDay01(unittest.TestCase):
     def setUp(self):
         self.my_dir: Path = Path(__file__).parent.resolve()
 
-    def test_day_01_01_in(self):
+    def test_sample_input(self):
         solver = Day()
         with open(f"{self.my_dir}/day01_01.in") as f:
             with patch('sys.stdin', f):
