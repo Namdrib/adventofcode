@@ -73,26 +73,36 @@ def generate_test_files(year: int, day: int) -> None:
         print(f'Creating test file {test_file}')
         open(test_file, 'w', encoding='utf-8').close()
 
-def generate_source_file(template, year: int, day: int) -> None:
+def generate_source_file(template, dir_: str, filename: str, year: int, day: int) -> None:
     """
     Create the specified python source file out of a Jinja2 template
 
     Create leading directories if they don't exist
 
+    This can be used for both the python source file and the corresponding unit
+    test (when called separately with different args)
+
     :param template: A Jinja2 template object
     :type template: _type_
+    :param dir_: Where the file should be created, excluding the year
+    :type dir_: str
+    :param filename: The target file "base" name, excluding any year/day values
+    :type filename: str
     :param year: The year of the file to create
     :type year: int
     :param day: The day of the file to create
     :type day: int
     """
-    src_dir: str = f'src/main/_{year}'
+    # The purpose of this is to be able to re-use the same method for functional
+    # code and the unit test file
+    src_dir: str = f'{dir_}/_{year}'
+
     # Create the dir if it doesn't exist
     if not os.path.exists(src_dir):
         print(f'Creating directory {src_dir}')
         os.mkdir(src_dir)
 
-    src_file: str = f'{src_dir}/day{pad_day(day)}.py'
+    src_file: str = f'{src_dir}/{filename}{pad_day(day)}.py'
     # Do nothing if the file exists
     if os.path.isfile(src_file):
         print(f'The file {src_file} already exists')
@@ -109,8 +119,14 @@ def main():
 
     env = Environment(loader=FileSystemLoader('src/main/template'))
     template = env.get_template('day.py.j2')
+    generate_source_file(template, 'src/main', 'day', args.year, args.day)
 
-    generate_source_file(template, args.year, args.day)
+    test_template = env.get_template('test_day.py.j2')
+    generate_source_file(test_template, 'src/test', 'test_day', args.year, args.day)
+
+    # Create __init__ files
+    open(f"src/main/_{args.year}/__init__.py", 'w').close()
+    open(f"src/test/_{args.year}/__init__.py", 'w').close()
 
     if args.test_file:
         generate_test_files(args.year, args.day)
